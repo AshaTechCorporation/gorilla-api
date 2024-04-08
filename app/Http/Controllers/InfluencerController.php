@@ -6,6 +6,7 @@ use App\Models\Influencer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Stmt\TryCatch;
 
 class InfluencerController extends Controller
 {
@@ -34,9 +35,9 @@ class InfluencerController extends Controller
 
         $type = $request->type;
 
-        $col = array('id', 'fullname', 'gender', 'email', 'phone', 'occupation', 'line_id', 'content_style', 'birthday', 'address', 'province_id', 'bank_brand', 'bank_account', 'bank_number', 'id_card', 'name_of_card', 'address_of_card', 'image_profile', 'image_bank', 'image_card', 'create_by', 'update_by', 'created_at', 'updated_at');
+        $col = array('id', 'fullname', 'gender', 'email', 'phone', 'career', 'line_id', 'content_style', 'birthday', 'product_address','product_province','product_district','product_subdistrict','product_zip','bank_id', 'bank_account', 'bank_brand', 'id_card', 'name_of_card', 'address_of_card','influencer_province','influencer_district','influencer_subdistrict','influencer_zip', 'image_bank', 'image_card', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-        $orderby = array('', 'fullname', 'gender', 'email', 'phone', 'occupation', 'line_id', 'content_style', 'birthday', 'address', 'province_id', 'bank_brand', 'bank_account', 'bank_number', 'id_card', 'name_of_card', 'address_of_card', 'image_profile', 'image_bank', 'image_card',  'create_by');
+        $orderby = array('id', 'fullname', 'gender', 'email', 'phone', 'career', 'line_id', 'content_style', 'birthday', 'product_address','product_province','product_district','product_subdistrict','product_zip','bank_id', 'bank_account', 'bank_brand', 'id_card', 'name_of_card', 'address_of_card','influencer_province','influencer_district','influencer_subdistrict','influencer_zip', 'image_bank', 'image_card', 'status', 'create_by');
 
         $D = Influencer::select($col);
 
@@ -107,12 +108,23 @@ class InfluencerController extends Controller
         $loginBy = $request->login_by;
 
         if (!isset($request->fullname)) {
-            return $this->returnErrorData('กรุณาระบุชื่อ fname ให้เรียบร้อย', 404);
+            return $this->returnErrorData('กรุณาระบุ ชื่อ ให้เรียบร้อย', 404);
+        } else if (!isset($request->gender)) {
+            return $this->returnErrorData('กรุณาระบุ เพศ ให้เรียบร้อย', 404);
         } else if (!isset($request->phone)) {
-            return $this->returnErrorData('กรุณาระบุชื่อ lname ให้เรียบร้อย', 404);
-        } else if (!isset($request->email)) {
-            return $this->returnErrorData('กรุณาระบุอีเมล์ให้เรียบร้อย', 404);
-        } else
+            return $this->returnErrorData('กรุณาระบุ เบอร์โทร ให้เรียบร้อย', 404);
+        }else if(!isset($request->email)){
+            return $this->returnErrorData('กรุณาระบุ อีเมล ให้เรียบร้อย', 404);
+        }else if (!isset($request->career)) {
+            return $this->returnErrorData('กรุณาระบุ อาชีพ ให้เรียบร้อย', 404);
+        }else if (!isset($request->line_id)) {
+            return $this->returnErrorData('กรุณาระบุ Line ID ให้เรียบร้อย', 404);
+        }else if (!isset($request->content_style)) {
+            return $this->returnErrorData('กรุณาระบุ ประเภทคอนเทนต์ ให้เรียบร้อย', 404);
+        }else if (!isset($request->birthday)) {
+            return $this->returnErrorData('กรุณาระบุ วันเกิด ให้เรียบร้อย', 404);
+        }
+        else
 
             DB::beginTransaction();
 
@@ -122,18 +134,24 @@ class InfluencerController extends Controller
             $Item->gender = $request->gender;
             $Item->email = $request->email;
             $Item->phone = $request->phone;
-            $Item->occupation = $request->occupation;
+            $Item->career = $request->career;
             $Item->line_id = $request->line_id;
             $Item->content_style = $request->content_style;
             $Item->birthday = $request->birthday;
-            $Item->address = $request->address;
-            $Item->province_id = $request->province_id;
-            $Item->bank_brand = $request->bank_brand;
+            $Item->product_address = $request->product_address;
+            $Item->product_province = $request->product_province;
+            $Item->product_district = $request->product_district;
+            $Item->product_subdistrict = $request->product_subdistrict;
+            $Item->product_zip = $request->product_zip;
+            $Item->bank_id = $request->bank_id;
             $Item->bank_account = $request->bank_account;
-            $Item->bank_number = $request->bank_number;
+            $Item->bank_brand = $request->bank_brand;
             $Item->id_card = $request->id_card;
             $Item->name_of_card = $request->name_of_card;
-            $Item->address_of_card = $request->address_of_card;
+            $Item->influencer_province = $request->influencer_province;
+            $Item->influencer_district = $request->influencer_district;
+            $Item->influencer_subdistrict = $request->influencer_subdistrict;
+            $Item->influencer_zip = $request->influencer_zip;
 
             if ($request->image_bank && $request->image_bank != null && $request->image_bank != 'null') {
                 $Item->image_bank = $this->uploadImage($request->image_bank, '/images/banks/');
@@ -154,7 +172,7 @@ class InfluencerController extends Controller
             $type = 'เพิ่มผู้ใช้งาน';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);
-            //
+            
 
             DB::commit();
 
@@ -175,8 +193,12 @@ class InfluencerController extends Controller
      */
     public function show($id)
     {
+        $checkId = Influencer::find($id);
+        if (!$checkId) {
+            return $this->returnErrorData('ไม่พบข้อมูลที่ท่านต้องการ', 404);
+        }
         $Item = Influencer::where('id', $id)
-            ->first();
+            ->first();  
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
     }
 
@@ -198,9 +220,60 @@ class InfluencerController extends Controller
      * @param  \App\Models\Influencer  $influencer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Influencer $influencer)
+    public function update(Request $request, $id)
     {
-        //
+        $loginBy = $request->login_by;
+        if (!isset($id)) {
+            return $this->returnErrorData('ไม่พบข้อมูล id', 404);
+        } else if (!isset($loginBy)) {
+            return $this->returnErrorData('ไม่พบข้อมูลผู้ใช้งาน กรุณาเข้าสู่ระบบใหม่อีกครั้ง', 404);
+        }
+
+        DB::beginTransaction();
+        try {
+            $Item = Influencer::find($id);
+            $Item->fullname = $request->fullname;
+            $Item->gender = $request->gender;
+            $Item->email = $request->email;
+            $Item->phone = $request->phone;
+            $Item->career = $request->career;
+            $Item->line_id = $request->line_id;
+            $Item->content_style = $request->content_style;
+            $Item->birthday = $request->birthday;
+            $Item->product_address = $request->product_address;
+            $Item->product_province = $request->product_province;
+            $Item->product_district = $request->product_district;
+            $Item->product_subdistrict = $request->product_subdistrict;
+            $Item->product_zip = $request->product_zip;
+            $Item->bank_id = $request->bank_id;
+            $Item->bank_account = $request->bank_account;
+            $Item->bank_brand = $request->bank_brand;
+            $Item->id_card = $request->id_card;
+            $Item->name_of_card = $request->name_of_card;
+            $Item->address_of_card = $request->address_of_card;
+            $Item->influencer_province = $request->influencer_province;
+            $Item->influencer_district = $request->influencer_district;
+            $Item->influencer_subdistrict = $request->influencer_subdistrict;
+            $Item->influencer_zip = $request->influencer_zip;
+
+            $Item->status = "Yes";
+            $Item->update_by = $loginBy;
+            $Item->save();
+
+            //log
+            $userId = $loginBy;
+            $type = 'แก้ไขผู้ใช้งาน';
+            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
+            $this->Log($userId, $description, $type);
+
+            DB::commit();
+
+            return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
+        }
+        catch (\Throwable $e){
+            DB::rollback();
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง '. $e->getMessage(), 404);
+        }
     }
 
     /**
