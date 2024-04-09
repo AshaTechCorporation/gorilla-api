@@ -152,6 +152,7 @@ class InfluencerController extends Controller
             $Item->influencer_district = $request->influencer_district;
             $Item->influencer_subdistrict = $request->influencer_subdistrict;
             $Item->influencer_zip = $request->influencer_zip;
+            $Item->note = $request->note;
 
             if ($request->image_bank && $request->image_bank != null && $request->image_bank != 'null') {
                 $Item->image_bank = $this->uploadImage($request->image_bank, '/images/banks/');
@@ -168,7 +169,7 @@ class InfluencerController extends Controller
             //
 
             //log
-            $userId = "admin";
+            $userId = $loginBy;
             $type = 'เพิ่มผู้ใช้งาน';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);
@@ -255,6 +256,7 @@ class InfluencerController extends Controller
             $Item->influencer_district = $request->influencer_district;
             $Item->influencer_subdistrict = $request->influencer_subdistrict;
             $Item->influencer_zip = $request->influencer_zip;
+            $Item->note = $request->note;
 
             $Item->status = "Yes";
             $Item->update_by = $loginBy;

@@ -45,6 +45,8 @@ class CreateInfluencersTable extends Migration
             $table->string('image_bank', 255)->nullable()->charset('utf8');
             $table->string('image_card', 255)->nullable()->charset('utf8');
 
+            $table->text('note')->charset('utf8')->nullable();
+
             $table->enum('status', ['Yes', 'No', 'Request'])->charset('utf8')->default('Yes');
             $table->string('create_by', 100)->charset('utf8')->nullable();
             $table->string('update_by', 100)->charset('utf8')->nullable();
