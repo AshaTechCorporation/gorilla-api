@@ -16,5 +16,9 @@ class Influencer extends Model
 
     protected $hidden = ['deleted_at'];
 
-
+    //////////////////////////////////////// relation //////////////////////////////////////
+    public function platform_socials()
+    {
+        return $this->belongsToMany(PlatformSocial::class);
+    }
 }

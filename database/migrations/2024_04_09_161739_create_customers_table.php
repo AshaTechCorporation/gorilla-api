@@ -19,7 +19,8 @@ class CreateCustomersTable extends Migration
             $table->string('name', 250)->charset('utf8')->nullable();
             $table->string('phone', 100)->charset('utf8')->nullable();
             $table->string('email', 100)->charset('utf8')->nullable();
-            $table->string('ccode', 100)->charset('utf8')->unique();            
+            $table->string('ccode', 100)->charset('utf8')->nullable();            
+            
             $table->timestamps();
             $table->softDeletes();
         });

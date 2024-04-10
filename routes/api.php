@@ -15,6 +15,7 @@ use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\PlatformSocialController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -43,6 +44,11 @@ Route::post('/forgot_password_user', [UserController::class, 'ForgotPasswordUser
 Route::resource('influencer', InfluencerController::class);
 Route::post('/influencer_page', [InfluencerController::class, 'getPage']);
 Route::get('/get_influencer', [InfluencerController::class, 'getList']);
+
+// PlatformSocial
+Route::resource('platformSocial', PlatformSocialController::class);
+Route::post('/platformSocial_page', [PlatformSocialController::class, 'getPage']);
+Route::get('/get_platformSocial', [PlatformSocialController::class, 'getList']);
 
 // Customer
 Route::resource('customer', CustomerController::class);

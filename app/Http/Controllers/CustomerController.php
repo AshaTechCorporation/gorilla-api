@@ -38,9 +38,9 @@ class CustomerController extends Controller
         $page = $start / $length + 1;
 
 
-        $col = array('id', 'fullname', 'phone', 'email', 'ccode', 'career', 'create_by', 'update_by', 'created_at', 'updated_at');
+        $col = array('id', 'name', 'phone', 'email', 'ccode', 'created_at', 'updated_at');
 
-        $orderby = array('id', 'fullname', 'phone', 'email', 'ccode', 'career', 'create_by');
+        $orderby = array('id', 'name', 'phone', 'email', 'ccode', 'created_at');
 
         $D = Customer::select($col);
 
@@ -103,7 +103,7 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $loginBy = $request->login_by;
+        $loginBy = "admin";
 
         if (!isset($request->name)) {
             return $this->returnErrorData('กรุณาระบุ ชื่อ ให้เรียบร้อย', 404);
@@ -183,7 +183,7 @@ class CustomerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $loginBy = $request->login_by;
+        $loginBy = "admin";
 
         if (!isset($request->name)) {
             return $this->returnErrorData('กรุณาระบุ ชื่อ ให้เรียบร้อย', 404);

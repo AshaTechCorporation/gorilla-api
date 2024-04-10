@@ -13,16 +13,18 @@ class CreateInfluSocialsTable extends Migration
      */
     public function up()
     {
-        Schema::create('influ_socials', function (Blueprint $table) {
+        Schema::create('influencer_platform_social', function (Blueprint $table) {
             $table->increments('id');
 
             $table->integer('influencer_id')->unsigned()->index();
             $table->foreign('influencer_id')->references('id')->on('influencers')->onDelete('cascade');
             $table->integer('platform_social_id')->unsigned()->index();
             $table->foreign('platform_social_id')->references('id')->on('platform_socials')->onDelete('cascade');
-            $table->integer('Subscribe')->nullable();
+            $table->string('name', 250)->charset('utf8')->nullable();
+            $table->integer('subscribe')->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

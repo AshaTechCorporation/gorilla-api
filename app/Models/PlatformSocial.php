@@ -15,4 +15,11 @@ class PlatformSocial extends Model
     protected $softDelete = true;
 
     protected $hidden = ['deleted_at'];
+
+    //////////////////////////////////////// relation //////////////////////////////////////
+
+    public function influencers()
+    {
+        return $this->belongsToMany(Influencer::class);
+    }
 }

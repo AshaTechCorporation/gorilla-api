@@ -15,9 +15,10 @@ class CreatePlatformSocialsTable extends Migration
     {
         Schema::create('platform_socials', function (Blueprint $table) {
             $table->increments('id');
-            
-            $table->string('name');
+
+            $table->string('name', 250)->charset('utf8')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

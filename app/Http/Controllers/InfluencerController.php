@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Influencer;
 use Illuminate\Http\Request;
+use App\Models\PlatformSocial;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
@@ -105,7 +106,8 @@ class InfluencerController extends Controller
      */
     public function store(Request $request)
     {
-        $loginBy = $request->login_by;
+        $loginBy = "admin";
+        $socialID = $request->socials;
 
         if (!isset($request->fullname)) {
             return $this->returnErrorData('กรุณาระบุ ชื่อ ให้เรียบร้อย', 404);
@@ -166,7 +168,21 @@ class InfluencerController extends Controller
             $Item->create_by = "admin";
 
             $Item->save();
-            //
+            
+            if(isset($request->socials)){
+                for ($i = 0; $i < count($socialID ); $i++) {
+
+                    $social = PlatformSocial::find($socialID [$i]['platform_social_id']);
+                    
+                    if($social == null){
+                        return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 404); 
+                    }
+                    else{
+                        $Item->platform_socials()->attach($social, array('name' => $socialID[$i]['name'], 'subscribe' => $socialID[$i]['subscribe']));
+                    }
+    
+                }
+            }
 
             //log
             $userId = $loginBy;
@@ -226,9 +242,7 @@ class InfluencerController extends Controller
         $loginBy = $request->login_by;
         if (!isset($id)) {
             return $this->returnErrorData('ไม่พบข้อมูล id', 404);
-        } else if (!isset($loginBy)) {
-            return $this->returnErrorData('ไม่พบข้อมูลผู้ใช้งาน กรุณาเข้าสู่ระบบใหม่อีกครั้ง', 404);
-        }
+        } 
 
         DB::beginTransaction();
         try {

@@ -129,69 +129,69 @@ class Controller extends BaseController
         return $this->returnSuccess('ดำเนินการสำเร็จ', $path . $input['imagename']);
     }
 
-    public function uploadSignature(Request $request)
-    {
+    // public function uploadSignature(Request $request)
+    // {
 
-        $image = $request->image;
-        $path = $request->path;
-        $refno = $request->refno;
-        $action = $request->action;
+    //     $image = $request->image;
+    //     $path = $request->path;
+    //     $refno = $request->refno;
+    //     $action = $request->action;
 
-        $input['imagename'] = md5(rand(0, 999999) . $image->getClientOriginalName()) . '.' . $image->extension();
-        $destinationPath = public_path('/thumbnail');
-        if (!File::exists($destinationPath)) {
-            File::makeDirectory($destinationPath, 0777, true);
-        }
+    //     $input['imagename'] = md5(rand(0, 999999) . $image->getClientOriginalName()) . '.' . $image->extension();
+    //     $destinationPath = public_path('/thumbnail');
+    //     if (!File::exists($destinationPath)) {
+    //         File::makeDirectory($destinationPath, 0777, true);
+    //     }
 
-        $img = Image::make($image->path());
-        $img->save($destinationPath . '/' . $input['imagename']);
-        $destinationPath = public_path($path);
-        $image->move($destinationPath, $input['imagename']);
+    //     $img = Image::make($image->path());
+    //     $img->save($destinationPath . '/' . $input['imagename']);
+    //     $destinationPath = public_path($path);
+    //     $image->move($destinationPath, $input['imagename']);
 
-        DB::beginTransaction();
+    //     DB::beginTransaction();
 
-        try {
+    //     try {
 
-            $Item = new Signature();
-            $Item->refno = $refno;
-            $Item->path = $path . $input['imagename'];
-            $Item->action = $action;
-            $Item->save();
+    //         $Item = new Signature();
+    //         $Item->refno = $refno;
+    //         $Item->path = $path . $input['imagename'];
+    //         $Item->action = $action;
+    //         $Item->save();
 
-            $ItemOrder = Orders::where('code', $refno)->first();
-            if ($ItemOrder) {
-                if ($Item->action == "Receive to Client") {
-                    $ItemOrder->status = "ToClient";
-                } else {
-                    $ItemOrder->status = "Recived";
-                }
+    //         $ItemOrder = Orders::where('code', $refno)->first();
+    //         if ($ItemOrder) {
+    //             if ($Item->action == "Receive to Client") {
+    //                 $ItemOrder->status = "ToClient";
+    //             } else {
+    //                 $ItemOrder->status = "Recived";
+    //             }
 
-                $ItemOrder->save();
+    //             $ItemOrder->save();
 
-                OneSignalFacade::sendNotificationToAll("แจ้งเตือนรายการนำเข้าโกดังสำเร็จรายการ : " . $refno);
-            }
+    //             OneSignalFacade::sendNotificationToAll("แจ้งเตือนรายการนำเข้าโกดังสำเร็จรายการ : " . $refno);
+    //         }
 
-            //
+    //         //
 
-            //log
-            $userId = "admin";
-            $type = 'เพิ่มรายการ';
-            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type . ' ' . $request->name;
-            $this->Log($userId, $description, $type);
-            //
+    //         //log
+    //         $userId = "admin";
+    //         $type = 'เพิ่มรายการ';
+    //         $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type . ' ' . $request->name;
+    //         $this->Log($userId, $description, $type);
+    //         //
 
-            DB::commit();
+    //         DB::commit();
 
-            return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
-        } catch (\Throwable $e) {
+    //         return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
+    //     } catch (\Throwable $e) {
 
-            DB::rollback();
+    //         DB::rollback();
 
-            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
-        }
+    //         return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+    //     }
 
-        // return $this->returnSuccess('ดำเนินการสำเร็จ', $path . $input['imagename']);
-    }
+    //     // return $this->returnSuccess('ดำเนินการสำเร็จ', $path . $input['imagename']);
+    // }
 
     public function uploadImage($image, $path)
     {
