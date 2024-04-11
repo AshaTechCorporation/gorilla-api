@@ -239,7 +239,7 @@ class InfluencerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $loginBy = $request->login_by;
+        $loginBy = "admin";
         if (!isset($id)) {
             return $this->returnErrorData('ไม่พบข้อมูล id', 404);
         } 

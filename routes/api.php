@@ -16,6 +16,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PlatformSocialController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\AddressController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -55,15 +57,26 @@ Route::resource('customer', CustomerController::class);
 Route::post('/customer_page', [CustomerController::class, 'getPage']);
 Route::get('/get_customer', [CustomerController::class, 'getList']);
 
-// department
+// Employee
+Route::resource('employee', EmployeeController::class);
+Route::post('/employee_page', [EmployeeController::class, 'getPage']);
+Route::get('/get_employee', [EmployeeController::class, 'getList']);
+
+// Department
 Route::resource('department', DepartmentController::class);
 Route::post('/department_page', [DepartmentController::class, 'getPage']);
 Route::get('/get_department', [DepartmentController::class, 'getList']);
 
-// position
+// Position
 Route::resource('position', PositionController::class);
 Route::post('/position_page', [PositionController::class, 'getPage']);
 Route::get('/get_position', [PositionController::class, 'getList']);
+
+// Address
+Route::get('/provinces', [ AddressController::class , 'getProvinces' ]);
+Route::get('/amphoes', [AddressController::class , 'getAmphoes' ]);
+Route::get('/tambons', [ AddressController::class , 'getTambons' ]);
+Route::get('/zipcodes', [AddressController::class, 'getZipcodes'] );
 
 // Client
 Route::resource('client', ClientsController::class);

@@ -17,12 +17,12 @@ class Employee extends Model
     protected $hidden = ['deleted_at'];
 
     //////////////////////////////////////// relation //////////////////////////////////////
-    public function departments()
+    public function department()
     {
         return $this->belongsTo(Department::class);
     }
 
-    public function positions()
+    public function position()
     {
         return $this->belongsTo(Position::class);
     }
