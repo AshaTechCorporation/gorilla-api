@@ -18,6 +18,8 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PlatformSocialController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\CareerController;
+use App\Http\Controllers\ContentStyleController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -51,6 +53,16 @@ Route::get('/get_influencer', [InfluencerController::class, 'getList']);
 Route::resource('platformSocial', PlatformSocialController::class);
 Route::post('/platformSocial_page', [PlatformSocialController::class, 'getPage']);
 Route::get('/get_platformSocial', [PlatformSocialController::class, 'getList']);
+
+// Career
+Route::resource('career', CareerController::class);
+Route::post('/career_page', [CareerController::class, 'getPage']);
+Route::get('/get_career', [CareerController::class, 'getList']);
+
+// ContentStyle
+Route::resource('contentstyle', ContentStyleController::class);
+Route::post('/contentstyle_page', [ContentStyleController::class, 'getPage']);
+Route::get('/get_contentstyle', [ContentStyleController::class, 'getList']);
 
 // Customer
 Route::resource('customer', CustomerController::class);

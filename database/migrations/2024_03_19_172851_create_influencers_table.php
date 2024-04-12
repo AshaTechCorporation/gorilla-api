@@ -20,9 +20,15 @@ class CreateInfluencersTable extends Migration
             $table->enum('gender', ['F', 'M', 'T'])->charset('utf8')->default('F');
             $table->string('email', 100)->charset('utf8')->nullable();
             $table->string('phone', 100)->charset('utf8')->nullable();
-            $table->string('career', 250)->charset('utf8')->nullable();
+
+            $table->integer('career_id')->nullable()->unsigned()->index();
+            $table->foreign('career_id')->references('id')->on('career')->onDelete('cascade');
+            
             $table->string('line_id', 250)->charset('utf8')->nullable();
-            $table->string('content_style', 250)->charset('utf8')->nullable();
+            
+            $table->integer('content_style_id')->nullable()->unsigned()->index();
+            $table->foreign('content_style_id')->references('id')->on('content_style')->onDelete('cascade');
+            
             $table->string('birthday', 250)->charset('utf8')->nullable();
             $table->text('product_address')->charset('utf8')->nullable();
             $table->string('product_province', 100)->charset('utf8')->nullable();

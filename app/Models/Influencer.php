@@ -21,4 +21,14 @@ class Influencer extends Model
     {
         return $this->belongsToMany(PlatformSocial::class);
     }
+
+    public function career()
+    {
+        return $this->belongsTo(Career::class);
+    }
+
+    public function contentstyle()
+    {
+        return $this->belongsTo(ContentStyle::class, 'content_style_id');
+    }
 }

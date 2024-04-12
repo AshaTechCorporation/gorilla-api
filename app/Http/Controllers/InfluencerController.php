@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Influencer;
 use Illuminate\Http\Request;
 use App\Models\PlatformSocial;
+use App\Models\ContentStyle;
+use App\Models\Career;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
@@ -13,7 +15,9 @@ class InfluencerController extends Controller
 {
     public function getList()
     {
-        $Item = Influencer::get()->toarray();
+        $Item = Influencer::with('career')
+        ->with('contentstyle')
+        ->get()->toarray();
 
         if (!empty($Item)) {
 
@@ -36,11 +40,13 @@ class InfluencerController extends Controller
 
         $type = $request->type;
 
-        $col = array('id', 'fullname', 'gender', 'email', 'phone', 'career', 'line_id', 'content_style', 'birthday', 'product_address','product_province','product_district','product_subdistrict','product_zip','bank_id', 'bank_account', 'bank_brand', 'id_card', 'name_of_card', 'address_of_card','influencer_province','influencer_district','influencer_subdistrict','influencer_zip', 'image_bank', 'image_card', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
+        $col = array('id', 'fullname', 'gender', 'email', 'phone', 'career_id', 'line_id', 'content_style_id', 'birthday', 'product_address','product_province','product_district','product_subdistrict','product_zip','bank_id', 'bank_account', 'bank_brand', 'id_card', 'name_of_card', 'address_of_card','influencer_province','influencer_district','influencer_subdistrict','influencer_zip', 'image_bank', 'image_card', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-        $orderby = array('id', 'fullname', 'gender', 'email', 'phone', 'career', 'line_id', 'content_style', 'birthday', 'product_address','product_province','product_district','product_subdistrict','product_zip','bank_id', 'bank_account', 'bank_brand', 'id_card', 'name_of_card', 'address_of_card','influencer_province','influencer_district','influencer_subdistrict','influencer_zip', 'image_bank', 'image_card', 'status', 'create_by');
+        $orderby = array('id', 'fullname', 'gender', 'email', 'phone', 'career_id', 'line_id', 'content_style_id', 'birthday', 'product_address','product_province','product_district','product_subdistrict','product_zip','bank_id', 'bank_account', 'bank_brand', 'id_card', 'name_of_card', 'address_of_card','influencer_province','influencer_district','influencer_subdistrict','influencer_zip', 'image_bank', 'image_card', 'status', 'create_by');
 
-        $D = Influencer::select($col);
+        $D = Influencer::select($col)
+        ->with('career')
+        ->with('contentstyle');
 
         if ($orderby[$order[0]['column']]) {
             $D->orderby($orderby[$order[0]['column']], $order[0]['dir']);
@@ -117,12 +123,8 @@ class InfluencerController extends Controller
             return $this->returnErrorData('กรุณาระบุ เบอร์โทร ให้เรียบร้อย', 404);
         }else if(!isset($request->email)){
             return $this->returnErrorData('กรุณาระบุ อีเมล ให้เรียบร้อย', 404);
-        }else if (!isset($request->career)) {
-            return $this->returnErrorData('กรุณาระบุ อาชีพ ให้เรียบร้อย', 404);
         }else if (!isset($request->line_id)) {
             return $this->returnErrorData('กรุณาระบุ Line ID ให้เรียบร้อย', 404);
-        }else if (!isset($request->content_style)) {
-            return $this->returnErrorData('กรุณาระบุ ประเภทคอนเทนต์ ให้เรียบร้อย', 404);
         }else if (!isset($request->birthday)) {
             return $this->returnErrorData('กรุณาระบุ วันเกิด ให้เรียบร้อย', 404);
         }
@@ -132,13 +134,28 @@ class InfluencerController extends Controller
 
         try {
             $Item = new Influencer();
+
+
+            $Item->career_id = $request->career_id;
+            $Item->content_style_id = $request->content_style_id;
+
+            //get data
+            $Content_style = ContentStyle::find($Item->content_style_id);
+            if (!$Content_style) {
+                return $this->returnErrorData('ไม่พบ content_style_id', 404);
+            }
+            $Career = Career::find($Item->career_id);
+            if (!$Career) {
+                return $this->returnErrorData('ไม่พบ career_id', 404);
+            }
+
             $Item->fullname = $request->fullname;
             $Item->gender = $request->gender;
             $Item->email = $request->email;
             $Item->phone = $request->phone;
-            $Item->career = $request->career;
+            // $Item->career = $request->career;
             $Item->line_id = $request->line_id;
-            $Item->content_style = $request->content_style;
+            // $Item->content_style = $request->content_style;
             $Item->birthday = $request->birthday;
             $Item->product_address = $request->product_address;
             $Item->product_province = $request->product_province;
@@ -175,7 +192,7 @@ class InfluencerController extends Controller
                     $social = PlatformSocial::find($socialID [$i]['platform_social_id']);
                     
                     if($social == null){
-                        return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 404); 
+                        return $this->returnErrorData('เกิดข้อผิดพลาดที่ $social กรุณาลองใหม่อีกครั้ง ', 404); 
                     }
                     else{
                         $Item->platform_socials()->attach($social, array('name' => $socialID[$i]['name'], 'subscribe' => $socialID[$i]['subscribe']));
@@ -198,7 +215,7 @@ class InfluencerController extends Controller
 
             DB::rollback();
 
-            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+            return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ' . $e, 404);
         }
     }
 
@@ -214,7 +231,9 @@ class InfluencerController extends Controller
         if (!$checkId) {
             return $this->returnErrorData('ไม่พบข้อมูลที่ท่านต้องการ', 404);
         }
-        $Item = Influencer::where('id', $id)
+        $Item = Influencer::with('career')
+        ->with('contentstyle')
+        ->where('id', $id)
             ->first();  
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
     }
@@ -240,6 +259,8 @@ class InfluencerController extends Controller
     public function update(Request $request, $id)
     {
         $loginBy = "admin";
+        $socialID = $request->socials;
+
         if (!isset($id)) {
             return $this->returnErrorData('ไม่พบข้อมูล id', 404);
         } 
@@ -247,13 +268,27 @@ class InfluencerController extends Controller
         DB::beginTransaction();
         try {
             $Item = Influencer::find($id);
+
+            $Item->career_id = $request->career_id;
+            $Item->content_style_id = $request->content_style_id;
+
+            //get data
+            $Content_style = ContentStyle::find($Item->content_style_id);
+            if (!$Content_style) {
+                return $this->returnErrorData('ไม่พบ content_style_id', 404);
+            }
+            $Career = Career::find($Item->career_id);
+            if (!$Career) {
+                return $this->returnErrorData('ไม่พบ career_id', 404);
+            }
+            
             $Item->fullname = $request->fullname;
             $Item->gender = $request->gender;
             $Item->email = $request->email;
             $Item->phone = $request->phone;
-            $Item->career = $request->career;
+            // $Item->career = $request->career;
             $Item->line_id = $request->line_id;
-            $Item->content_style = $request->content_style;
+            // $Item->content_style = $request->content_style;
             $Item->birthday = $request->birthday;
             $Item->product_address = $request->product_address;
             $Item->product_province = $request->product_province;
@@ -275,6 +310,21 @@ class InfluencerController extends Controller
             $Item->status = "Yes";
             $Item->update_by = $loginBy;
             $Item->save();
+
+            if(isset($request->socials)){
+                for ($i = 0; $i < count($socialID ); $i++) {
+
+                    $social = PlatformSocial::find($socialID [$i]['platform_social_id']);
+                    
+                    if($social == null){
+                        return $this->returnErrorData('เกิดข้อผิดพลาดที่ $social กรุณาลองใหม่อีกครั้ง ', 404); 
+                    }
+                    else{
+                        $Item->platform_socials()->attach($social, array('name' => $socialID[$i]['name'], 'subscribe' => $socialID[$i]['subscribe']));
+                    }
+    
+                }
+            }
 
             //log
             $userId = $loginBy;
