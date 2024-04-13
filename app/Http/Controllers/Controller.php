@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\DB;
 use Berkayk\OneSignal\OneSignalFacade;
+use PhpParser\Node\Stmt\TryCatch;
 
 class Controller extends BaseController
 {
@@ -108,26 +109,50 @@ class Controller extends BaseController
 
         curl_close($chOne);
     }
+/// old version
+    // public function uploadImages(Request $request)
+    // {
+    //     try {
+    //         $image = $request->image;
+    //         $path = $request->path;
 
+    //         $input['imagename'] = md5(rand(0, 999999) . $image->getClientOriginalName()) . '.' . $image->extension();
+    //         $destinationPath = public_path('/thumbnail');
+    //         if (!File::exists($destinationPath)) {
+    //             File::makeDirectory($destinationPath, 0777, true);
+    //         }
+
+    //         $img = Image::make($image->path());
+    //         $img->save($destinationPath . '/' . $input['imagename']);
+    //         $destinationPath = public_path($path);
+    //         $image->move($destinationPath, $input['imagename']);
+
+    //         return $this->returnSuccess('ดำเนินการสำเร็จ', $path . '/' . $input['imagename']);
+    //     } catch (\Throwable $e) {
+
+    //         return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+    //     }
+    // }
     public function uploadImages(Request $request)
-    {
-
+{
+    try {
         $image = $request->image;
         $path = $request->path;
 
         $input['imagename'] = md5(rand(0, 999999) . $image->getClientOriginalName()) . '.' . $image->extension();
-        $destinationPath = public_path('/thumbnail');
+        $destinationPath = public_path("/images" . $path);
+
         if (!File::exists($destinationPath)) {
             File::makeDirectory($destinationPath, 0777, true);
         }
 
-        $img = Image::make($image->path());
-        $img->save($destinationPath . '/' . $input['imagename']);
-        $destinationPath = public_path($path);
         $image->move($destinationPath, $input['imagename']);
 
-        return $this->returnSuccess('ดำเนินการสำเร็จ', $path . $input['imagename']);
+        return $this->returnSuccess('ดำเนินการสำเร็จ', "/images" . $path . '/' . $input['imagename']);
+    } catch (\Throwable $e) {
+        return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
     }
+}
 
     // public function uploadSignature(Request $request)
     // {

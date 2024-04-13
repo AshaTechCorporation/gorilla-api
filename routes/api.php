@@ -90,39 +90,41 @@ Route::get('/amphoes', [AddressController::class , 'getAmphoes' ]);
 Route::get('/tambons', [ AddressController::class , 'getTambons' ]);
 Route::get('/zipcodes', [AddressController::class, 'getZipcodes'] );
 
-// Client
-Route::resource('client', ClientsController::class);
-Route::post('/client_page', [ClientsController::class, 'getPage']);
-Route::get('/get_client', [ClientsController::class, 'getList']);
-Route::post('/update_client', [ClientsController::class, 'updateData']);
+// // Client
+// Route::resource('client', ClientsController::class);
+// Route::post('/client_page', [ClientsController::class, 'getPage']);
+// Route::get('/get_client', [ClientsController::class, 'getList']);
+// Route::post('/update_client', [ClientsController::class, 'updateData']);
 
-// province
-Route::resource('province', ProvinceController::class);
-Route::post('/province_page', [ProvinceController::class, 'getPage']);
-Route::get('/get_province', [ProvinceController::class, 'getList']);
+// // province
+// Route::resource('province', ProvinceController::class);
+// Route::post('/province_page', [ProvinceController::class, 'getPage']);
+// Route::get('/get_province', [ProvinceController::class, 'getList']);
 
-// Permission
-Route::resource('permission', PermissionController::class);
-Route::post('/permission_page', [PermissionController::class, 'getPage']);
-Route::get('/get_permission', [PermissionController::class, 'getList']);
+// // Permission
+// Route::resource('permission', PermissionController::class);
+// Route::post('/permission_page', [PermissionController::class, 'getPage']);
+// Route::get('/get_permission', [PermissionController::class, 'getList']);
 
-//Main Menu
-Route::resource('main_menu', MainMenuController::class);
-Route::get('/get_main_menu', [MainMenuController::class, 'getList']);
+// //Main Menu
+// Route::resource('main_menu', MainMenuController::class);
+// Route::get('/get_main_menu', [MainMenuController::class, 'getList']);
 
-//Menu
-Route::resource('menu', MenuController::class);
-Route::get('/get_menu', [MenuController::class, 'getList']);
+// //Menu
+// Route::resource('menu', MenuController::class);
+// Route::get('/get_menu', [MenuController::class, 'getList']);
 
-//Menu Permission
-Route::resource('menu_permission', MenuPermissionController::class);
-Route::get('/get_menu_permission', [MenuPermissionController::class, 'getList']);
-Route::post('checkAll', [MenuPermissionController::class, 'checkAll']);
+// //Menu Permission
+// Route::resource('menu_permission', MenuPermissionController::class);
+// Route::get('/get_menu_permission', [MenuPermissionController::class, 'getList']);
+// Route::post('checkAll', [MenuPermissionController::class, 'checkAll']);
 
 //controller
+// current use this!!!
 Route::post('upload_images', [Controller::class, 'uploadImages']);
-Route::post('upload_file', [Controller::class, 'uploadFile']);
-Route::post('upload_signature', [Controller::class, 'uploadSignature']);
+
+// Route::post('upload_file', [Controller::class, 'uploadFile']);
+// Route::post('upload_signature', [Controller::class, 'uploadSignature']);
 
 //user
 Route::resource('user', UserController::class);
@@ -146,4 +148,4 @@ Route::group(['middleware' => 'checkjwt'], function () {
 
 //upload
 
-Route::post('/upload_file', [UploadController::class, 'uploadFile']);
+// Route::post('/upload_file', [UploadController::class, 'uploadFile']);
