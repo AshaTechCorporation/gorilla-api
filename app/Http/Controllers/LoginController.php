@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MenuPermission;
 use App\Models\User;
+use App\Models\EmployeeCredential;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -71,34 +71,68 @@ class LoginController extends Controller
         }
     }
 
-    public function login(Request $request)
+    // public function login(Request $request)
+    // {
+    //     if (!isset($request->username)) {
+    //         return $this->returnErrorData('[username] ไม่มีข้อมูล', 404);
+    //     } else if (!isset($request->password)) {
+    //         return $this->returnErrorData('[password] ไม่มีข้อมูล', 404);
+    //     }
+
+    //     $user = User::where('username', $request->username)
+    //         ->where('password', md5($request->password))
+    //         ->first();
+
+    //     if ($user) {
+
+    //         $user->menus = MenuPermission::where('permission_id',$user->permission_id)->get();
+    //         foreach ($user->menus as $key => $value) {
+    //             $user->menus[$key]->menu_id = intval($user->menus[$key]->menu_id);
+    //             $user->menus[$key]->view = intval($user->menus[$key]->view);
+    //             $user->menus[$key]->edit = intval($user->menus[$key]->edit);
+    //             $user->menus[$key]->save = intval($user->menus[$key]->save);
+    //             $user->menus[$key]->delete = intval($user->menus[$key]->delete);
+    //         }
+
+    //         //log
+    //         $username = $user->username;
+    //         $log_type = 'เข้าสู่ระบบ';
+    //         $log_description = 'ผู้ใช้งาน ' . $username . ' ได้ทำการ ' . $log_type;
+    //         $this->Log($username, $log_description, $log_type);
+    //         //
+
+    //         return response()->json([
+    //             'code' => '200',
+    //             'status' => true,
+    //             'message' => 'เข้าสู่ระบบสำเร็จ',
+    //             'data' => $user,
+    //             'token' => $this->genToken($user->id, $user),
+    //         ], 200);
+    //     } else {
+    //         return $this->returnError('รหัสผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง', 401);
+    //     }
+
+    // }
+
+    public function employeelogin(Request $request)
     {
-        if (!isset($request->username)) {
-            return $this->returnErrorData('[username] ไม่มีข้อมูล', 404);
+        if (!isset($request->email)) {
+            return $this->returnErrorData('[email] ไม่มีข้อมูล', 404);
         } else if (!isset($request->password)) {
             return $this->returnErrorData('[password] ไม่มีข้อมูล', 404);
         }
 
-        $user = User::where('username', $request->username)
-            ->where('password', md5($request->password))
+        $user = EmployeeCredential::where('Email', $request->email)
+            ->where('PasswordHash', md5($request->password))
             ->first();
 
         if ($user) {
 
-            $user->menus = MenuPermission::where('permission_id',$user->permission_id)->get();
-            foreach ($user->menus as $key => $value) {
-                $user->menus[$key]->menu_id = intval($user->menus[$key]->menu_id);
-                $user->menus[$key]->view = intval($user->menus[$key]->view);
-                $user->menus[$key]->edit = intval($user->menus[$key]->edit);
-                $user->menus[$key]->save = intval($user->menus[$key]->save);
-                $user->menus[$key]->delete = intval($user->menus[$key]->delete);
-            }
-
             //log
-            $username = $user->username;
-            $log_type = 'เข้าสู่ระบบ';
-            $log_description = 'ผู้ใช้งาน ' . $username . ' ได้ทำการ ' . $log_type;
-            $this->Log($username, $log_description, $log_type);
+            $userId = $request->email;
+            $type = 'เข้าสู่ระบบ';
+            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type;
+            $this->Log($userId, $description, $type);
             //
 
             return response()->json([

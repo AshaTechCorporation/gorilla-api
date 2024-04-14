@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\Department;
 use App\Models\Position;
+use App\Models\EmployeeCredential;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
@@ -132,8 +133,9 @@ class EmployeeController extends Controller
         try {
             $Item = new Employee();
 
-            $Item->position_id = $request->position_id;
             $Item->department_id = $request->department_id;
+            $Item->position_id = $request->position_id;
+            $Item->credentials_id = $request->credentials_id;
 
             //get data
             $Department = Department::find($Item->department_id);
@@ -143,6 +145,10 @@ class EmployeeController extends Controller
             $Position = Position::find($Item->position_id);
             if (!$Position) {
                 return $this->returnErrorData('ไม่พบตำแหน่ง', 404);
+            }
+            $Credentials_id = EmployeeCredential::find($Item->credentials_id);
+            if (!$Credentials_id) {
+                return $this->returnErrorData('ไม่พบพนักงานในระบบ', 404);
             }
 
             $Item->ecode = $request->ecode;
@@ -300,6 +306,43 @@ class EmployeeController extends Controller
             DB::commit();
 
             return $this->returnUpdate('ดำเนินการสำเร็จ');
+        } catch (\Throwable $e) {
+
+            DB::rollback();
+
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+        }
+    
+    }
+
+    public function addCredential(Request $request)
+    {
+        $loginBy = "admin";
+
+        if (!isset($request->email)) {
+            return $this->returnErrorData('กรุณาระบุ email ให้เรียบร้อย', 404);
+        }else if (!isset($request->password)) {
+            return $this->returnErrorData('กรุณาระบุ password ให้เรียบร้อย', 404);
+        }
+        DB::beginTransaction();
+
+        try {
+
+            $Item = new EmployeeCredential();
+            $Item->Email = $request->email;
+            $Item->PasswordHash = md5($request->password);
+
+            $Item->save();
+            //log
+            $userId = "admin";
+            $type = 'เพิ่มพนักงาน';
+            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type;
+            $this->Log($userId, $description, $type);
+            //
+
+            DB::commit();
+
+            return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
         } catch (\Throwable $e) {
 
             DB::rollback();

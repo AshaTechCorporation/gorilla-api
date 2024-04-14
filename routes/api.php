@@ -36,13 +36,14 @@ use Illuminate\Support\Facades\Route;
 
 //////////////////////////////////////////web no route group/////////////////////////////////////////////////////
 //Login Admin
-Route::post('/login', [LoginController::class, 'login']);
+// Route::post('/login', [LoginController::class, 'login']);
 
-Route::post('/check_login', [LoginController::class, 'checkLogin']);
+//use middleware checkjwt
+// Route::post('/check_login', [LoginController::class, 'checkLogin']);
 
 //user
-Route::post('/create_admin', [UserController::class, 'createUserAdmin']);
-Route::post('/forgot_password_user', [UserController::class, 'ForgotPasswordUser']);
+// Route::post('/create_admin', [UserController::class, 'createUserAdmin']);
+// Route::post('/forgot_password_user', [UserController::class, 'ForgotPasswordUser']);
 
 // Influencer
 Route::resource('influencer', InfluencerController::class);
@@ -73,6 +74,9 @@ Route::get('/get_customer', [CustomerController::class, 'getList']);
 Route::resource('employee', EmployeeController::class);
 Route::post('/employee_page', [EmployeeController::class, 'getPage']);
 Route::get('/get_employee', [EmployeeController::class, 'getList']);
+Route::post('/add_emp_credential', [EmployeeController::class, 'addCredential']);
+/// Employee Login
+Route::post('/login_employee', [LoginController::class, 'employeelogin']);
 
 // Department
 Route::resource('department', DepartmentController::class);
@@ -127,11 +131,11 @@ Route::post('upload_images', [Controller::class, 'uploadImages']);
 // Route::post('upload_signature', [Controller::class, 'uploadSignature']);
 
 //user
-Route::resource('user', UserController::class);
-Route::get('/get_user', [UserController::class, 'getList']);
-Route::post('/user_page', [UserController::class, 'getPage']);
-Route::get('/user_profile', [UserController::class, 'getProfileUser']);
-Route::post('/update_user', [UserController::class, 'update']);
+// Route::resource('user', UserController::class);
+// Route::get('/get_user', [UserController::class, 'getList']);
+// Route::post('/user_page', [UserController::class, 'getPage']);
+// Route::get('/user_profile', [UserController::class, 'getProfileUser']);
+// Route::post('/update_user', [UserController::class, 'update']);
 
 
 Route::resource('user', UserController::class);
