@@ -122,6 +122,11 @@ class LoginController extends Controller
             return $this->returnErrorData('[password] ไม่มีข้อมูล', 404);
         }
 
+        $domainname = "@gorilla.com";
+        
+        if (strpos($request->email, $domainname) === false) {
+            return $this->returnErrorData('กรุณาระบุ Email ที่มี domain @gorilla.com', 404);
+        }
         $user = EmployeeCredential::where('Email', $request->email)
             ->where('PasswordHash', md5($request->password))
             ->first();
