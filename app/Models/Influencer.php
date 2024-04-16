@@ -22,6 +22,11 @@ class Influencer extends Model
         return $this->belongsToMany(PlatformSocial::class);
     }
 
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class);
+    }
+
     public function career()
     {
         return $this->belongsTo(Career::class);

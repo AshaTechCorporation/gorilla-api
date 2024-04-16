@@ -9,7 +9,7 @@ class AddressController extends Controller
     public $data;
     public function __construct()
         {
-            $path = url('thailand_address.json');
+            $path = public_path('thailand_address.json');
             $this->data = json_decode(file_get_contents($path), false);
         }
     public function getProvinces()

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateInfluProjectsTable extends Migration
+class CreateEmployeeProjectTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateInfluProjectsTable extends Migration
      */
     public function up()
     {
-        Schema::create('influencer_project', function (Blueprint $table) {
+        Schema::create('employee_project', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('influencer_id')->unsigned()->index();
-            $table->foreign('influencer_id')->references('id')->on('influencers')->onDelete('cascade');
+            $table->integer('employee_id')->unsigned()->index();
+            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
 
             $table->integer('project_id')->unsigned()->index();
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
@@ -37,6 +37,6 @@ class CreateInfluProjectsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('influencer_project');
+        Schema::dropIfExists('employee_project');
     }
 }

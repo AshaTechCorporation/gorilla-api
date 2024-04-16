@@ -31,4 +31,9 @@ class Employee extends Model
     {
         return $this->belongsTo(EmployeeCredential::class);
     }
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class);
+    }
 }

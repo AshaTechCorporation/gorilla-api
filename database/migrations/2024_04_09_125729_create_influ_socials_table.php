@@ -18,8 +18,10 @@ class CreateInfluSocialsTable extends Migration
 
             $table->integer('influencer_id')->unsigned()->index();
             $table->foreign('influencer_id')->references('id')->on('influencers')->onDelete('cascade');
+            
             $table->integer('platform_social_id')->unsigned()->index();
             $table->foreign('platform_social_id')->references('id')->on('platform_socials')->onDelete('cascade');
+            
             $table->string('name', 250)->charset('utf8')->nullable();
             $table->integer('subscribe')->nullable();
 

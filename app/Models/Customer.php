@@ -15,4 +15,11 @@ class Customer extends Model
     protected $softDelete = true;
 
     protected $hidden = ['deleted_at'];
+
+    //////////////////////////////////////// relation //////////////////////////////////////
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 }

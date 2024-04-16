@@ -29,6 +29,7 @@ class CreatePlatformSocialsTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('influencer_platform_social');
         Schema::dropIfExists('platform_socials');
     }
 }

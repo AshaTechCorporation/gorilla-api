@@ -17,6 +17,7 @@ class InfluencerController extends Controller
     {
         $Item = Influencer::with('career')
         ->with('contentstyle')
+        ->with('platform_socials')
         ->get()->toarray();
 
         if (!empty($Item)) {
@@ -46,7 +47,8 @@ class InfluencerController extends Controller
 
         $D = Influencer::select($col)
         ->with('career')
-        ->with('contentstyle');
+        ->with('contentstyle')
+        ->with('platform_socials');
 
         if ($orderby[$order[0]['column']]) {
             $D->orderby($orderby[$order[0]['column']], $order[0]['dir']);
@@ -174,11 +176,11 @@ class InfluencerController extends Controller
             $Item->note = $request->note;
 
             if ($request->image_bank && $request->image_bank != null && $request->image_bank != 'null') {
-                $Item->image_bank = $this->uploadImage($request->image_bank, '/images/banks/');
+                $Item->image_bank = $this->uploadImage($request->image_bank, '/image_bank');
             }
 
             if ($request->image_card && $request->image_card != null && $request->image_card != 'null') {
-                $Item->image_card = $this->uploadImage($request->image_card, '/images/cards/');
+                $Item->image_card = $this->uploadImage($request->image_card, '/image_card');
             }
 
             $Item->status = "Request";
@@ -233,6 +235,7 @@ class InfluencerController extends Controller
         }
         $Item = Influencer::with('career')
         ->with('contentstyle')
+        ->with('platform_socials')
         ->where('id', $id)
             ->first();  
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
@@ -309,6 +312,7 @@ class InfluencerController extends Controller
 
             $Item->status = "Yes";
             $Item->update_by = $loginBy;
+
             $Item->save();
 
             if(isset($request->socials)){
@@ -325,6 +329,7 @@ class InfluencerController extends Controller
     
                 }
             }
+
 
             //log
             $userId = $loginBy;

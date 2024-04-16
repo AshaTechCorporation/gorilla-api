@@ -139,6 +139,10 @@ class Controller extends BaseController
         $image = $request->image;
         $path = $request->path;
 
+        if ($request->path != "/image_card" && $request->path != "/image_bank"&& $request->path == null) {
+            return $this->returnErrorData('เกิดข้อผิดพลาดที่ path ', 404);
+        }
+
         $input['imagename'] = md5(rand(0, 999999) . $image->getClientOriginalName()) . '.' . $image->extension();
         $destinationPath = public_path("/images" . $path);
 
@@ -221,17 +225,14 @@ class Controller extends BaseController
     public function uploadImage($image, $path)
     {
         $input['imagename'] = md5(rand(0, 999999) . $image->getClientOriginalName()) . '.' . $image->extension();
-        $destinationPath = public_path('/thumbnail');
+        $destinationPath = public_path("/images" . $path);
         if (!File::exists($destinationPath)) {
             File::makeDirectory($destinationPath, 0777, true);
         }
 
-        $img = Image::make($image->path());
-        $img->save($destinationPath . '/' . $input['imagename']);
-        $destinationPath = public_path($path);
         $image->move($destinationPath, $input['imagename']);
 
-        return $path . $input['imagename'];
+        return $path .'/'. $input['imagename'];
     }
 
     public function uploadFile(Request $request)

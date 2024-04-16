@@ -20,6 +20,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ContentStyleController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -94,7 +95,13 @@ Route::get('/amphoes', [AddressController::class , 'getAmphoes' ]);
 Route::get('/tambons', [ AddressController::class , 'getTambons' ]);
 Route::get('/zipcodes', [AddressController::class, 'getZipcodes'] );
 
-// // Client
+// Project
+Route::resource('project', ProjectController::class);
+Route::post('/project_page', [ProjectController::class, 'getPage']);
+Route::get('/get_project', [ProjectController::class, 'getList']);
+Route::post('/add_project_influencer', [ProjectController::class, 'addInfluencer']);
+
+// Client
 // Route::resource('client', ClientsController::class);
 // Route::post('/client_page', [ClientsController::class, 'getPage']);
 // Route::get('/get_client', [ClientsController::class, 'getList']);
