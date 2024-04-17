@@ -346,7 +346,7 @@ class ProjectController extends Controller
                         return $this->returnErrorData('เกิดข้อผิดพลาดที่ $influencer กรุณาลองใหม่อีกครั้ง ', 404); 
                     }
                     else{
-                        $Item->influencers()->attach($influencer);
+                        $Item->influencers()->attach($influencer,array('status' => $influencerID[$i]['status']));
                     }
     
                 }

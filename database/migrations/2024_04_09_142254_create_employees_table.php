@@ -26,7 +26,7 @@ class CreateEmployeesTable extends Migration
             $table->foreign('position_id')->references('id')->on('positions')->onDelete('cascade');
 
             $table->string('ecode', 100)->charset('utf8')->unique();
-            $table->enum('prefix', ['F', 'M', 'T'])->charset('utf8')->default('F');
+            $table->enum('prefix', ['นาย', 'นาง', 'นางสาว'])->charset('utf8')->default('นาง');
             $table->string('fname', 250)->charset('utf8')->nullable();
             $table->string('lname', 250)->charset('utf8')->nullable();
             $table->string('nickname', 250)->charset('utf8')->nullable();

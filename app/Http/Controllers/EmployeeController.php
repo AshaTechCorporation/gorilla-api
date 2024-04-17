@@ -146,10 +146,10 @@ class EmployeeController extends Controller
             if (!$Position) {
                 return $this->returnErrorData('ไม่พบตำแหน่ง', 404);
             }
-            $Credentials_id = EmployeeCredential::find($Item->credentials_id);
-            if (!$Credentials_id) {
-                return $this->returnErrorData('ไม่พบพนักงานในระบบ', 404);
-            }
+            // $Credentials_id = EmployeeCredential::find($Item->credentials_id);
+            // if (!$Credentials_id) {
+            //     return $this->returnErrorData('ไม่พบพนักงานในระบบ', 404);
+            // }
 
             $Item->ecode = $request->ecode;
             $Item->prefix = $request->prefix;

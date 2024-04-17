@@ -17,7 +17,7 @@ class CreateInfluencersTable extends Migration
             $table->increments('id');
 
             $table->string('fullname', 250)->charset('utf8')->nullable();
-            $table->enum('gender', ['F', 'M', 'T'])->charset('utf8')->default('F');
+            $table->enum('gender', ['ชาย', 'หญิง', 'เพศทางเลือก'])->charset('utf8')->default('หญิง');
             $table->string('email', 100)->charset('utf8')->nullable();
             $table->string('phone', 100)->charset('utf8')->nullable();
 

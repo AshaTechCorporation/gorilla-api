@@ -41,14 +41,17 @@ class InfluencerController extends Controller
 
         $type = $request->type;
 
-        $col = array('id', 'fullname', 'gender', 'email', 'phone', 'career_id', 'line_id', 'content_style_id', 'birthday', 'product_address','product_province','product_district','product_subdistrict','product_zip','bank_id', 'bank_account', 'bank_brand', 'id_card', 'name_of_card', 'address_of_card','influencer_province','influencer_district','influencer_subdistrict','influencer_zip', 'image_bank', 'image_card', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
+        $col = array('id', 'fullname', 'gender', 'email', 'phone', 'career_id', 'line_id', 'content_style_id', 'birthday', 'product_address','product_province','product_district','product_subdistrict','product_zip','bank_id', 'bank_account', 'bank_brand', 'id_card', 'name_of_card', 'address_of_card','influencer_province','influencer_district','influencer_subdistrict','influencer_zip', 'image_bank', 'image_card','note', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-        $orderby = array('id', 'fullname', 'gender', 'email', 'phone', 'career_id', 'line_id', 'content_style_id', 'birthday', 'product_address','product_province','product_district','product_subdistrict','product_zip','bank_id', 'bank_account', 'bank_brand', 'id_card', 'name_of_card', 'address_of_card','influencer_province','influencer_district','influencer_subdistrict','influencer_zip', 'image_bank', 'image_card', 'status', 'create_by');
+        $orderby = array('id', 'fullname', 'gender', 'email', 'phone', 'career_id', 'line_id', 'content_style_id', 'birthday', 'product_address','product_province','product_district','product_subdistrict','product_zip','bank_id', 'bank_account', 'bank_brand', 'id_card', 'name_of_card', 'address_of_card','influencer_province','influencer_district','influencer_subdistrict','influencer_zip', 'image_bank', 'image_card','note', 'status', 'create_by');
 
         $D = Influencer::select($col)
         ->with('career')
         ->with('contentstyle')
-        ->with('platform_socials');
+        ->with(['platform_socials' => function ($query) {
+            // Select only the name and subscribe columns from the pivot table
+            $query->select('platform_socials.name as platform_social_name','influencer_platform_social.name as name', 'subscribe');
+        }]);
 
         if ($orderby[$order[0]['column']]) {
             $D->orderby($orderby[$order[0]['column']], $order[0]['dir']);
@@ -77,10 +80,17 @@ class InfluencerController extends Controller
             //run no
             $No = (($page - 1) * $length);
 
-            for ($i = 0; $i < count($d); $i++) {
+            foreach ($d as $item) {
+                $No++;
+                $item->No = $No;
+    
+            // Calculate age
+            $birthdate = new \DateTime($item->birthday);
+            $now = new \DateTime();
+            $age = $now->diff($birthdate)->y;
 
-                $No = $No + 1;
-                $d[$i]->No = $No;
+            // Add age to the item
+            $item->age = $age;
             }
         }
 
@@ -169,6 +179,7 @@ class InfluencerController extends Controller
             $Item->bank_brand = $request->bank_brand;
             $Item->id_card = $request->id_card;
             $Item->name_of_card = $request->name_of_card;
+            $Item->address_of_card = $request->address_of_card;
             $Item->influencer_province = $request->influencer_province;
             $Item->influencer_district = $request->influencer_district;
             $Item->influencer_subdistrict = $request->influencer_subdistrict;
@@ -235,7 +246,13 @@ class InfluencerController extends Controller
         }
         $Item = Influencer::with('career')
         ->with('contentstyle')
-        ->with('platform_socials')
+        ->with(['platform_socials' => function ($query) {
+            $query->select('platform_socials.name as platform_social_name','influencer_platform_social.name as name', 'subscribe');
+        }])
+        ->with(['projects' => function ($query) {
+            $query->select('projects.name as name')
+                  ->where('influencer_project.status', 'done');
+        }])
         ->where('id', $id)
             ->first();  
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
@@ -310,6 +327,13 @@ class InfluencerController extends Controller
             $Item->influencer_zip = $request->influencer_zip;
             $Item->note = $request->note;
 
+            if ($request->image_bank && $request->image_bank != null && $request->image_bank != 'null') {
+                $Item->image_bank = $this->uploadImage($request->image_bank, '/image_bank');
+            }
+
+            if ($request->image_card && $request->image_card != null && $request->image_card != 'null') {
+                $Item->image_card = $this->uploadImage($request->image_card, '/image_card');
+            }
             $Item->status = "Yes";
             $Item->update_by = $loginBy;
 
@@ -329,8 +353,6 @@ class InfluencerController extends Controller
     
                 }
             }
-
-
             //log
             $userId = $loginBy;
             $type = 'แก้ไขผู้ใช้งาน';

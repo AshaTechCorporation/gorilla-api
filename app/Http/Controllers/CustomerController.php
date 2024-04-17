@@ -112,7 +112,7 @@ class CustomerController extends Controller
         }else if(!isset($request->email)){
             return $this->returnErrorData('กรุณาระบุ อีเมล ให้เรียบร้อย', 404);
         }else if (!isset($request->ccode)) {
-            return $this->returnErrorData('กรุณาระบุ อาชีพ ให้เรียบร้อย', 404);
+            return $this->returnErrorData('กรุณาระบุ ccode ให้เรียบร้อย', 404);
         }
         else
 
