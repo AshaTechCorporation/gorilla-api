@@ -235,6 +235,30 @@ class Controller extends BaseController
         return $path .'/'. $input['imagename'];
     }
 
+    public function getImage($path)
+    {
+        $imagePath = $path;
+    
+        if (File::exists($imagePath)) {
+            $files = File::allFiles($imagePath);
+            
+            if (count($files) > 0) {
+                $image = $files[0];
+                $imageContent = file_get_contents($image->getPathname());
+                $base64 = base64_encode($imageContent);
+                $extension = pathinfo($image->getPathname(), PATHINFO_EXTENSION);
+                $mime = mime_content_type($image->getPathname());
+    
+                return [
+                    'base64' => $base64,
+                    'extension' => $extension,
+                    'mime' => $mime
+                ];
+            }
+        }
+    
+        return null;
+    }
     public function uploadFile(Request $request)
     {
 

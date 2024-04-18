@@ -24,6 +24,7 @@ class CreateInfluSocialsTable extends Migration
             
             $table->string('name', 250)->charset('utf8')->nullable();
             $table->integer('subscribe')->nullable();
+            $table->string('link', 250)->charset('utf8')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

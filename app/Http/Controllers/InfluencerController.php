@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\PlatformSocial;
 use App\Models\ContentStyle;
 use App\Models\Career;
+use App\Models\Project;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
@@ -50,7 +51,10 @@ class InfluencerController extends Controller
         ->with('contentstyle')
         ->with(['platform_socials' => function ($query) {
             // Select only the name and subscribe columns from the pivot table
-            $query->select('platform_socials.name as platform_social_name','influencer_platform_social.name as name', 'subscribe');
+            $query->select('platform_socials.name as platform_social_name','influencer_platform_social.name as name', 'subscribe','link');
+        }])
+        ->with(['projects' => function ($query) {
+            $query->select('projects.name as name','status','influencer_project.project_id');
         }]);
 
         if ($orderby[$order[0]['column']]) {
@@ -91,6 +95,7 @@ class InfluencerController extends Controller
 
             // Add age to the item
             $item->age = $age;
+            $item->typefollower = "Nano";
             }
         }
 
@@ -126,6 +131,7 @@ class InfluencerController extends Controller
     {
         $loginBy = "admin";
         $socialID = $request->socials;
+        $projectID = $request->project_id;
 
         if (!isset($request->fullname)) {
             return $this->returnErrorData('กรุณาระบุ ชื่อ ให้เรียบร้อย', 404);
@@ -199,19 +205,60 @@ class InfluencerController extends Controller
 
             $Item->save();
             
-            if(isset($request->socials)){
-                for ($i = 0; $i < count($socialID ); $i++) {
+            if ($request->socials === "SocialTemp") {
+                $request->merge([
+                    'socials' => [
+                        [
+                            'platform_social_id' => 1,
+                            'name' => 'Facebook',
+                            'subscribe' => 1000,
+                            'link' => 'https://www.facebook.com/example'
+                        ],
+                        [
+                            'platform_social_id' => 2,
+                            'name' => 'Tiktok',
+                            'subscribe' => 15000,
+                            'link' => 'https://www.tiktok.com/example'
+                        ],
+                        [
+                            'platform_social_id' => 3,
+                            'name' => 'Youtube',
+                            'subscribe' => 3000,
+                            'link' => 'https://www.youtube.com/example'
+                        ]
+                    ]
+                ]);
+            }
+            
 
-                    $social = PlatformSocial::find($socialID [$i]['platform_social_id']);
+            if(isset($request->socials)){
+                try{
+                    foreach ($request->socials as $socialID) {
+                        $social = PlatformSocial::find($socialID['platform_social_id']);
+                        
+                        if($social == null){
+                            return $this->returnErrorData('เกิดข้อผิดพลาดที่ $social กรุณาลองใหม่อีกครั้ง ', 404); 
+                        }
+                        else{
+                            $Item->platform_socials()->attach($social, array('name' => $socialID['name'], 'subscribe' => $socialID['subscribe'],'link' => $socialID['link']));
+                        }
+                    }
+                }catch(\Throwable $e){
+                    return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+                }
+            }
+
+            if(isset($request->project_id)){
+
+                    $project = Project::find($request->project_id);
                     
-                    if($social == null){
-                        return $this->returnErrorData('เกิดข้อผิดพลาดที่ $social กรุณาลองใหม่อีกครั้ง ', 404); 
+                    if($project == null){
+                        return $this->returnErrorData('เกิดข้อผิดพลาดที่ $projects กรุณาลองใหม่อีกครั้ง ', 404); 
                     }
                     else{
-                        $Item->platform_socials()->attach($social, array('name' => $socialID[$i]['name'], 'subscribe' => $socialID[$i]['subscribe']));
+                        $status = "working";
+                        $Item->projects()->attach($project,['status' => $status]);
                     }
-    
-                }
             }
 
             //log
@@ -250,8 +297,7 @@ class InfluencerController extends Controller
             $query->select('platform_socials.name as platform_social_name','influencer_platform_social.name as name', 'subscribe');
         }])
         ->with(['projects' => function ($query) {
-            $query->select('projects.name as name')
-                  ->where('influencer_project.status', 'done');
+            $query->select('projects.name as name','status','influencer_project.project_id');
         }])
         ->where('id', $id)
             ->first();  
@@ -339,20 +385,63 @@ class InfluencerController extends Controller
 
             $Item->save();
 
-            if(isset($request->socials)){
-                for ($i = 0; $i < count($socialID ); $i++) {
 
-                    $social = PlatformSocial::find($socialID [$i]['platform_social_id']);
-                    
-                    if($social == null){
-                        return $this->returnErrorData('เกิดข้อผิดพลาดที่ $social กรุณาลองใหม่อีกครั้ง ', 404); 
+            if ($request->socials === "SocialTemp") {
+                $request->merge([
+                    'socials' => [
+                        [
+                            'platform_social_id' => 1,
+                            'name' => 'Facebook',
+                            'subscribe' => 1000,
+                            'link' => 'https://www.facebook.com/example'
+                        ],
+                        [
+                            'platform_social_id' => 2,
+                            'name' => 'Tiktok',
+                            'subscribe' => 15000,
+                            'link' => 'https://www.tiktok.com/example'
+                        ],
+                        [
+                            'platform_social_id' => 3,
+                            'name' => 'Youtube',
+                            'subscribe' => 3000,
+                            'link' => 'https://www.youtube.com/example'
+                        ]
+                    ]
+                ]);
+            }
+            
+
+            if(isset($request->socials)){
+                try{
+                    foreach ($request->socials as $socialID) {
+                        $social = PlatformSocial::find($socialID['platform_social_id']);
+                        
+                        if($social == null){
+                            return $this->returnErrorData('เกิดข้อผิดพลาดที่ $social กรุณาลองใหม่อีกครั้ง ', 404); 
+                        }
+                        else{
+                            $Item->platform_socials()->attach($social, array('name' => $socialID['name'], 'subscribe' => $socialID['subscribe'],'link' => $socialID['link']));
+                        }
                     }
-                    else{
-                        $Item->platform_socials()->attach($social, array('name' => $socialID[$i]['name'], 'subscribe' => $socialID[$i]['subscribe']));
-                    }
-    
+                }catch(\Throwable $e){
+                    return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ' . $e, 404);
                 }
             }
+
+
+            if(isset($request->project_id)){
+
+                $project = Project::find($request->project_id);
+                
+                if($project == null){
+                    return $this->returnErrorData('เกิดข้อผิดพลาดที่ $projects กรุณาลองใหม่อีกครั้ง ', 404); 
+                }
+                else{
+                    $status = "working";
+                    $Item->projects()->attach($project,['status' => $status]);
+                }
+        }
             //log
             $userId = $loginBy;
             $type = 'แก้ไขผู้ใช้งาน';
