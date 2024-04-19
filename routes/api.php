@@ -50,7 +50,7 @@ use Illuminate\Support\Facades\Route;
 Route::resource('influencer', InfluencerController::class);
 Route::post('/influencer_page', [InfluencerController::class, 'getPage']);
 Route::get('/get_influencer', [InfluencerController::class, 'getList']);
-Route::put('/fix_influencer/{id}', [InfluencerController::class, 'fixdataInfluencer']);
+Route::post('/fix_influencer', [InfluencerController::class, 'fixdataInfluencer']);
 Route::get('/search_influencer', [InfluencerController::class, 'searchData']);
 
 // PlatformSocial
