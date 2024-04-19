@@ -82,7 +82,28 @@ class EmployeeController extends Controller
 
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $d);
     }
-
+    public function searchData(Request $request)
+    {
+        try{
+            $key = $request->input('key');
+            $Item = Employee::where('fname','like',"%{$key}%")
+            ->orWhere('lname', 'like', "%{$key}%")
+            ->orWhere('nickname', 'like', "%{$key}%")
+            ->limit(20)
+            ->get()->toarray();
+    
+            if (!empty($Item)) {
+    
+                for ($i = 0; $i < count($Item); $i++) {
+                    $Item[$i]['No'] = $i + 1;
+                }
+            }
+    
+            return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
+        }catch(\Exception $e){
+            return $this->returnErrorData($e->getMessage(), 404);
+        }
+    }
         /**
      * Display a listing of the resource.
      *

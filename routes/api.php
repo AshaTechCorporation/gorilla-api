@@ -50,6 +50,8 @@ use Illuminate\Support\Facades\Route;
 Route::resource('influencer', InfluencerController::class);
 Route::post('/influencer_page', [InfluencerController::class, 'getPage']);
 Route::get('/get_influencer', [InfluencerController::class, 'getList']);
+Route::put('/fix_influencer/{id}', [InfluencerController::class, 'fixdataInfluencer']);
+Route::get('/search_influencer', [InfluencerController::class, 'searchData']);
 
 // PlatformSocial
 Route::resource('platformSocial', PlatformSocialController::class);
@@ -70,12 +72,14 @@ Route::get('/get_contentstyle', [ContentStyleController::class, 'getList']);
 Route::resource('customer', CustomerController::class);
 Route::post('/customer_page', [CustomerController::class, 'getPage']);
 Route::get('/get_customer', [CustomerController::class, 'getList']);
+Route::get('/search_customer', [CustomerController::class, 'searchData']);
 
 // Employee
 Route::resource('employee', EmployeeController::class);
 Route::post('/employee_page', [EmployeeController::class, 'getPage']);
 Route::get('/get_employee', [EmployeeController::class, 'getList']);
 Route::post('/add_emp_credential', [EmployeeController::class, 'addCredential']);
+Route::get('/search_employee', [EmployeeController::class, 'searchData']);
 /// Employee Login
 Route::post('/login_employee', [LoginController::class, 'employeelogin']);
 

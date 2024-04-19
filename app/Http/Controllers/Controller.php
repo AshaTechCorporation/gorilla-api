@@ -232,7 +232,7 @@ class Controller extends BaseController
 
         $image->move($destinationPath, $input['imagename']);
 
-        return $path .'/'. $input['imagename'];
+        return '/images'.$path .'/'. $input['imagename'];
     }
 
     public function getImage($path)
