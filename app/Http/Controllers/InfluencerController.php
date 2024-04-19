@@ -536,7 +536,7 @@ class InfluencerController extends Controller
             //get data
             $Content_style = ContentStyle::find($Item->content_style_id);
             if (!$Content_style) {
-                return $this->returnErrorData('ไม่พบ content_style_id', 404);
+                return $this->returnErrorData($request->fullname, 404);
             }
             $Career = Career::find($Item->career_id);
             if (!$Career) {
