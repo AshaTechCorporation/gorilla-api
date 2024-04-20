@@ -43,7 +43,7 @@ class Kernel extends HttpKernel
             // 'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \TomLerendu\LaravelConvertCaseMiddleware\ConvertRequestToSnakeCase::class,
-            \App\Http\Middleware\HandlePutFormData::class,
+            // \App\Http\Middleware\HandlePutFormData::class,
             // \TomLerendu\LaravelConvertCaseMiddleware\ConvertResponseToCamelCase::class,
         ],
     ];

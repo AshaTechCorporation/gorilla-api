@@ -21,6 +21,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ContentStyleController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\SubtypeController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -57,6 +58,11 @@ Route::get('/search_influencer', [InfluencerController::class, 'searchData']);
 Route::resource('platformSocial', PlatformSocialController::class);
 Route::post('/platformSocial_page', [PlatformSocialController::class, 'getPage']);
 Route::get('/get_platformSocial', [PlatformSocialController::class, 'getList']);
+
+// subtypeController
+Route::resource('subtype', SubtypeController::class);
+Route::post('/subtype_page', [SubtypeController::class, 'getPage']);
+Route::get('/get_subtype', [SubtypeController::class, 'getList']);
 
 // Career
 Route::resource('career', CareerController::class);
