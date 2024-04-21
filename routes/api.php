@@ -22,6 +22,7 @@ use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ContentStyleController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SubtypeController;
+use App\Http\Controllers\PastProjectController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -110,6 +111,11 @@ Route::resource('project', ProjectController::class);
 Route::post('/project_page', [ProjectController::class, 'getPage']);
 Route::get('/get_project', [ProjectController::class, 'getList']);
 Route::post('/add_project_influencer', [ProjectController::class, 'addInfluencer']);
+
+// Past Project
+Route::resource('pastproject', PastProjectController::class);
+Route::post('/pastproject_page', [PastProjectController::class, 'getPage']);
+Route::get('/get_pastproject', [PastProjectController::class, 'getList']);
 
 // Client
 // Route::resource('client', ClientsController::class);

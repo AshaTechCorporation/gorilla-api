@@ -36,4 +36,9 @@ class Influencer extends Model
     {
         return $this->belongsTo(ContentStyle::class, 'content_style_id');
     }
+    
+    public function past_project()
+    {
+        return $this->hasMany(PastProject::class);
+    }
 }
