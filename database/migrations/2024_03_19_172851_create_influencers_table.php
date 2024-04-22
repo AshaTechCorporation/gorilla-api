@@ -53,6 +53,7 @@ class CreateInfluencersTable extends Migration
 
             $table->text('note')->charset('utf8')->nullable();
 
+            $table->text('map')->charset('utf8')->nullable();
             $table->text('current_address')->charset('utf8')->nullable();
             $table->string('latitude', 250)->charset('utf8')->nullable();
             $table->string('longitude', 250)->charset('utf8')->nullable();

@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PdfController;
+use App\Http\Controllers\PresentationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+// Pdf
+Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
+
+// Presentatiion
+Route::get('/get_ppx', [PresentationController::class, 'generatePresentation']);
 
 Route::get('/', function () {
     return view('welcome');

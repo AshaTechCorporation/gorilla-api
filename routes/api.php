@@ -23,6 +23,8 @@ use App\Http\Controllers\ContentStyleController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SubtypeController;
 use App\Http\Controllers\PastProjectController;
+use App\Http\Controllers\PdfController;
+use App\Http\Controllers\PresentationController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -47,6 +49,12 @@ use Illuminate\Support\Facades\Route;
 //user
 // Route::post('/create_admin', [UserController::class, 'createUserAdmin']);
 // Route::post('/forgot_password_user', [UserController::class, 'ForgotPasswordUser']);
+
+// Pdf
+Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
+
+// Presentatiion
+Route::get('/get_ppx', [PresentationController::class, 'generatePresentation']);
 
 // Influencer
 Route::resource('influencer', InfluencerController::class);

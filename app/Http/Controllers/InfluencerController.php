@@ -221,6 +221,7 @@ class InfluencerController extends Controller
             $Item->influencer_district = $request->influencer_district;
             $Item->influencer_subdistrict = $request->influencer_subdistrict;
             $Item->influencer_zip = $request->influencer_zip;
+            $Item->map = $request->map;
             $Item->current_address = $request->current_address;
             $Item->latitude = $request->latitude;
             $Item->longitude = $request->longitude;
@@ -402,6 +403,7 @@ class InfluencerController extends Controller
             $Item->influencer_district = $request->influencer_district;
             $Item->influencer_subdistrict = $request->influencer_subdistrict;
             $Item->influencer_zip = $request->influencer_zip;
+            $Item->map = $request->map;
             $Item->current_address = $request->current_address;
             $Item->latitude = $request->latitude;
             $Item->longitude = $request->longitude;
@@ -572,6 +574,9 @@ class InfluencerController extends Controller
             $Item->influencer_subdistrict = $request->influencer_subdistrict;
             $Item->influencer_zip = $request->influencer_zip;
             $Item->map = $request->map;
+            $Item->current_address = $request->current_address;
+            $Item->latitude = $request->latitude;
+            $Item->longitude = $request->longitude;
             $Item->note = $request->note;
 
             if ($request->image_bank && $request->image_bank != null && $request->image_bank != 'null') {

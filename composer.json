@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "barryvdh/laravel-dompdf": "^2.1",
         "berkayk/onesignal-laravel": "^2.0",
         "fideloper/proxy": "^4.4",
         "firebase/php-jwt": "^5.2",
@@ -23,7 +24,8 @@
         "maatwebsite/excel": "^3.1",
         "mpdf/mpdf": "^8.0",
         "phpoffice/phpword": "^0.18.2",
-        "tomlerendu/laravel-convert-case-middleware": "^1.1"
+        "tomlerendu/laravel-convert-case-middleware": "^1.1",
+        "phpoffice/phppresentation": "dev-master"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
