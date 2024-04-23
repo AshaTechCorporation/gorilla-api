@@ -49,7 +49,8 @@ class ProjectController extends Controller
 
         $D = Project::select($col)
         ->with('customer')
-        ->with('employees');
+        ->with('employees')
+        ->with('influencers');
         if ($orderby[$order[0]['column']]) {
             $D->orderby($orderby[$order[0]['column']], $order[0]['dir']);
         }

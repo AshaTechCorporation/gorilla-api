@@ -25,6 +25,7 @@ use App\Http\Controllers\SubtypeController;
 use App\Http\Controllers\PastProjectController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PresentationController;
+use App\Http\Controllers\InfluencerAddressController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -113,6 +114,12 @@ Route::get('/provinces', [ AddressController::class , 'getProvinces' ]);
 Route::get('/amphoes', [AddressController::class , 'getAmphoes' ]);
 Route::get('/tambons', [ AddressController::class , 'getTambons' ]);
 Route::get('/zipcodes', [AddressController::class, 'getZipcodes'] );
+
+// Influencer Address
+Route::get('/influ_provinces', [ InfluencerAddressController::class , 'getProvinces' ]);
+Route::get('/influ_amphoes', [InfluencerAddressController::class , 'getAmphoes' ]);
+Route::get('/influ_tambons', [ InfluencerAddressController::class , 'getTambons' ]);
+Route::get('/influ_zipcodes', [InfluencerAddressController::class, 'getZipcodes'] );
 
 // Project
 Route::resource('project', ProjectController::class);
