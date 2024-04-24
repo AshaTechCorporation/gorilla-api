@@ -12,7 +12,9 @@ use PhpOffice\PhpPresentation\Style\Color;
 use PhpOffice\PhpPresentation\Style\Fill;
 use PhpOffice\PhpPresentation\Shape\RichText;
 use PhpOffice\PhpPresentation\Slide;
+use PhpOffice\PhpPresentation\Shape\AutoShape;
 use PhpOffice\PhpPresentation\DocumentLayout;
+use PhpOffice\PhpPresentation\Style\Border;
 use PhpOffice\PhpPresentation\IOFactory;
 
 
@@ -30,7 +32,7 @@ class PresentationController extends Controller
 
         // Set the slide background color (optional)
         // your image file
-        $imagePath = public_path("/presentation/static") . "/bg1.jpg";
+        $imagePath = public_path("/presentation/static/bg") . "/thumbnail.png";
         $imageWidth = 960;
         $imageHeight = 540;
         $defaultFontName = 'Calibri'; // Use a common font
@@ -57,7 +59,7 @@ class PresentationController extends Controller
         // Add a text run to the shape
         $textRun = $textShape->createTextRun('REPORT');
         $textRun->getFont()->setSize(48);
-        $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('00000'));
+        $textRun->getFont()->setColor(new Color('FFFFFF'));
         $textRun->getFont()->setName($defaultFontName);
 
 
@@ -77,8 +79,15 @@ class PresentationController extends Controller
         $textRun = $textShape->createTextRun('ProductName');
         $textRun->getFont()->setSize(52);
         $textRun->getFont()->setBold(true);
-        $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('00000'));
+        $textRun->getFont()->setColor(new Color('FFFFFF'));
         $textRun->getFont()->setName($defaultFontName);
+        
+        // Add shadow effect to the text shape
+        $textShape->getShadow()->setVisible(true);
+        $textShape->getShadow()->setDirection(180); // Angle of shadow (in degrees)
+        $textShape->getShadow()->setDistance(8); // Distance of shadow from shape
+        $textShape->getShadow()->setBlurRadius(2); // Blur radius of shadow
+        $textShape->getShadow()->setColor(new Color('FFE06B20')); // Color of shadow
 
         // third component
         $textShapeWidth = 250; // Width of the text shape
@@ -96,7 +105,7 @@ class PresentationController extends Controller
         $textRun = $textShape->createTextRun(Date::now()->format('Y-m-d H:i:s'));
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setBold(true);
-        $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('00000'));
+        $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('FFFFFF'));
         $textRun->getFont()->setName($defaultFontName);
 
         //  *************************Add the second slide *************************
@@ -126,7 +135,7 @@ class PresentationController extends Controller
         // Add a text run to the shape
         $textRun = $textShape->createTextRun('Total State');
         $textRun->getFont()->setSize(48);
-        $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('00000'));
+        $textRun->getFont()->setColor(new Color('00000'));
         $textRun->getFont()->setName($defaultFontName);
 
         // second component
@@ -144,7 +153,7 @@ class PresentationController extends Controller
         // Add a text run to the shape
         $textRun = $textShape->createTextRun('Overall');
         $textRun->getFont()->setSize(20);
-        $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('00000'));
+        $textRun->getFont()->setColor(new Color('00000'));
         $textRun->getFont()->setName($defaultFontName);
 
         // Add an view image to the second slide
@@ -344,7 +353,7 @@ class PresentationController extends Controller
             ->setWidth(250)
             ->setOffsetX(52)
             ->setOffsetY(220);
-        
+
         $shape->getHyperlink()->setUrl('https://www.tiktok.com/@tumkomsun/video/7336527336768113922');
 
         // Influencer 2
@@ -372,7 +381,7 @@ class PresentationController extends Controller
             ->setOffsetX(354)
             ->setOffsetY(220);
 
-                    
+
         $shape->getHyperlink()->setUrl('https://www.tiktok.com/@tumkomsun/video/7336527336768113922');
         // Influencer 3
         // Add dynamic content to the first slide
@@ -398,8 +407,8 @@ class PresentationController extends Controller
             ->setWidth(250)
             ->setOffsetX(656)
             ->setOffsetY(220);
-        
-                
+
+
         $shape->getHyperlink()->setUrl('https://www.tiktok.com/@tumkomsun/video/7336527336768113922');
 
         // ************************* Add the fourth slide *****************************
