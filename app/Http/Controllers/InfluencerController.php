@@ -327,11 +327,12 @@ class InfluencerController extends Controller
         $Item = Influencer::with('career')
             ->with('contentstyle')
             ->with(['platform_socials' => function ($query) {
-                $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name as name', 'subscribe');
+                $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name as name', 'subscribe','link');
             }])
             ->with(['projects' => function ($query) {
                 $query->select('projects.name as name', 'status', 'influencer_project.project_id');
             }])
+            ->with('past_project')
             ->where('id', $id)
             ->first();
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
