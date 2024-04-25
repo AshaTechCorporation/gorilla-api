@@ -8,6 +8,7 @@ use App\Models\PlatformSocial;
 use App\Models\ContentStyle;
 use App\Models\Career;
 use App\Models\Project;
+use App\Models\SubType;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
@@ -80,6 +81,16 @@ class InfluencerController extends Controller
             $D->whereHas('platform_socials', function ($query) use ($request) {
                 $query->where('platform_social_id', $request->social_id);
             });
+            if ($request->subtype_id) {
+                $subtype = SubType::find($request->subtype_id);
+                if ($subtype) {
+                    $minSubscribe = $subtype->min;
+                    $maxSubscribe = $subtype->max;
+                    $D->whereHas('platform_socials', function ($query) use ($minSubscribe, $maxSubscribe) {
+                        $query->whereBetween('subscribe', [$minSubscribe, $maxSubscribe]);
+                    });
+                }
+            }
         }
         // $D->image_bank = url($D->image_bank);
         // $D->image_card = url($D->image_card);
@@ -99,9 +110,14 @@ class InfluencerController extends Controller
                 $now = new \DateTime();
                 $age = $now->diff($birthdate)->y;
 
+                if (isset($subtype)) { // ตรวจสอบว่าตัวแปร $subtype ถูกกำหนดค่าหรือไม่
+                    $item->typefollower = $subtype->name;
+                } else {
+                    $item->typefollower = "-";
+                }
                 // Add age to the item
                 $item->age = $age;
-                $item->typefollower = "Nano";
+                // $item->typefollower = "-";
                 $item->image_bank = url($item->image_bank);
                 $item->image_card = url($item->image_card);
                                
