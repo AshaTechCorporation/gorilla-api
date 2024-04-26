@@ -77,17 +77,18 @@ class InfluencerController extends Controller
                 // $query = $this->withPermission($query, $search);
             });
         }
-        if ($request->social_id) {
+        if ($request->social_name) {
             $D->whereHas('platform_socials', function ($query) use ($request) {
-                $query->where('platform_social_id', $request->social_id);
+                $query->where('platform_socials.name', $request->social_name);
             });
             if ($request->subtype_id) {
                 $subtype = SubType::find($request->subtype_id);
                 if ($subtype) {
                     $minSubscribe = $subtype->min;
                     $maxSubscribe = $subtype->max;
-                    $D->whereHas('platform_socials', function ($query) use ($minSubscribe, $maxSubscribe) {
-                        $query->whereBetween('subscribe', [$minSubscribe, $maxSubscribe]);
+                    $D->whereHas('platform_socials', function ($query) use ($minSubscribe, $maxSubscribe, $request) {
+                        $query->where('platform_socials.name', $request->social_name)
+                        ->whereBetween('subscribe', [$minSubscribe, $maxSubscribe]);
                     });
                 }
             }
@@ -110,7 +111,7 @@ class InfluencerController extends Controller
                 $now = new \DateTime();
                 $age = $now->diff($birthdate)->y;
 
-                if (isset($subtype)) { // ตรวจสอบว่าตัวแปร $subtype ถูกกำหนดค่าหรือไม่
+                if (isset($subtype)) { 
                     $item->typefollower = $subtype->name;
                 } else {
                     $item->typefollower = "-";
