@@ -88,7 +88,7 @@ class InfluencerController extends Controller
                     $maxSubscribe = $subtype->max;
                     $D->whereHas('platform_socials', function ($query) use ($minSubscribe, $maxSubscribe, $request) {
                         $query->where('platform_socials.name', $request->social_name)
-                        ->whereBetween('subscribe', [$minSubscribe, $maxSubscribe]);
+                            ->whereBetween('subscribe', [$minSubscribe, $maxSubscribe]);
                     });
                 }
             }
@@ -96,7 +96,7 @@ class InfluencerController extends Controller
         // $D->image_bank = url($D->image_bank);
         // $D->image_card = url($D->image_card);
         $d = $D->paginate($length, ['*'], 'page', $page);
-
+        $d->count = 0;
         if ($d->isNotEmpty()) {
 
             //run no
@@ -105,23 +105,41 @@ class InfluencerController extends Controller
             foreach ($d as $item) {
                 $No++;
                 $item->No = $No;
-
                 // Calculate age
                 $birthdate = new \DateTime($item->birthday);
                 $now = new \DateTime();
                 $age = $now->diff($birthdate)->y;
 
-                if (isset($subtype)) { 
-                    $item->typefollower = $subtype->name;
+                if ($request->social_name) {
+                    $subtypes = Subtype::all();
+                    foreach ($subtypes as $subtype) {
+                        // $item->count = $item->count + 1;
+                        $minSubscribe = $subtype->min;
+                        $maxSubscribe = $subtype->max;
+                        $socialInflu = $item->platform_socials;
+                        foreach ($socialInflu as $social) {
+                            if ($social->platform_social_name == $request->social_name) {
+                                if ($social->subscribe >= $minSubscribe && $social->subscribe <= $maxSubscribe) {
+                                    $item->typefollower = $subtype->name;
+                                    // $item->count = "test";
+                                    break; 
+                                }
+                            }
+                        }
+                    }
+                    // If no matching subtype found, set typefollower to "-"
+                    if (!$item->typefollower) {
+                        $item->typefollower = "-";
+                    }
                 } else {
                     $item->typefollower = "-";
                 }
+
                 // Add age to the item
                 $item->age = $age;
                 // $item->typefollower = "-";
                 $item->image_bank = url($item->image_bank);
                 $item->image_card = url($item->image_card);
-                               
             }
         }
 
@@ -344,7 +362,7 @@ class InfluencerController extends Controller
         $Item = Influencer::with('career')
             ->with('contentstyle')
             ->with(['platform_socials' => function ($query) {
-                $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name as name', 'subscribe','link');
+                $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name as name', 'subscribe', 'link');
             }])
             ->with(['projects' => function ($query) {
                 $query->select('projects.name as name', 'status', 'influencer_project.project_id');
