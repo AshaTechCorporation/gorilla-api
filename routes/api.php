@@ -55,7 +55,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
 
 // Presentatiion
-Route::get('/get_ppx', [PresentationController::class, 'generatePresentation']);
+Route::get('/get_ppx', [PresentationController::class, 'Test_newppx']);
 
 // Influencer
 Route::resource('influencer', InfluencerController::class);
