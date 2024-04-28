@@ -19,7 +19,7 @@ use App\Http\Controllers\PresentationController;
 Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
 
 // Presentatiion
-Route::get('/get_ppx', [PresentationController::class, 'Test_newppx']);
+Route::get('/get_ppx', [PresentationController::class, 'generatePresentation']);
 
 Route::get('/', function () {
     return view('welcome');
