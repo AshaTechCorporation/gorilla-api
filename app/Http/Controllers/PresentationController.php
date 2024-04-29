@@ -18,6 +18,10 @@ use PhpOffice\PhpPresentation\Style\Border;
 use PhpOffice\PhpPresentation\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Ods\Thumbnails;
 
+use App\Models\Presentation;
+use Illuminate\Support\Facades\DB;
+
+
 class PresentationController extends Controller
 {
     private $defaultFontName;
@@ -38,11 +42,14 @@ class PresentationController extends Controller
     }
     public function Thumbnail()
     {
+        $imagePath = public_path(Presentation::where('Template_Name', 'Thumbnail')
+            ->value('Background_Template'));
+
         //  ************************* Add the first slide *************************
         $firstSlide = $this->presentation->getActiveSlide();
 
-        // Set the slide background color (optional)
-        $imagePath = public_path("/presentation/static/bg") . "/thumbnail.png";
+        // $imagePath = public_path("/presentation/static/bg") . "/thumbnail.png";
+
         // Set the background image for the first slide
         $backgroundImage = $firstSlide->createDrawingShape();
         $backgroundImage->setPath($imagePath);
@@ -121,9 +128,10 @@ class PresentationController extends Controller
     public function Status()
     {
         //  *************************Add the second slide *************************
-        $imagePath = public_path("/presentation/static/bg") . "/b1.jpg";
         $secondSlide = $this->presentation->createSlide();
 
+        $imagePath = public_path(Presentation::where('Template_Name', 'Status')
+            ->value('Background_Template'));
         // Set the slide background color (optional)
 
         $backgroundImage = $secondSlide->createDrawingShape();
@@ -345,7 +353,9 @@ class PresentationController extends Controller
     public function Influ_format_3()
     {
         // ************************* Add the third slide *****************************
-        $imagePath = public_path("/presentation/static/bg") . "/b3.JPG";
+        $imagePath = public_path(Presentation::where('Template_Name', 'Influ_format_3')
+            ->value('Background_Template'));
+
         $thirdSlide = $this->presentation->createSlide();
 
         // Set the slide background color (optional)
@@ -473,7 +483,9 @@ class PresentationController extends Controller
     public function Insertdata()
     {
         // ************************* Add the fourth slide *****************************
-        $imagePath = public_path("/presentation/static/bg") . "/bg2.JPG";
+        $imagePath = public_path(Presentation::where('Template_Name', 'Insertdata')
+            ->value('Background_Template'));
+        // $imagePath = public_path("/presentation/static/bg") . "/bg2.JPG";
         $fourthSlide = $this->presentation->createSlide();
 
         // Set the slide background color (optional)
@@ -524,9 +536,10 @@ class PresentationController extends Controller
     }
     public function Topperform()
     {
-
         // ************************* Add the fifth slide *****************************
-        $imagePath = public_path("/presentation/static/bg") . "/bg2.JPG";
+        $imagePath = public_path(Presentation::where('Template_Name', 'Topperform')
+        ->value('Background_Template'));
+        // $imagePath = public_path("/presentation/static/bg") . "/bg2.JPG";
         $fifthSlide = $this->presentation->createSlide();
 
         // Set the slide background color (optional)
@@ -791,17 +804,328 @@ class PresentationController extends Controller
             ->setOffsetY(175);
     }
 
-    public function generatePresentation()
+    public function Title()
+    {
+        $imagePath = public_path(Presentation::where('Template_Name', 'Thumbnail')
+            ->value('Background_Template'));
+
+        //  ************************* Add the first slide *************************
+        $firstSlide = $this->presentation->createSlide();
+
+        // $imagePath = public_path("/presentation/static/bg") . "/thumbnail.png";
+
+        // Set the background image for the first slide
+        $backgroundImage = $firstSlide->createDrawingShape();
+        $backgroundImage->setPath($imagePath);
+        $backgroundImage->setWidth($this->imageWidth);
+        $backgroundImage->setHeight($this->imageHeight);
+        $backgroundImage->setOffsetX(0);
+        $backgroundImage->setOffsetY(0);
+
+        // first component
+        $textShapeWidth = 350;
+        $textShapeOffsetX = ($this->imageWidth - $textShapeWidth) / 2;
+
+        // Add dynamic content to the first slide
+        $textShape = $firstSlide->createRichTextShape();
+        $textShape->setHeight(120);
+        $textShape->setWidth($textShapeWidth);
+        $textShape->setOffsetX($textShapeOffsetX);
+        $textShape->setOffsetY(20);
+        $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Add a text run to the shape
+        $textRun = $textShape->createTextRun('REPORT');
+        $textRun->getFont()->setSize(48);
+        $textRun->getFont()->setColor(new Color('FFFFFF'));
+        $textRun->getFont()->setName($this->defaultFontName);
+
+
+        // second component
+        $textShapeWidth = 900; // Width of the text shape
+        $textShapeOffsetX = ($this->imageWidth - $textShapeWidth) / 2; // Calculate the offset to center horizontally
+
+        // Add dynamic content to the first slide
+        $textShape = $firstSlide->createRichTextShape();
+        $textShape->setHeight(150);
+        $textShape->setWidth($textShapeWidth);
+        $textShape->setOffsetX($textShapeOffsetX);
+        $textShape->setOffsetY(200);
+        $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Add a text run to the shape
+        $textRun = $textShape->createTextRun('ProductName');
+        $textRun->getFont()->setSize(86);
+        $textRun->getFont()->setBold(true);
+        $textRun->getFont()->setColor(new Color('FFFFFF'));
+        $textRun->getFont()->setName('Berlin Sans FB');
+
+        // Add shadow effect to the text shape
+        $textShape->getShadow()->setVisible(true);
+        $textShape->getShadow()->setDirection(180); // Angle of shadow (in degrees)
+        $textShape->getShadow()->setDistance(8); // Distance of shadow from shape
+        $textShape->getShadow()->setBlurRadius(2); // Blur radius of shadow
+        $textShape->getShadow()->setColor(new Color('FFE06B20')); // Color of shadow
+
+        // third component
+        $textShapeWidth = 250; // Width of the text shape
+        $textShapeOffsetX = ($this->imageWidth - $textShapeWidth) / 2; // Calculate the offset to center horizontally
+
+
+        // Add dynamic content to the first slide
+        $textShape = $firstSlide->createRichTextShape();
+        $textShape->setHeight(50);
+        $textShape->setWidth($textShapeWidth);
+        $textShape->setOffsetX($textShapeOffsetX);
+        $textShape->setOffsetY(400);
+        $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('E1AB16'))->setEndColor(new Color('E1AB16'));
+
+        // Add a text run to the shape
+        $textRun = $textShape->createTextRun('3 Month 2024');
+        $textRun->getFont()->setSize(20);
+        $textRun->getFont()->setBold(true);
+        $textRun->getFont()->setColor(new Color('FFFFFF'));
+        $textRun->getFont()->setName($this->defaultFontName);
+    }
+
+    public function generatePresentation($firstpage)
     {
         $this->Thumbnail();
-        $this->Status();
+        for($i = 0; $i < $firstpage; $i++){
+            $this->Status();
+        }
+        // $this->Status();
         $this->Influ_format_3();
         $this->Insertdata();
         $this->Topperform();
         // Save the presentation
+        header("Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation");
+        header("Content-Disposition: attachment; filename=test.pptx");
         $dynamicPresentationPath = public_path("/presentation/result") . "/sample.pptx";
         $objWriter = IOFactory::createWriter($this->presentation, 'PowerPoint2007');
-        $objWriter->save($dynamicPresentationPath);
+        $objWriter->save('php://output');
     }
-  
+    public function getList()
+    {
+        $Item = Presentation::get()->toarray();
+
+        if (!empty($Item)) {
+
+            for ($i = 0; $i < count($Item); $i++) {
+                $Item[$i]['No'] = $i + 1;
+            }
+        }
+
+        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getPage(Request $request)
+    {
+        $columns = $request->columns;
+        $length = $request->length;
+        $order = $request->order;
+        $search = $request->search;
+        $start = $request->start;
+        $page = $start / $length + 1;
+
+
+        $col = array('id', 'Template_Name', 'Background_Template');
+
+        $orderby = array('id', 'Template_Name', 'Background_Template');
+
+        $D = Presentation::select($col);
+
+        if ($orderby[$order[0]['column']]) {
+            $D->orderby($orderby[$order[0]['column']], $order[0]['dir']);
+        }
+
+        if ($search['value'] != '' && $search['value'] != null) {
+
+            $D->Where(function ($query) use ($search, $col) {
+
+                //search datatable
+                $query->orWhere(function ($query) use ($search, $col) {
+                    foreach ($col as &$c) {
+                        $query->orWhere($c, 'like', '%' . $search['value'] . '%');
+                    }
+                });
+
+                //search with
+                // $query = $this->withPermission($query, $search);
+            });
+        }
+
+        $d = $D->paginate($length, ['*'], 'page', $page);
+
+        if ($d->isNotEmpty()) {
+
+            //run no
+            $No = (($page - 1) * $length);
+
+            for ($i = 0; $i < count($d); $i++) {
+
+                $No = $No + 1;
+                $d[$i]->No = $No;
+            }
+        }
+
+        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $d);
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $Item = new Presentation();
+            $Item->Template_Name = $request->name;
+            $Item->Background_Template = $request->background;
+
+            $Item->save();
+            //
+
+            //log
+            $userId = "admin";
+            $type = 'เพิ่มsocial';
+            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
+            $this->Log($userId, $description, $type);
+
+
+            DB::commit();
+
+            return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
+        } catch (\Throwable $e) {
+
+            DB::rollback();
+
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Presentation  $Presentation
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $checkId = Presentation::find($id);
+        if (!$checkId) {
+            return $this->returnErrorData('ไม่พบข้อมูลที่ท่านต้องการ', 404);
+        }
+        $Item = Presentation::where('id', $id)
+            ->first();
+        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Presentation  $Presentation
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Presentation $Presentation)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Presentation  $Presentation
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $Item = Presentation::find($id);
+            $Item->Template_Name = $request->Template_Name;
+            $Item->Background_Template = $request->Background_Template;
+
+            $Item->save();
+            //
+
+            //log
+            $userId = "admin";
+            $type = 'แก้ไขsocial';
+            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
+            $this->Log($userId, $description, $type);
+
+
+            DB::commit();
+
+            return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
+        } catch (\Throwable $e) {
+
+            DB::rollback();
+
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Presentation  $Presentation
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $Item = Presentation::find($id);
+            $Item->delete();
+
+            //log
+            $userId = "admin";
+            $type = 'ลบsocial';
+            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type;
+            $this->Log($userId, $description, $type);
+            //
+
+            DB::commit();
+
+            return $this->returnUpdate('ดำเนินการสำเร็จ');
+        } catch (\Throwable $e) {
+
+            DB::rollback();
+
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+        }
+    }
 }
