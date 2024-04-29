@@ -78,6 +78,35 @@ class ProjectController extends Controller
 
         if ($request->work_id) {
             $D->where('projects.id', $request->work_id);
+            if ($request->social_name) {
+                $D = Project::query();
+
+                $D->with(['influencers' => function ($query) use ($request) {
+                    if ($request->social_name) {
+                        $query->whereHas('platform_socials', function ($query) use ($request) {
+                            $query->where('platform_socials.name', $request->social_name);
+                        });
+                    }
+                    $query->with('career')
+                    ->with('contentstyle')
+                    ->with(['platform_socials' => function ($query) {
+                        // Select only the name and subscribe columns from the pivot table
+                        $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name', 'subscribe', 'link');
+                    }]);
+                }])
+                ->where('projects.id', $request->work_id);
+                if ($request->subtype_id) {
+                    $subtype = SubType::find($request->subtype_id);
+                    if ($subtype) {
+                        $minSubscribe = $subtype->min;
+                        $maxSubscribe = $subtype->max;
+                        $D->whereHas('influencers.platform_socials', function ($query) use ($minSubscribe, $maxSubscribe, $request) {
+                            $query->where('platform_socials.name', $request->social_name)
+                                ->whereBetween('subscribe', [$minSubscribe, $maxSubscribe]);
+                        });
+                    }
+                }
+            }
         }
 
         $d = $D->paginate($length, ['*'], 'page', $page);
@@ -88,6 +117,7 @@ class ProjectController extends Controller
             $No = (($page - 1) * $length);
             foreach ($d as $project) {
                 foreach ($project->influencers as $influencer) {
+                    $influencer->count = 0;
                     $No++;
                     $influencer->No = $No;
                     // Calculate age
@@ -98,15 +128,14 @@ class ProjectController extends Controller
                     if ($request->social_name) {
                         $subtypes = Subtype::all();
                         foreach ($subtypes as $subtype) {
-                            // $item->count = $item->count + 1;
                             $minSubscribe = $subtype->min;
                             $maxSubscribe = $subtype->max;
                             $socialInflu = $influencer->platform_socials;
                             foreach ($socialInflu as $social) {
+                                $influencer->count = $social;
                                 if ($social->platform_social_name == $request->social_name) {
                                     if ($social->subscribe >= $minSubscribe && $social->subscribe <= $maxSubscribe) {
                                         $influencer->typefollower = $subtype->name;
-                                        // $item->count = "test";
                                         break;
                                     }
                                 }
