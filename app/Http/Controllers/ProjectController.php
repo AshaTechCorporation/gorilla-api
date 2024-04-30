@@ -88,22 +88,30 @@ class ProjectController extends Controller
                         });
                     }
                     $query->with('career')
-                    ->with('contentstyle')
-                    ->with(['platform_socials' => function ($query) {
-                        // Select only the name and subscribe columns from the pivot table
-                        $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name', 'subscribe', 'link');
-                    }]);
+                        ->with('contentstyle')
+                        ->with(['platform_socials' => function ($query) {
+                            // Select only the name and subscribe columns from the pivot table
+                            $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name', 'subscribe', 'link');
+                        }]);
                 }])
-                ->where('projects.id', $request->work_id);
+                    ->where('projects.id', $request->work_id);
                 if ($request->subtype_id) {
                     $subtype = SubType::find($request->subtype_id);
                     if ($subtype) {
                         $minSubscribe = $subtype->min;
                         $maxSubscribe = $subtype->max;
-                        $D->whereHas('influencers.platform_socials', function ($query) use ($minSubscribe, $maxSubscribe, $request) {
-                            $query->where('platform_socials.name', $request->social_name)
-                                ->whereBetween('subscribe', [$minSubscribe, $maxSubscribe]);
-                        });
+                        $D->with(['influencers' => function ($query) use ($request, $minSubscribe, $maxSubscribe) {
+                            $query->whereHas('platform_socials', function ($query) use ($request, $minSubscribe, $maxSubscribe) {
+                                $query->where('platform_socials.name', $request->social_name)
+                                    ->whereBetween('subscribe', [$minSubscribe, $maxSubscribe]);
+                            });
+                            $query->with('career')
+                            ->with('contentstyle')
+                            ->with(['platform_socials' => function ($query) {
+                                // Select only the name and subscribe columns from the pivot table
+                                $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name', 'subscribe', 'link');
+                            }]);
+                        }]);
                     }
                 }
             }
