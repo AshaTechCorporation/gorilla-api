@@ -593,13 +593,22 @@ class PresentationController extends Controller
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setName($this->defaultFontName);
 
+        $shape = $fifthSlide->createDrawingShape();
+        $shape->setName('bgview')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/textbox/1.png'))
+            ->setHeight(75)
+            ->setWidth(420)
+            ->setOffsetX(102)
+            ->setOffsetY(200);
+
         // Add dynamic content to the first slide
         $textShape = $fifthSlide->createRichTextShape();
         $textShape->setHeight(75);
         $textShape->setWidth(400);
         $textShape->setOffsetX(112);
         $textShape->setOffsetY(200);
-        $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('737373'))->setEndColor(new Color('737373'));
+        // $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('737373'))->setEndColor(new Color('737373'));
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT)->setVertical(Alignment::VERTICAL_CENTER);
 
         // Add a text run to the shape
@@ -633,13 +642,22 @@ class PresentationController extends Controller
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setName($this->defaultFontName);
 
+        $shape = $fifthSlide->createDrawingShape();
+        $shape->setName('bglike')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/textbox/2.png'))
+            ->setHeight(75)
+            ->setWidth(420)
+            ->setOffsetX(102)
+            ->setOffsetY(280);
+
         // Add dynamic content to the first slide
         $textShape = $fifthSlide->createRichTextShape();
         $textShape->setHeight(75);
         $textShape->setWidth(400);
         $textShape->setOffsetX(112);
         $textShape->setOffsetY(280);
-        $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('cd6966'))->setEndColor(new Color('cd6966'));
+        // $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('cd6966'))->setEndColor(new Color('cd6966'));
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT)->setVertical(Alignment::VERTICAL_CENTER);
 
         // Add a text run to the shape
@@ -673,13 +691,22 @@ class PresentationController extends Controller
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setName($this->defaultFontName);
 
+        $shape = $fifthSlide->createDrawingShape();
+        $shape->setName('commentbg')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/textbox/3.png'))
+            ->setHeight(75)
+            ->setWidth(420)
+            ->setOffsetX(102)
+            ->setOffsetY(360);
+
         // Add dynamic content to the first slide
         $textShape = $fifthSlide->createRichTextShape();
         $textShape->setHeight(75);
         $textShape->setWidth(400);
         $textShape->setOffsetX(112);
         $textShape->setOffsetY(360);
-        $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('65990b'))->setEndColor(new Color('65990b'));
+        // $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('65990b'))->setEndColor(new Color('65990b'));
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT)->setVertical(Alignment::VERTICAL_CENTER);
 
         // Add a text run to the shape
@@ -713,13 +740,22 @@ class PresentationController extends Controller
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setName($this->defaultFontName);
 
+        $shape = $fifthSlide->createDrawingShape();
+        $shape->setName('share')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/textbox/4.png'))
+            ->setHeight(75)
+            ->setWidth(420)
+            ->setOffsetX(102)
+            ->setOffsetY(440);
+
         // Add dynamic content to the first slide
         $textShape = $fifthSlide->createRichTextShape();
         $textShape->setHeight(75);
         $textShape->setWidth(400);
         $textShape->setOffsetX(112);
         $textShape->setOffsetY(440);
-        $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('fcba04'))->setEndColor(new Color('fcba04'));
+        // $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('fcba04'))->setEndColor(new Color('fcba04'));
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT)->setVertical(Alignment::VERTICAL_CENTER);
 
         // Add a text run to the shape
@@ -889,12 +925,11 @@ class PresentationController extends Controller
         $textRun->getFont()->setName($this->defaultFontName);
     }
 
-    public function generatePresentation($firstpage)
+    public function generatePresentation()
     {
         $this->Thumbnail();
-        for($i = 0; $i < $firstpage; $i++){
-            $this->Status();
-        }
+        $this->Status();
+
         // $this->Status();
         $this->Influ_format_3();
         $this->Insertdata();
