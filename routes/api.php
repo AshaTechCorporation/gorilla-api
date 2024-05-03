@@ -59,6 +59,7 @@ Route::get('/get_ppx', [PresentationController::class, 'generatePresentation']);
 Route::resource('presentation', PresentationController::class);
 Route::post('/presentation_page', [PresentationController::class, 'getPage']);
 Route::get('/get_presentation', [PresentationController::class, 'getList']);
+Route::get('/influ_slide', [PresentationController::class, 'createInfluSide']);
 
 // Influencer
 Route::resource('influencer', InfluencerController::class);
