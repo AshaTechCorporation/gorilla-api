@@ -1092,9 +1092,9 @@ class PresentationController extends Controller
         // Save the presentation
         header("Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation");
         header("Content-Disposition: attachment; filename=test.pptx");
-        // $dynamicPresentationPath = public_path("/presentation/result") . "/sample.pptx";
+        // header("charset=utf8");
         $objWriter = IOFactory::createWriter($this->presentation, 'PowerPoint2007');
-        $objWriter->save('php://output');
+        return $objWriter->save('php://output');
     }
     public function createInfluSide($influencers)
     {   

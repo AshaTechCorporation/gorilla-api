@@ -55,7 +55,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
 
 // Presentatiion
-Route::get('/get_ppx', [PresentationController::class, 'generatePresentation']);
+Route::group(['middleware' => 'cors'], function () {
+
+Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentation']);
+
+});
+
+
 Route::resource('presentation', PresentationController::class);
 Route::post('/presentation_page', [PresentationController::class, 'getPage']);
 Route::get('/get_presentation', [PresentationController::class, 'getList']);

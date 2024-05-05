@@ -21,6 +21,8 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        // \Illuminate\Http\Middleware\HandleCors::class,
+        
     ];
 
     /**
@@ -45,6 +47,8 @@ class Kernel extends HttpKernel
             \TomLerendu\LaravelConvertCaseMiddleware\ConvertRequestToSnakeCase::class,
             // \App\Http\Middleware\HandlePutFormData::class,
             // \TomLerendu\LaravelConvertCaseMiddleware\ConvertResponseToCamelCase::class,
+            \Fruitcake\Cors\HandleCors::class,
+            // \App\Http\Middleware\HandleCors::class,
         ],
     ];
 
@@ -67,5 +71,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         'checkjwt' => \App\Http\Middleware\CheckJWT::class,
+        'cors' => \App\Http\Middleware\HandleCors::class,
     ];
 }
