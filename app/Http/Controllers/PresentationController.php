@@ -1090,6 +1090,7 @@ class PresentationController extends Controller
         $this->Topperform();
         $this->Title();
         // Save the presentation
+        header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation");
         header("Content-Disposition: attachment; filename=test.pptx");
         // header("charset=utf8");
