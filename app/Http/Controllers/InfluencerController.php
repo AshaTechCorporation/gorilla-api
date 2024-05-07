@@ -55,7 +55,7 @@ class InfluencerController extends Controller
                 $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name as name', 'subscribe', 'link');
             }])
             ->with(['projects' => function ($query) {
-                $query->select('projects.name as name', 'status', 'influencer_project.project_id');
+                $query->select('projects.name as name', 'influencer_project.status', 'influencer_project.project_id');
             }]);
 
         if ($orderby[$order[0]['column']]) {
@@ -366,7 +366,7 @@ class InfluencerController extends Controller
                 $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name as name', 'subscribe', 'link');
             }])
             ->with(['projects' => function ($query) {
-                $query->select('projects.name as name', 'status', 'influencer_project.project_id');
+                $query->select('projects.name as name', 'influencer_project.status', 'influencer_project.project_id');
             }])
             ->with('past_project')
             ->where('id', $id)

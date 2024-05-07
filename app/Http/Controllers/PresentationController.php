@@ -41,7 +41,7 @@ class PresentationController extends Controller
         $this->presentation = new PhpPresentation();
         $this->presentation->getLayout()->setDocumentLayout(DocumentLayout::LAYOUT_SCREEN_16X9, true);
     }
-    public function Thumbnail()
+    public function Thumbnail($name)
     {
         $imagePath = public_path(Presentation::where('Template_Name', 'Thumbnail')
             ->value('Background_Template'));
@@ -91,7 +91,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('ProductName');
+        $textRun = $textShape->createTextRun($name);
         $textRun->getFont()->setSize(86);
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setColor(new Color('FFFFFF'));
@@ -1083,7 +1083,7 @@ class PresentationController extends Controller
     {
         $project = Project::with('influencers')->find($id);
 
-        $this->Thumbnail();
+        $this->Thumbnail($project->name);
         $this->Status();
         $this->createInfluSide($project->influencers);
         $this->Insertdata();
@@ -1092,8 +1092,8 @@ class PresentationController extends Controller
         // Save the presentation
         header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation");
-        header("Content-Disposition: attachment; filename=test.pptx");
-        // header("charset=utf8");
+        // header("Content-Disposition: attachment; filename=test.pptx");
+
         $objWriter = IOFactory::createWriter($this->presentation, 'PowerPoint2007');
         return $objWriter->save('php://output');
     }

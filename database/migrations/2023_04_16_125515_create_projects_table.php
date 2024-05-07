@@ -25,6 +25,8 @@ class CreateProjectsTable extends Migration
             $table->string('productname', 250)->charset('utf8')->nullable();
             $table->string('numinflu', 100)->charset('utf8')->nullable();
             $table->string('projectdes', 250)->charset('utf8')->nullable();
+
+            $table->enum('status', ['open', 'ongoing', 'closed'])->charset('utf8')->default('closed');
             $table->timestamps();
             $table->softDeletes();
         });
