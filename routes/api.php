@@ -73,6 +73,7 @@ Route::post('/influencer_page', [InfluencerController::class, 'getPage']);
 Route::get('/get_influencer', [InfluencerController::class, 'getList']);
 Route::post('/fix_influencer', [InfluencerController::class, 'fixdataInfluencer']);
 Route::get('/search_influencer', [InfluencerController::class, 'searchData']);
+Route::post('/line_influencer', [InfluencerController::class, 'Line_Influencer']);
 
 // PlatformSocial
 Route::resource('platformSocial', PlatformSocialController::class);

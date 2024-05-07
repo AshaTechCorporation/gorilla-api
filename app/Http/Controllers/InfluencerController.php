@@ -122,7 +122,7 @@ class InfluencerController extends Controller
                                 if ($social->subscribe >= $minSubscribe && $social->subscribe <= $maxSubscribe) {
                                     $item->typefollower = $subtype->name;
                                     // $item->count = "test";
-                                    break; 
+                                    break;
                                 }
                             }
                         }
@@ -154,7 +154,6 @@ class InfluencerController extends Controller
             $Item = Influencer::where('fullname', 'like', "%{$key}%")
                 ->limit(20)
                 ->get()->toarray();
-            dd($key);
 
             if (!empty($Item)) {
 
@@ -168,6 +167,44 @@ class InfluencerController extends Controller
             return $this->returnErrorData($e->getMessage(), 404);
         }
     }
+
+    public function Line_Influencer(Request $request)
+    {
+        try {
+            $key = $request->userId;
+            $Item = Influencer::where('line_token', 'like', "{$key}")
+                ->get();
+
+                if ($Item) {
+
+                    //log
+                    $type = 'เข้าสู่ระบบ';
+                    $description = 'ผู้ใช้งาน ' . $Item->id . ' ได้ทำการ ' . $type;
+                    $this->Log($Item->id, $description, $type);
+                    //
+        
+                    return response()->json([
+                        'code' => '200',
+                        'status' => true,
+                        'message' => 'เข้าสู่ระบบสำเร็จ',
+                        'data' => $Item->id,
+                        'token' => $this->genToken($Item->id, $Item),
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'code' => '200',
+                        'status' => true,
+                        'message' => 'สร้างบัญชีสำเร็จ',
+                        'data' => null,
+                    ], 200);
+                }
+
+           
+        } catch (\Exception $e) {
+            return $this->returnErrorData($e->getMessage(), 404);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -299,14 +336,19 @@ class InfluencerController extends Controller
             //         ]
             //     ]);
             // }
-            
             if (isset($request->socials)) {
+                $decodedSocials = [];
                 try {
-
-                    foreach ($request->socials as $social) {
-                        $socialID = $social['platform_social_id'];
+                    foreach ($request->socials as $socialJson) {
+                        $decodedSocial = json_decode($socialJson, true);
+                        if ($decodedSocial !== null) {
+                            $decodedSocials[] = $decodedSocial;
+                        }
+                    }
+                    foreach ($decodedSocials as $social) {
+                        $socialID = $social["platform_social_id"];
                         $socialObject = PlatformSocial::find($socialID);
-            
+
                         if ($socialObject == null) {
                             return $this->returnErrorData('ไม่มี platform_social_id นี้ ', 404);
                         } else {
@@ -314,7 +356,8 @@ class InfluencerController extends Controller
                         }
                     }
                 } catch (\Throwable $e) {
-                    return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ' . gettype($request->socials) , 404);
+                    return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ->' . $e, 404);
+                    // return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ->'. "before decode :". $request->socials[0] ."after decode :" .$decodedSocials[0], 404);
                 }
             }
 
