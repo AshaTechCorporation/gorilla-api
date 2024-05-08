@@ -56,10 +56,17 @@ use Illuminate\Support\Facades\Route;
 Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
 
 // Presentatiion
-Route::post('/get_ppx', [PresentationController::class, 'generatePresentation']);
+Route::group(['middleware' => 'cors'], function () {
+
+Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentation']);
+
+});
+
+
 Route::resource('presentation', PresentationController::class);
 Route::post('/presentation_page', [PresentationController::class, 'getPage']);
 Route::get('/get_presentation', [PresentationController::class, 'getList']);
+Route::get('/influ_slide', [PresentationController::class, 'createInfluSide']);
 
 // Influencer
 Route::resource('influencer', InfluencerController::class);
@@ -67,6 +74,7 @@ Route::post('/influencer_page', [InfluencerController::class, 'getPage']);
 Route::get('/get_influencer', [InfluencerController::class, 'getList']);
 Route::post('/fix_influencer', [InfluencerController::class, 'fixdataInfluencer']);
 Route::get('/search_influencer', [InfluencerController::class, 'searchData']);
+Route::post('/line_influencer', [InfluencerController::class, 'Line_Influencer']);
 
 // PlatformSocial
 Route::resource('platformSocial', PlatformSocialController::class);

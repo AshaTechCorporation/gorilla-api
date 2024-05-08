@@ -55,7 +55,7 @@ class InfluencerController extends Controller
                 $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name as name', 'subscribe', 'link');
             }])
             ->with(['projects' => function ($query) {
-                $query->select('projects.name as name', 'status', 'influencer_project.project_id');
+                $query->select('projects.name as name', 'influencer_project.status', 'influencer_project.project_id');
             }]);
 
         if ($orderby[$order[0]['column']]) {
@@ -122,7 +122,7 @@ class InfluencerController extends Controller
                                 if ($social->subscribe >= $minSubscribe && $social->subscribe <= $maxSubscribe) {
                                     $item->typefollower = $subtype->name;
                                     // $item->count = "test";
-                                    break; 
+                                    break;
                                 }
                             }
                         }
@@ -154,7 +154,6 @@ class InfluencerController extends Controller
             $Item = Influencer::where('fullname', 'like', "%{$key}%")
                 ->limit(20)
                 ->get()->toarray();
-            dd($key);
 
             if (!empty($Item)) {
 
@@ -168,6 +167,43 @@ class InfluencerController extends Controller
             return $this->returnErrorData($e->getMessage(), 404);
         }
     }
+
+    public function Line_Influencer(Request $request)
+    {
+        try {
+            $key = $request->userId;
+            $Item = Influencer::where('lineid', 'like', "{$key}")
+                ->get();
+
+                if ($Item) {
+
+                    //log
+                    $type = 'เข้าสู่ระบบ';
+                    $description = 'ผู้ใช้งาน ' . $Item->id . ' ได้ทำการ ' . $type;
+                    $this->Log($Item->id, $description, $type);
+                    //
+        
+                    return response()->json([
+                        'code' => '200',
+                        'status' => true,
+                        'message' => 'เข้าสู่ระบบสำเร็จ',
+                        'data' => $Item->id,
+                        'token' => $this->genToken( $Item),
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'code' => '200',
+                        'status' => true,
+                        'message' => 'สร้างบัญชีสำเร็จ',
+                        'data' => $request->userId,
+                    ], 200);
+                }
+ 
+        } catch (\Exception $e) {
+            return $this->returnErrorData($e->getMessage(), 404);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -275,45 +311,52 @@ class InfluencerController extends Controller
 
             $Item->save();
 
-            if ($request->socials === "SocialTemp") {
-                $request->merge([
-                    'socials' => [
-                        [
-                            'platform_social_id' => 1,
-                            'name' => 'Facebook',
-                            'subscribe' => 1000,
-                            'link' => 'https://www.facebook.com/example'
-                        ],
-                        [
-                            'platform_social_id' => 2,
-                            'name' => 'Tiktok',
-                            'subscribe' => 15000,
-                            'link' => 'https://www.tiktok.com/example'
-                        ],
-                        [
-                            'platform_social_id' => 3,
-                            'name' => 'Youtube',
-                            'subscribe' => 3000,
-                            'link' => 'https://www.youtube.com/example'
-                        ]
-                    ]
-                ]);
-            }
-
-
+            // if ($request->socials === "SocialTemp") {
+            //     $request->merge([
+            //         'socials' => [
+            //             [
+            //                 'platform_social_id' => 1,
+            //                 'name' => 'Facebook',
+            //                 'subscribe' => 1000,
+            //                 'link' => 'https://www.facebook.com/example'
+            //             ],
+            //             [
+            //                 'platform_social_id' => 2,
+            //                 'name' => 'Tiktok',
+            //                 'subscribe' => 15000,
+            //                 'link' => 'https://www.tiktok.com/example'
+            //             ],
+            //             [
+            //                 'platform_social_id' => 3,
+            //                 'name' => 'Youtube',
+            //                 'subscribe' => 3000,
+            //                 'link' => 'https://www.youtube.com/example'
+            //             ]
+            //         ]
+            //     ]);
+            // }
             if (isset($request->socials)) {
+                $decodedSocials = [];
                 try {
-                    foreach ($request->socials as $socialID) {
-                        $social = PlatformSocial::find($socialID['platform_social_id']);
+                    foreach ($request->socials as $socialJson) {
+                        $decodedSocial = json_decode($socialJson, true);
+                        if ($decodedSocial !== null) {
+                            $decodedSocials[] = $decodedSocial;
+                        }
+                    }
+                    foreach ($decodedSocials as $social) {
+                        $socialID = $social["platform_social_id"];
+                        $socialObject = PlatformSocial::find($socialID);
 
-                        if ($social == null) {
-                            return $this->returnErrorData('เกิดข้อผิดพลาดที่ $social กรุณาลองใหม่อีกครั้ง ', 404);
+                        if ($socialObject == null) {
+                            return $this->returnErrorData('ไม่มี platform_social_id นี้ ', 404);
                         } else {
-                            $Item->platform_socials()->attach($social, array('name' => $socialID['name'], 'subscribe' => $socialID['subscribe'], 'link' => $socialID['link']));
+                            $Item->platform_socials()->attach($socialObject, array('name' => $social['name'], 'subscribe' => $social['subscribe'], 'link' => $social['link']));
                         }
                     }
                 } catch (\Throwable $e) {
-                    return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+                    return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ->' . $e, 404);
+                    // return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ->'. "before decode :". $request->socials[0] ."after decode :" .$decodedSocials[0], 404);
                 }
             }
 
@@ -365,7 +408,7 @@ class InfluencerController extends Controller
                 $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name as name', 'subscribe', 'link');
             }])
             ->with(['projects' => function ($query) {
-                $query->select('projects.name as name', 'status', 'influencer_project.project_id');
+                $query->select('projects.name as name', 'influencer_project.status', 'influencer_project.project_id');
             }])
             ->with('past_project')
             ->where('id', $id)
@@ -458,30 +501,30 @@ class InfluencerController extends Controller
             $Item->save();
 
 
-            if ($request->socials === "SocialTemp") {
-                $request->merge([
-                    'socials' => [
-                        [
-                            'platform_social_id' => 1,
-                            'name' => 'Facebook',
-                            'subscribe' => 1000,
-                            'link' => 'https://www.facebook.com/example'
-                        ],
-                        [
-                            'platform_social_id' => 2,
-                            'name' => 'Tiktok',
-                            'subscribe' => 15000,
-                            'link' => 'https://www.tiktok.com/example'
-                        ],
-                        [
-                            'platform_social_id' => 3,
-                            'name' => 'Youtube',
-                            'subscribe' => 3000,
-                            'link' => 'https://www.youtube.com/example'
-                        ]
-                    ]
-                ]);
-            }
+            // if ($request->socials === "SocialTemp") {
+            //     $request->merge([
+            //         'socials' => [
+            //             [
+            //                 'platform_social_id' => 1,
+            //                 'name' => 'Facebook',
+            //                 'subscribe' => 1000,
+            //                 'link' => 'https://www.facebook.com/example'
+            //             ],
+            //             [
+            //                 'platform_social_id' => 2,
+            //                 'name' => 'Tiktok',
+            //                 'subscribe' => 15000,
+            //                 'link' => 'https://www.tiktok.com/example'
+            //             ],
+            //             [
+            //                 'platform_social_id' => 3,
+            //                 'name' => 'Youtube',
+            //                 'subscribe' => 3000,
+            //                 'link' => 'https://www.youtube.com/example'
+            //             ]
+            //         ]
+            //     ]);
+            // }
 
 
             if (isset($request->socials)) {
@@ -540,6 +583,7 @@ class InfluencerController extends Controller
         try {
 
             $Item = Influencer::find($id);
+            $Item->platform_socials()->detach();
             $Item->delete();
 
             //log

@@ -19,6 +19,7 @@ use PhpOffice\PhpPresentation\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Ods\Thumbnails;
 
 use App\Models\Presentation;
+use App\Models\Project;
 use Illuminate\Support\Facades\DB;
 
 
@@ -40,7 +41,7 @@ class PresentationController extends Controller
         $this->presentation = new PhpPresentation();
         $this->presentation->getLayout()->setDocumentLayout(DocumentLayout::LAYOUT_SCREEN_16X9, true);
     }
-    public function Thumbnail()
+    public function Thumbnail($name)
     {
         $imagePath = public_path(Presentation::where('Template_Name', 'Thumbnail')
             ->value('Background_Template'));
@@ -90,7 +91,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('ProductName');
+        $textRun = $textShape->createTextRun($name);
         $textRun->getFont()->setSize(86);
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setColor(new Color('FFFFFF'));
@@ -350,7 +351,7 @@ class PresentationController extends Controller
         $textRun->getFont()->setName($this->defaultFontName);
     }
 
-    public function Influ_format_3()
+    public function Influ_format_3($influencer)
     {
         // ************************* Add the third slide *****************************
         $imagePath = public_path(Presentation::where('Template_Name', 'Influ_format_3')
@@ -378,7 +379,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('Influencer1');
+        $textRun = $textShape->createTextRun($influencer[0]->fullname);
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new Color('00000'));
         $textRun->getFont()->setBold(true);
@@ -416,7 +417,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('Influencer2');
+        $textRun = $textShape->createTextRun($influencer[1]->fullname);
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('00000'));
         $textRun->getFont()->setBold(true);
@@ -454,7 +455,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('Influencer3');
+        $textRun = $textShape->createTextRun($influencer[2]->fullname);
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('00000'));
         $textRun->getFont()->setBold(true);
@@ -478,6 +479,159 @@ class PresentationController extends Controller
             ->setHeight(60)
             ->setWidth(60)
             ->setOffsetX(663)
+            ->setOffsetY(105);
+    }
+    public function Influ_format_2($influencer)
+    {
+        // ************************* Add the third slide *****************************
+        $imagePath = public_path(Presentation::where('Template_Name', 'Influ_format_3')
+            ->value('Background_Template'));
+
+        $thirdSlide = $this->presentation->createSlide();
+        $offxcom1 = 276;
+        $offycom1 = 110;
+        // Set the slide background color (optional)
+        $backgroundImage = $thirdSlide->createDrawingShape();
+        $backgroundImage->setPath($imagePath);
+        $backgroundImage->setWidth($this->imageWidth);
+        $backgroundImage->setHeight($this->imageHeight);
+        $backgroundImage->setOffsetX(0);
+        $backgroundImage->setOffsetY(0);
+
+        // Influencer 1
+        // Add dynamic content to the first slide
+        $textShape =  $thirdSlide->createRichTextShape();
+        $textShape->setHeight(50);
+        $textShape->setWidth(150);
+        $textShape->setOffsetX($offxcom1);
+        $textShape->setOffsetY($offycom1);
+        $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('fcba04'))->setEndColor(new Color('fcba04'));
+        $textShape->getBorder()->setColor(new Color('00000'))->setLineWidth(5)->setDashStyle(Border::DASH_SOLID)->setLineStyle(Border::LINE_DOUBLE);
+        $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Add a text run to the shape
+        $textRun = $textShape->createTextRun($influencer[0]->fullname);
+        $textRun->getFont()->setSize(20);
+        $textRun->getFont()->setColor(new Color('00000'));
+        $textRun->getFont()->setBold(true);
+        $textRun->getFont()->setName($this->defaultFontName);
+
+        $shape = $thirdSlide->createDrawingShape();
+        $shape->setName('image')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/influ1.jpg'))
+            ->setHeight(250)
+            ->setWidth(250)
+            ->setOffsetX($offxcom1 - 74)
+            ->setOffsetY($offycom1 + 110);
+
+        $shape->getHyperlink()->setUrl('https://www.tiktok.com/@tumkomsun/video/7336527336768113922');
+
+        $shape = $thirdSlide->createDrawingShape();
+        $shape->setName('image')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/tiktok.png'))
+            ->setHeight(60)
+            ->setWidth(60)
+            ->setOffsetX($offxcom1 - 45)
+            ->setOffsetY($offycom1 - 5);
+
+        // Influencer 2
+        $offxcom2 = 552;
+        $offycom2 = 110;
+
+        // Text shape
+        $textShape = $thirdSlide->createRichTextShape();
+        $textShape->setHeight(50);
+        $textShape->setWidth(150);
+        $textShape->setOffsetX($offxcom2);
+        $textShape->setOffsetY($offycom2);
+        $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('fcba04'))->setEndColor(new Color('fcba04'));
+        $textShape->getBorder()->setColor(new Color('00000'))->setLineWidth(5)->setDashStyle(Border::DASH_SOLID)->setLineStyle(Border::LINE_DOUBLE);
+        $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Text run
+        $textRun = $textShape->createTextRun($influencer[1]->fullname);
+        $textRun->getFont()->setSize(20);
+        $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('00000'));
+        $textRun->getFont()->setBold(true);
+        $textRun->getFont()->setName($this->defaultFontName);
+
+        // Image shape
+        $shape = $thirdSlide->createDrawingShape();
+        $shape->setName('image')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/influ2.jpg'))
+            ->setHeight(250)
+            ->setWidth(250)
+            ->setOffsetX($offxcom2 - 74)
+            ->setOffsetY($offycom2 + 110);
+
+        $shape->getHyperlink()->setUrl('https://www.tiktok.com/@tumkomsun/video/7336527336768113922');
+
+        // TikTok logo
+        $shape = $thirdSlide->createDrawingShape();
+        $shape->setName('image')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/tiktok.png'))
+            ->setHeight(60)
+            ->setWidth(60)
+            ->setOffsetX($offxcom2 - 45)
+            ->setOffsetY($offycom2 - 5);
+    }
+    public function Influ_format_1($influencer)
+    {
+        // ************************* Add the third slide *****************************
+        $imagePath = public_path(Presentation::where('Template_Name', 'Influ_format_3')
+            ->value('Background_Template'));
+
+        $thirdSlide = $this->presentation->createSlide();
+
+        // Set the slide background color (optional)
+        $backgroundImage = $thirdSlide->createDrawingShape();
+        $backgroundImage->setPath($imagePath);
+        $backgroundImage->setWidth($this->imageWidth);
+        $backgroundImage->setHeight($this->imageHeight);
+        $backgroundImage->setOffsetX(0);
+        $backgroundImage->setOffsetY(0);
+
+        // Influencer 2
+        // Add dynamic content to the first slide
+        $textShape =  $thirdSlide->createRichTextShape();
+        $textShape->setHeight(50);
+        $textShape->setWidth(150);
+        $textShape->setOffsetX(402);
+        $textShape->setOffsetY(110);
+        $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('fcba04'))->setEndColor(new Color('fcba04'));
+        $textShape->getBorder()->setColor(new Color('00000'))->setLineWidth(5)->setDashStyle(Border::DASH_SOLID)->setLineStyle(Border::LINE_DOUBLE);
+        $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Add a text run to the shape
+        $textRun = $textShape->createTextRun($influencer[0]->fullname);
+        $textRun->getFont()->setSize(20);
+        $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('00000'));
+        $textRun->getFont()->setBold(true);
+        $textRun->getFont()->setName($this->defaultFontName);
+
+        $shape = $thirdSlide->createDrawingShape();
+        $shape->setName('image')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/influ2.jpg'))
+            ->setHeight(250)
+            ->setWidth(250)
+            ->setOffsetX(354)
+            ->setOffsetY(220);
+
+
+        $shape->getHyperlink()->setUrl('https://www.tiktok.com/@tumkomsun/video/7336527336768113922');
+
+        $shape = $thirdSlide->createDrawingShape();
+        $shape->setName('image')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/tiktok.png'))
+            ->setHeight(60)
+            ->setWidth(60)
+            ->setOffsetX(357)
             ->setOffsetY(105);
     }
     public function Insertdata()
@@ -538,7 +692,7 @@ class PresentationController extends Controller
     {
         // ************************* Add the fifth slide *****************************
         $imagePath = public_path(Presentation::where('Template_Name', 'Topperform')
-        ->value('Background_Template'));
+            ->value('Background_Template'));
         // $imagePath = public_path("/presentation/static/bg") . "/bg2.JPG";
         $fifthSlide = $this->presentation->createSlide();
 
@@ -593,13 +747,22 @@ class PresentationController extends Controller
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setName($this->defaultFontName);
 
+        $shape = $fifthSlide->createDrawingShape();
+        $shape->setName('bgview')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/textbox/1.png'))
+            ->setHeight(75)
+            ->setWidth(420)
+            ->setOffsetX(102)
+            ->setOffsetY(200);
+
         // Add dynamic content to the first slide
         $textShape = $fifthSlide->createRichTextShape();
         $textShape->setHeight(75);
         $textShape->setWidth(400);
         $textShape->setOffsetX(112);
         $textShape->setOffsetY(200);
-        $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('737373'))->setEndColor(new Color('737373'));
+        // $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('737373'))->setEndColor(new Color('737373'));
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT)->setVertical(Alignment::VERTICAL_CENTER);
 
         // Add a text run to the shape
@@ -633,13 +796,22 @@ class PresentationController extends Controller
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setName($this->defaultFontName);
 
+        $shape = $fifthSlide->createDrawingShape();
+        $shape->setName('bglike')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/textbox/2.png'))
+            ->setHeight(75)
+            ->setWidth(420)
+            ->setOffsetX(102)
+            ->setOffsetY(280);
+
         // Add dynamic content to the first slide
         $textShape = $fifthSlide->createRichTextShape();
         $textShape->setHeight(75);
         $textShape->setWidth(400);
         $textShape->setOffsetX(112);
         $textShape->setOffsetY(280);
-        $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('cd6966'))->setEndColor(new Color('cd6966'));
+        // $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('cd6966'))->setEndColor(new Color('cd6966'));
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT)->setVertical(Alignment::VERTICAL_CENTER);
 
         // Add a text run to the shape
@@ -673,13 +845,22 @@ class PresentationController extends Controller
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setName($this->defaultFontName);
 
+        $shape = $fifthSlide->createDrawingShape();
+        $shape->setName('commentbg')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/textbox/3.png'))
+            ->setHeight(75)
+            ->setWidth(420)
+            ->setOffsetX(102)
+            ->setOffsetY(360);
+
         // Add dynamic content to the first slide
         $textShape = $fifthSlide->createRichTextShape();
         $textShape->setHeight(75);
         $textShape->setWidth(400);
         $textShape->setOffsetX(112);
         $textShape->setOffsetY(360);
-        $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('65990b'))->setEndColor(new Color('65990b'));
+        // $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('65990b'))->setEndColor(new Color('65990b'));
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT)->setVertical(Alignment::VERTICAL_CENTER);
 
         // Add a text run to the shape
@@ -713,13 +894,22 @@ class PresentationController extends Controller
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setName($this->defaultFontName);
 
+        $shape = $fifthSlide->createDrawingShape();
+        $shape->setName('share')
+            ->setDescription('My image description')
+            ->setPath(public_path('/presentation/static/textbox/4.png'))
+            ->setHeight(75)
+            ->setWidth(420)
+            ->setOffsetX(102)
+            ->setOffsetY(440);
+
         // Add dynamic content to the first slide
         $textShape = $fifthSlide->createRichTextShape();
         $textShape->setHeight(75);
         $textShape->setWidth(400);
         $textShape->setOffsetX(112);
         $textShape->setOffsetY(440);
-        $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('fcba04'))->setEndColor(new Color('fcba04'));
+        // $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('fcba04'))->setEndColor(new Color('fcba04'));
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT)->setVertical(Alignment::VERTICAL_CENTER);
 
         // Add a text run to the shape
@@ -889,23 +1079,49 @@ class PresentationController extends Controller
         $textRun->getFont()->setName($this->defaultFontName);
     }
 
-    public function generatePresentation($firstpage)
+    public function generatePresentation($id)
     {
-        $this->Thumbnail();
-        for($i = 0; $i < $firstpage; $i++){
-            $this->Status();
-        }
-        // $this->Status();
-        $this->Influ_format_3();
+        $project = Project::with('influencers')->find($id);
+
+        $this->Thumbnail($project->name);
+        $this->Status();
+        $this->createInfluSide($project->influencers);
         $this->Insertdata();
         $this->Topperform();
+        $this->Title();
         // Save the presentation
+        header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation");
-        header("Content-Disposition: attachment; filename=test.pptx");
-        $dynamicPresentationPath = public_path("/presentation/result") . "/sample.pptx";
+
         $objWriter = IOFactory::createWriter($this->presentation, 'PowerPoint2007');
-        $objWriter->save('php://output');
+        return $objWriter->save('php://output');
     }
+    public function createInfluSide($influencers)
+    {   
+        $chunkSize = 3;
+        $chunkIndex = 0;
+        $chunks = collect();
+    
+        foreach ($influencers as $index => $influencer) {
+            if ($index % $chunkSize === 0) {
+                $chunks->push(collect()); 
+                $chunkIndex++; 
+            }
+            $chunks[$chunkIndex - 1]->push($influencer); 
+        }
+    
+        foreach ($chunks as $chunk) {
+            $chunkCount = $chunk->count();
+            if ($chunkCount === 3) {
+                $this->Influ_format_3($chunk);
+            } elseif ($chunkCount === 2) {
+                $this->Influ_format_2($chunk);
+            } elseif ($chunkCount === 1) {
+                $this->Influ_format_1($chunk);
+            }
+        }
+    }
+
     public function getList()
     {
         $Item = Presentation::get()->toarray();
