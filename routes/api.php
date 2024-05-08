@@ -26,6 +26,7 @@ use App\Http\Controllers\PastProjectController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PresentationController;
 use App\Http\Controllers\InfluencerAddressController;
+use App\Http\Controllers\ProjectTimelineController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -134,6 +135,12 @@ Route::post('/add_project_influencer', [ProjectController::class, 'addInfluencer
 Route::resource('pastproject', PastProjectController::class);
 Route::post('/pastproject_page', [PastProjectController::class, 'getPage']);
 Route::get('/get_pastproject', [PastProjectController::class, 'getList']);
+
+// Project Timeline
+Route::resource('project_timeline', ProjectTimelineController::class);
+Route::post('/project_timeline_page', [ProjectTimelineController::class, 'getPage']);
+Route::get('/get_project_timeline', [ProjectTimelineController::class, 'getList']);
+
 
 // Client
 // Route::resource('client', ClientsController::class);
