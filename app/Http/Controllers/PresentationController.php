@@ -1092,7 +1092,6 @@ class PresentationController extends Controller
         // Save the presentation
         header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation");
-        // header("Content-Disposition: attachment; filename=test.pptx");
 
         $objWriter = IOFactory::createWriter($this->presentation, 'PowerPoint2007');
         return $objWriter->save('php://output');

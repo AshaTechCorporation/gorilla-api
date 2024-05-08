@@ -172,7 +172,7 @@ class InfluencerController extends Controller
     {
         try {
             $key = $request->userId;
-            $Item = Influencer::where('line_token', 'like', "{$key}")
+            $Item = Influencer::where('lineid', 'like', "{$key}")
                 ->get();
 
                 if ($Item) {
@@ -188,18 +188,17 @@ class InfluencerController extends Controller
                         'status' => true,
                         'message' => 'เข้าสู่ระบบสำเร็จ',
                         'data' => $Item->id,
-                        'token' => $this->genToken($Item->id, $Item),
+                        'token' => $this->genToken( $Item),
                     ], 200);
                 } else {
                     return response()->json([
                         'code' => '200',
                         'status' => true,
                         'message' => 'สร้างบัญชีสำเร็จ',
-                        'data' => null,
+                        'data' => $request->userId,
                     ], 200);
                 }
-
-           
+ 
         } catch (\Exception $e) {
             return $this->returnErrorData($e->getMessage(), 404);
         }
