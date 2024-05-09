@@ -22,10 +22,10 @@ class InfluencerAddressController extends Controller
                 $provinces = array_unique($provinces);
                 $provinces = array_values($provinces);
     
-                $userId = "admin";
-                $type = 'เรียกข้อมูล';
-                $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
-                $this->Log($userId, $description, $type);
+                // $userId = "admin";
+                // $type = 'เรียกข้อมูล';
+                // $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
+                // $this->Log($userId, $description, $type);
                 
                 return $this->returnSuccess('ดำเนินการสำเร็จ', $provinces);
             }catch (\Throwable $e) {
@@ -53,10 +53,10 @@ class InfluencerAddressController extends Controller
                 $amphoes = array_unique($amphoes);        
                 $amphoes = array_values($amphoes);
 
-                $userId = "admin";
-                $type = 'เรียกข้อมูล';
-                $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
-                $this->Log($userId, $description, $type);
+                // $userId = "admin";
+                // $type = 'เรียกข้อมูล';
+                // $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
+                // $this->Log($userId, $description, $type);
 
                 return $this->returnSuccess('ดำเนินการสำเร็จ', $amphoes);
             }catch (\Throwable $e) {

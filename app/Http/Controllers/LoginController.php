@@ -13,12 +13,13 @@ class LoginController extends Controller
 {
     public $key = "key";
 
-    public function genToken($id, $name)
+    public function genToken($id, $name, $role)
     {
         $payload = array(
             "iss" => "key",
             "aud" => $id,
             "lun" => $name,
+            "role" => $role,
             "iat" => Carbon::now()->timestamp,
             // "exp" => Carbon::now()->timestamp + 86400,
             "exp" => Carbon::now()->timestamp + 31556926,

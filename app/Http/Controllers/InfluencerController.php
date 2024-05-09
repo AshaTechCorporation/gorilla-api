@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
 
+use App\Http\Controllers\LoginController;
+
 class InfluencerController extends Controller
 {
     public function getList()
@@ -171,34 +173,42 @@ class InfluencerController extends Controller
     public function Line_Influencer(Request $request)
     {
         try {
-            $key = $request->userId;
-            $Item = Influencer::where('lineid', 'like', "{$key}")
-                ->get();
 
-                if ($Item) {
+            $Login = new LoginController();
 
-                    //log
-                    $type = 'เข้าสู่ระบบ';
-                    $description = 'ผู้ใช้งาน ' . $Item->id . ' ได้ทำการ ' . $type;
-                    $this->Log($Item->id, $description, $type);
-                    //
-        
-                    return response()->json([
-                        'code' => '200',
-                        'status' => true,
-                        'message' => 'เข้าสู่ระบบสำเร็จ',
-                        'data' => $Item->id,
-                        'token' => $this->genToken( $Item),
-                    ], 200);
-                } else {
-                    return response()->json([
-                        'code' => '200',
-                        'status' => true,
-                        'message' => 'สร้างบัญชีสำเร็จ',
-                        'data' => $request->userId,
-                    ], 200);
-                }
- 
+            $key = $request->lineid;
+            $Item = Influencer::where('line_token', 'like', "{$key}")
+                ->first();
+
+            if ($Item) {
+
+                //log
+                $type = 'เข้าสู่ระบบ';
+                $description = 'ผู้ใช้งาน ' . $key . ' ได้ทำการ ' . $type;
+                $this->Log($Item->id, $description, $type);
+                //
+
+                return response()->json([
+                    'code' => '200',
+                    'status' => true,
+                    'message' => 'เข้าสู่ระบบสำเร็จ',
+                    'data' => $Item->id,
+                    'token' => $Login->genToken($Item->id, $Item, "influencer"),
+                ], 200);
+            } else {
+                //log
+                $type = 'เข้าสู่ระบบเป็นครังแรก';
+                $description = 'ผู้ใช้งานใหม่ ' . ' ได้ทำการ ' . $type;
+                $this->Log("ผู้ใช้งานใหม่", $description, $type);
+                $latestId = Influencer::latest('id')->value('id');
+                return response()->json([
+                    'code' => '200',
+                    'status' => true,
+                    'message' => 'สร้างบัญชีสำเร็จ',
+                    'data' => null,
+                    'token' => $Login->genToken($latestId, $key, "influencer"),
+                ], 200);
+            }
         } catch (\Exception $e) {
             return $this->returnErrorData($e->getMessage(), 404);
         }

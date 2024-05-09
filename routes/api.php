@@ -27,6 +27,7 @@ use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PresentationController;
 use App\Http\Controllers\InfluencerAddressController;
 use App\Http\Controllers\ProjectTimelineController;
+use App\Http\Controllers\TiktokController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -56,11 +57,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
 
 // Presentatiion
-Route::group(['middleware' => 'cors'], function () {
-
 Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentation']);
 
-});
+// Tiktok
+Route::get('/get_Tiktok_info/{name}', [TiktokController::class, 'getUserInfo']);
 
 
 Route::resource('presentation', PresentationController::class);
