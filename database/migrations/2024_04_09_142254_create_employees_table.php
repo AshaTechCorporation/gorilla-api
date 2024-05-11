@@ -15,9 +15,6 @@ class CreateEmployeesTable extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->increments('id');
-
-            $table->integer('credentials_id')->nullable()->unsigned()->index();
-            $table->foreign('credentials_id')->references('id')->on('employee_credentials')->onDelete('cascade');
             
             $table->integer('department_id')->nullable()->unsigned()->index();
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');

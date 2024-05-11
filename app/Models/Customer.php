@@ -22,4 +22,9 @@ class Customer extends Model
     {
         return $this->hasMany(Project::class);
     }
+
+    public function customer_credentials()
+    {
+        return $this->hasOne(CustomerCredential::class);
+    }
 }

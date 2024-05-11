@@ -29,7 +29,7 @@ class Employee extends Model
 
     public function employee_credentials()
     {
-        return $this->belongsTo(EmployeeCredential::class);
+        return $this->hasOne(EmployeeCredential::class);
     }
 
     public function projects()

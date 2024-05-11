@@ -19,7 +19,7 @@ class EmployeeCredential extends Model
     //////////////////////////////////////// relation //////////////////////////////////////
     public function employees()
     {
-        return $this->hasOne(Employee::class);
+        return $this->belongsTo(Employee::class);
     }
 
 }

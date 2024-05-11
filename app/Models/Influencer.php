@@ -41,4 +41,9 @@ class Influencer extends Model
     {
         return $this->hasMany(PastProject::class);
     }
+
+    public function influencer_credentials()
+    {
+        return $this->hasOne(InfluencerCredential::class);
+    }
 }

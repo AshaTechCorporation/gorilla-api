@@ -13,13 +13,12 @@ class LoginController extends Controller
 {
     public $key = "key";
 
-    public function genToken($id, $name, $role)
+    public function genToken($id, $name)
     {
         $payload = array(
             "iss" => "key",
             "aud" => $id,
             "lun" => $name,
-            "role" => $role,
             "iat" => Carbon::now()->timestamp,
             // "exp" => Carbon::now()->timestamp + 86400,
             "exp" => Carbon::now()->timestamp + 31556926,
@@ -114,44 +113,51 @@ class LoginController extends Controller
     //     }
 
     // }
+    public function influencerlogin(Request $request){
+
+    }
 
     public function employeelogin(Request $request)
     {
-        if (!isset($request->email)) {
-            return $this->returnErrorData('[email] ไม่มีข้อมูล', 404);
-        } else if (!isset($request->password)) {
-            return $this->returnErrorData('[password] ไม่มีข้อมูล', 404);
-        }
+        // if (!isset($request->email)) {
+        //     return $this->returnErrorData('[email] ไม่มีข้อมูล', 404);
+        // } else if (!isset($request->password)) {
+        //     return $this->returnErrorData('[password] ไม่มีข้อมูล', 404);
+        // }
 
-        $domainname = "@gorilla.com";
+        // $domainname = "@gorilla.com";
         
-        if (strpos($request->email, $domainname) === false) {
-            return $this->returnErrorData('กรุณาระบุ Email ที่มี domain @gorilla.com', 404);
-        }
-        $user = EmployeeCredential::where('Email', $request->email)
-            ->where('PasswordHash', md5($request->password))
-            ->first();
+        // if (strpos($request->email, $domainname) === false) {
+        //     return $this->returnErrorData('กรุณาระบุ Email ที่มี domain @gorilla.com', 404);
+        // }
+        // $user = EmployeeCredential::where('Email', $request->email)
+        //     ->where('PasswordHash', md5($request->password))
+        //     ->first();
 
-        if ($user) {
+        // if ($user) {
 
-            //log
-            $userId = $request->email;
-            $type = 'เข้าสู่ระบบ';
-            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type;
-            $this->Log($userId, $description, $type);
-            //
+        //     //log
+        //     $userId = $request->email;
+        //     $type = 'เข้าสู่ระบบ';
+        //     $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type;
+        //     $this->Log($userId, $description, $type);
+        //     //
 
-            return response()->json([
-                'code' => '200',
-                'status' => true,
-                'message' => 'เข้าสู่ระบบสำเร็จ',
-                'data' => $user,
-                'token' => $this->genToken($user->id, $user),
-            ], 200);
-        } else {
-            return $this->returnError('รหัสผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง', 401);
-        }
+        //     return response()->json([
+        //         'code' => '200',
+        //         'status' => true,
+        //         'message' => 'เข้าสู่ระบบสำเร็จ',
+        //         'data' => $user,
+        //         'token' => $this->genToken($user->id, $user),
+        //     ], 200);
+        // } else {
+        //     return $this->returnError('รหัสผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง', 401);
+        // }
 
+    }
+
+    public function customerlogin(Request $request){
+        
     }
 
 }

@@ -62,19 +62,22 @@ Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentatio
 // Tiktok
 Route::get('/get_Tiktok_info/{name}', [TiktokController::class, 'getUserInfo']);
 
-
 Route::resource('presentation', PresentationController::class);
 Route::post('/presentation_page', [PresentationController::class, 'getPage']);
 Route::get('/get_presentation', [PresentationController::class, 'getList']);
 Route::get('/influ_slide', [PresentationController::class, 'createInfluSide']);
 
-// Influencer
+// Influencer Employee management
 Route::resource('influencer', InfluencerController::class);
 Route::post('/influencer_page', [InfluencerController::class, 'getPage']);
 Route::get('/get_influencer', [InfluencerController::class, 'getList']);
 Route::post('/fix_influencer', [InfluencerController::class, 'fixdataInfluencer']);
 Route::get('/search_influencer', [InfluencerController::class, 'searchData']);
+
+// Influencer Self management
 Route::post('/line_influencer', [InfluencerController::class, 'Line_Influencer']);
+Route::post('/selfassign', [InfluencerController::class, 'selfassign']);
+Route::post('/selfupdate', [InfluencerController::class, 'selfupdate']);
 
 // PlatformSocial
 Route::resource('platformSocial', PlatformSocialController::class);
