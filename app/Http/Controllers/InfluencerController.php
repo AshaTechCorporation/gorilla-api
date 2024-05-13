@@ -406,21 +406,30 @@ class InfluencerController extends Controller
 
             $Item->save();
 
-            // if (isset($request->socials)) {
-            //     try {
-            //         foreach ($request->socials as $socialID) {
-            //             $social = PlatformSocial::find($socialID['platform_social_id']);
+            if (isset($request->socials)) {
+                $decodedSocials = [];
+                try {
+                    foreach ($request->socials as $socialJson) {
+                        $decodedSocial = json_decode($socialJson, true);
+                        if ($decodedSocial !== null) {
+                            $decodedSocials[] = $decodedSocial;
+                        }
+                    }
+                    foreach ($decodedSocials as $social) {
+                        $socialID = $social["platform_social_id"];
+                        $socialObject = PlatformSocial::find($socialID);
 
-            //             if ($social == null) {
-            //                 return $this->returnErrorData('เกิดข้อผิดพลาดที่ $social กรุณาลองใหม่อีกครั้ง ', 404);
-            //             } else {
-            //                 $Item->platform_socials()->attach($social, array('name' => $socialID['name'], 'subscribe' => $socialID['subscribe'], 'link' => $socialID['link']));
-            //             }
-            //         }
-            //     } catch (\Throwable $e) {
-            //         return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ' . $Item, 404);
-            //     }
-            // }
+                        if ($socialObject == null) {
+                            return $this->returnErrorData('ไม่มี platform_social_id นี้ ', 404);
+                        } else {
+                            $Item->platform_socials()->attach($socialObject, array('name' => $social['name'], 'subscribe' => $social['subscribe'], 'link' => $social['link']));
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ->' . $e, 404);
+                    // return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ->'. "before decode :". $request->socials[0] ."after decode :" .$decodedSocials[0], 404);
+                }
+            }
 
 
             if (isset($request->project_id)) {
@@ -899,45 +908,54 @@ class InfluencerController extends Controller
             $Item->save();
 
 
-            if ($request->socials === "SocialTemp") {
-                $request->merge([
-                    'socials' => [
-                        [
-                            'platform_social_id' => 1,
-                            'name' => 'Facebook',
-                            'subscribe' => 1000,
-                            'link' => 'https://www.facebook.com/example'
-                        ],
-                        [
-                            'platform_social_id' => 2,
-                            'name' => 'Tiktok',
-                            'subscribe' => 15000,
-                            'link' => 'https://www.tiktok.com/example'
-                        ],
-                        [
-                            'platform_social_id' => 3,
-                            'name' => 'Youtube',
-                            'subscribe' => 3000,
-                            'link' => 'https://www.youtube.com/example'
-                        ]
-                    ]
-                ]);
-            }
+            // if ($request->socials === "SocialTemp") {
+            //     $request->merge([
+            //         'socials' => [
+            //             [
+            //                 'platform_social_id' => 1,
+            //                 'name' => 'Facebook',
+            //                 'subscribe' => 1000,
+            //                 'link' => 'https://www.facebook.com/example'
+            //             ],
+            //             [
+            //                 'platform_social_id' => 2,
+            //                 'name' => 'Tiktok',
+            //                 'subscribe' => 15000,
+            //                 'link' => 'https://www.tiktok.com/example'
+            //             ],
+            //             [
+            //                 'platform_social_id' => 3,
+            //                 'name' => 'Youtube',
+            //                 'subscribe' => 3000,
+            //                 'link' => 'https://www.youtube.com/example'
+            //             ]
+            //         ]
+            //     ]);
+            // }
 
 
             if (isset($request->socials)) {
+                $decodedSocials = [];
                 try {
-                    foreach ($request->socials as $socialID) {
-                        $social = PlatformSocial::find($socialID['platform_social_id']);
+                    foreach ($request->socials as $socialJson) {
+                        $decodedSocial = json_decode($socialJson, true);
+                        if ($decodedSocial !== null) {
+                            $decodedSocials[] = $decodedSocial;
+                        }
+                    }
+                    foreach ($decodedSocials as $social) {
+                        $socialID = $social["platform_social_id"];
+                        $socialObject = PlatformSocial::find($socialID);
 
-                        if ($social == null) {
-                            return $this->returnErrorData('เกิดข้อผิดพลาดที่ $social กรุณาลองใหม่อีกครั้ง ', 404);
+                        if ($socialObject == null) {
+                            return $this->returnErrorData('ไม่มี platform_social_id นี้ ', 404);
                         } else {
-                            $Item->platform_socials()->attach($social, array('name' => $socialID['name'], 'subscribe' => $socialID['subscribe'], 'link' => $socialID['link']));
+                            $Item->platform_socials()->attach($socialObject, array('name' => $social['name'], 'subscribe' => $social['subscribe'], 'link' => $social['link']));
                         }
                     }
                 } catch (\Throwable $e) {
-                    return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+                    return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ->' . $e, 404);
+                    // return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ->'. "before decode :". $request->socials[0] ."after decode :" .$decodedSocials[0], 404);
                 }
             }
 
