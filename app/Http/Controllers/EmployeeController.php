@@ -156,7 +156,7 @@ class EmployeeController extends Controller
 
             $Item->department_id = $request->department_id;
             $Item->position_id = $request->position_id;
-            $Item->credentials_id = $request->credentials_id;
+            // $Item->credentials_id = $request->credentials_id;
 
             //get data
             $Department = Department::find($Item->department_id);

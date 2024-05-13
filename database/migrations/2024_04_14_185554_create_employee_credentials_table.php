@@ -16,7 +16,7 @@ class CreateEmployeeCredentialsTable extends Migration
         Schema::create('employee_credentials', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('employee_id')->unsigned()->index();
+            $table->integer('employee_id')->unsigned()->nullable()->index();
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
             $table->string('UID', 250)->charset('utf8')->nullable();
             

@@ -16,7 +16,7 @@ class CreateCustomerCredentialsTable extends Migration
         Schema::create('customer_credentials', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('customer_id')->unsigned()->index();
+            $table->integer('customer_id')->unsigned()->nullable()->index();
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->string('UID', 250)->charset('utf8')->nullable();
             

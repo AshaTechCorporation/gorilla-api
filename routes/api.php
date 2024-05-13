@@ -75,9 +75,12 @@ Route::post('/fix_influencer', [InfluencerController::class, 'fixdataInfluencer'
 Route::get('/search_influencer', [InfluencerController::class, 'searchData']);
 
 // Influencer Self management
-Route::post('/line_influencer', [InfluencerController::class, 'Line_Influencer']);
+// Route::post('/line_influencer', [InfluencerController::class, 'Line_Influencer']);
 Route::post('/selfassign', [InfluencerController::class, 'selfassign']);
 Route::post('/selfupdate', [InfluencerController::class, 'selfupdate']);
+
+// Influencer Login
+Route::post('/line_influencer', [LoginController::class, 'influencerlogin']);
 
 // PlatformSocial
 Route::resource('platformSocial', PlatformSocialController::class);

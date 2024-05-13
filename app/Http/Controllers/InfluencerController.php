@@ -9,6 +9,9 @@ use App\Models\ContentStyle;
 use App\Models\Career;
 use App\Models\Project;
 use App\Models\SubType;
+use App\Models\InfluencerCredential;
+
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
@@ -74,9 +77,6 @@ class InfluencerController extends Controller
                         $query->orWhere($c, 'like', '%' . $search['value'] . '%');
                     }
                 });
-
-                //search with
-                // $query = $this->withPermission($query, $search);
             });
         }
         if ($request->social_name) {
@@ -100,7 +100,6 @@ class InfluencerController extends Controller
         $d->count = 0;
         if ($d->isNotEmpty()) {
 
-            //run no
             $No = (($page - 1) * $length);
 
             foreach ($d as $item) {
@@ -181,12 +180,6 @@ class InfluencerController extends Controller
 
             if ($Item) {
 
-                //log
-                // $type = 'เข้าสู่ระบบ';
-                // $description = 'ผู้ใช้งาน ' . $key . ' ได้ทำการ ' . $type;
-                // $this->Log($Item->id, $description, $type);
-                //
-
                 return response()->json([
                     'code' => '200',
                     'status' => true,
@@ -196,10 +189,6 @@ class InfluencerController extends Controller
                 ], 200);
             } else {
 
-                //log
-                // $type = 'เข้าสู่ระบบเป็นครังแรก';
-                // $description = 'ผู้ใช้งานใหม่ ' . ' ได้ทำการ ' . $type;
-                // $this->Log("ผู้ใช้งานใหม่", $description, $type);
 
                 $latestId = Influencer::latest('id')->value('id');
                 return response()->json([
@@ -218,10 +207,10 @@ class InfluencerController extends Controller
     public function selfassign(Request $request)
     {
 
-        $key = "key";
-        $header = $request->header('Authorization');
-        $token = str_replace('Bearer ', '', $header);
-        $payload = JWT::decode($token, $key, array('HS256'));
+        // $key = "key";
+        // $header = $request->header('Authorization');
+        // $token = str_replace('Bearer ', '', $header);
+        // $payload = JWT::decode($token, $key, array('HS256'));
         
         $socialID = $request->socials;
         $projectID = $request->project_id;
@@ -286,7 +275,7 @@ class InfluencerController extends Controller
             $Item->latitude = $request->latitude;
             $Item->longitude = $request->longitude;
             $Item->note = $request->note;
-            $Item->line_token = $payload->lun;
+            // $Item->line_token = $payload->lun;
 
             if ($request->image_bank && $request->image_bank != null && $request->image_bank != 'null') {
                 $Item->image_bank = $this->uploadImage($request->image_bank, '/image_bank');
@@ -338,6 +327,13 @@ class InfluencerController extends Controller
                     $Item->projects()->attach($project, ['status' => $status]);
                 }
             }
+
+            $Login = new LoginController();
+            $tokendata = $request->header('Authorization');
+            $credential = $Login->decodeToken($tokendata);
+            $influCredential = InfluencerCredential::find($credential->aud);
+            $influCredential->influencer_id = $Item->id;
+            $influCredential->save();
 
             DB::commit();
             $Login = new LoginController();
@@ -592,6 +588,13 @@ class InfluencerController extends Controller
                     $Item->projects()->attach($project, ['status' => $status]);
                 }
             }
+
+            $latestId = $Item->id;
+
+            $influCredential = new InfluencerCredential();
+            $influCredential->influencer_id = $latestId;
+            $influCredential->GK = Str::random(5);
+            $influCredential->save();
 
             //log
             $userId = $loginBy;

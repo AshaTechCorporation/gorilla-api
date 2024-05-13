@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\InfluencerCredential;
 use App\Models\EmployeeCredential;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use \Firebase\JWT\JWT;
+use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
@@ -27,6 +29,13 @@ class LoginController extends Controller
 
         $token = JWT::encode($payload, $this->key);
         return $token;
+    }
+
+    public function decodeToken($token)
+    {
+        $token = str_replace('Bearer ', '', $token);
+        $payload = JWT::decode($token, $this->key, array('HS256'));
+        return $payload;
     }
 
     public function checkLogin(Request $request)
@@ -65,7 +74,6 @@ class LoginController extends Controller
                 'data' => [],
                 'token' => $token,
             ], 200);
-
         } catch (Exception $e) {
             return $this->returnError('Can not verify identity', 401);
         }
@@ -113,8 +121,49 @@ class LoginController extends Controller
     //     }
 
     // }
-    public function influencerlogin(Request $request){
+    public function influencerlogin(Request $request)
+    {
 
+        try {
+
+            $Login = new LoginController();
+
+            $key = $request->lineid;
+            $Item = InfluencerCredential::where('UID', 'like', "{$key}")
+                ->first();
+
+            if ($Item) {
+                return response()->json([
+                    'code' => '200',
+                    'status' => true,
+                    'message' => 'เข้าสู่ระบบสำเร็จ',
+                    'id' => $Item->influencer_id,
+                    'role' => 'Influencer',
+                    'token' => $Login->genToken($Item->id, $key),
+                ], 200);
+            } else {
+
+                DB::beginTransaction();
+
+                $influCredential = new InfluencerCredential();
+                $influCredential->UID = $key;
+                $influCredential->save();
+                
+                DB::commit();
+                return response()->json([
+                    'code' => '200',
+                    'status' => true,
+                    'message' => 'สร้างบัญชีสำเร็จ',
+                    'id' => null,
+                    'role' => 'Influencer',
+                    'token' => $Login->genToken($influCredential->id, $key),
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            
+            DB::rollback();
+            return $this->returnErrorData($e->getMessage(), 404);
+        }
     }
 
     public function employeelogin(Request $request)
@@ -126,7 +175,7 @@ class LoginController extends Controller
         // }
 
         // $domainname = "@gorilla.com";
-        
+
         // if (strpos($request->email, $domainname) === false) {
         //     return $this->returnErrorData('กรุณาระบุ Email ที่มี domain @gorilla.com', 404);
         // }
@@ -156,8 +205,7 @@ class LoginController extends Controller
 
     }
 
-    public function customerlogin(Request $request){
-        
+    public function customerlogin(Request $request)
+    {
     }
-
 }

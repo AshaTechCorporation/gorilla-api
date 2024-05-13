@@ -16,7 +16,7 @@ class CreateInfluencerCredentialsTable extends Migration
         Schema::create('influencer_credentials', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('influencer_id')->unsigned()->index();
+            $table->integer('influencer_id')->unsigned()->nullable()->index();
             $table->foreign('influencer_id')->references('id')->on('influencers')->onDelete('cascade');
             $table->string('UID', 250)->charset('utf8')->nullable();
             $table->string('GK', 250)->charset('utf8')->nullable();
