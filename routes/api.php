@@ -27,7 +27,7 @@ use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PresentationController;
 use App\Http\Controllers\InfluencerAddressController;
 use App\Http\Controllers\ProjectTimelineController;
-use App\Http\Controllers\TiktokController;
+use App\Http\Controllers\SocialInfluencerController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -59,8 +59,9 @@ Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
 // Presentatiion
 Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentation']);
 
-// Tiktok
-Route::get('/get_Tiktok_info/{name}', [TiktokController::class, 'getUserInfo']);
+// Influencer Social
+Route::post('/get_Tiktok_info', [SocialInfluencerController::class, 'getTiktokInfo']);
+Route::post('/get_Youtube_info', [SocialInfluencerController::class, 'getYoutubeInfo']);
 
 Route::resource('presentation', PresentationController::class);
 Route::post('/presentation_page', [PresentationController::class, 'getPage']);
@@ -107,6 +108,9 @@ Route::resource('customer', CustomerController::class);
 Route::post('/customer_page', [CustomerController::class, 'getPage']);
 Route::get('/get_customer', [CustomerController::class, 'getList']);
 Route::get('/search_customer', [CustomerController::class, 'searchData']);
+
+// Influencer Login
+Route::post('/google_customer', [LoginController::class, 'customerlogin']);
 
 // Employee
 Route::resource('employee', EmployeeController::class);

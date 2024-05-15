@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\InfluencerCredential;
+use App\Models\CustomerCredential;
+use App\Models\Employee;
 use App\Models\EmployeeCredential;
 use Carbon\Carbon;
 use Exception;
@@ -129,9 +131,20 @@ class LoginController extends Controller
             $Login = new LoginController();
 
             $key = $request->lineid;
-            $Item = InfluencerCredential::where('UID', 'like', "{$key}")
-                ->first();
 
+            if ($request->gk) {
+                $Item = InfluencerCredential::where('GK', $request->gk)
+                    ->first();
+                DB::beginTransaction();
+
+                $Item->UID = $key;
+                $Item->save();
+
+                DB::commit();
+            } else {
+                $Item = InfluencerCredential::where('UID', $key)
+                    ->first();
+            }
             if ($Item) {
                 return response()->json([
                     'code' => '200',
@@ -148,7 +161,7 @@ class LoginController extends Controller
                 $influCredential = new InfluencerCredential();
                 $influCredential->UID = $key;
                 $influCredential->save();
-                
+
                 DB::commit();
                 return response()->json([
                     'code' => '200',
@@ -160,7 +173,7 @@ class LoginController extends Controller
                 ], 200);
             }
         } catch (\Exception $e) {
-            
+
             DB::rollback();
             return $this->returnErrorData($e->getMessage(), 404);
         }
@@ -168,44 +181,93 @@ class LoginController extends Controller
 
     public function employeelogin(Request $request)
     {
-        // if (!isset($request->email)) {
-        //     return $this->returnErrorData('[email] ไม่มีข้อมูล', 404);
-        // } else if (!isset($request->password)) {
-        //     return $this->returnErrorData('[password] ไม่มีข้อมูล', 404);
-        // }
+        try {
 
-        // $domainname = "@gorilla.com";
+            $Login = new LoginController();
 
-        // if (strpos($request->email, $domainname) === false) {
-        //     return $this->returnErrorData('กรุณาระบุ Email ที่มี domain @gorilla.com', 404);
-        // }
-        // $user = EmployeeCredential::where('Email', $request->email)
-        //     ->where('PasswordHash', md5($request->password))
-        //     ->first();
+            $key = $request->gmail;
 
-        // if ($user) {
+            $Item = EmployeeCredential::where('UID', $key)
+                ->first();
 
-        //     //log
-        //     $userId = $request->email;
-        //     $type = 'เข้าสู่ระบบ';
-        //     $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type;
-        //     $this->Log($userId, $description, $type);
-        //     //
 
-        //     return response()->json([
-        //         'code' => '200',
-        //         'status' => true,
-        //         'message' => 'เข้าสู่ระบบสำเร็จ',
-        //         'data' => $user,
-        //         'token' => $this->genToken($user->id, $user),
-        //     ], 200);
-        // } else {
-        //     return $this->returnError('รหัสผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง', 401);
-        // }
+            if ($Item) {
+                return response()->json([
+                    'code' => '200',
+                    'status' => true,
+                    'message' => 'เข้าสู่ระบบสำเร็จ',
+                    'id' => $Item->employee_id,
+                    'role' => 'Customer',
+                    'token' => $Login->genToken($Item->id, $key),
+                ], 200);
+            } else {
+
+                // DB::beginTransaction();
+
+                // $CustomerCredential = new CustomerCredential();
+                // $CustomerCredential->UID = $key;
+                // $CustomerCredential->save();
+
+                // DB::commit();
+                return response()->json([
+                    'code' => '404',
+                    'status' => false,
+                    'message' => 'ไม่มีบัญชีนี้ในระบบ',
+                    'id' => null,
+                    'role' => null,
+                ], 200);
+            }
+        } catch (\Exception $e) {
+
+            DB::rollback();
+            return $this->returnErrorData($e->getMessage(), 404);
+        }
 
     }
 
     public function customerlogin(Request $request)
     {
+        try {
+
+            $Login = new LoginController();
+
+
+            $key = $request->email;
+
+            $Item = CustomerCredential::where('UID', $key)
+                ->first();
+
+
+            if ($Item) {
+                return response()->json([
+                    'code' => '200',
+                    'status' => true,
+                    'message' => 'เข้าสู่ระบบสำเร็จ',
+                    'id' => $Item->customer_id,
+                    'role' => 'Customer',
+                    'token' => $Login->genToken($Item->id, $key),
+                ], 200);
+            } else {
+
+                // DB::beginTransaction();
+
+                // $CustomerCredential = new CustomerCredential();
+                // $CustomerCredential->UID = $key;
+                // $CustomerCredential->save();
+
+                // DB::commit();
+                return response()->json([
+                    'code' => '404',
+                    'status' => false,
+                    'message' => 'test',
+                    'id' => null,
+                    'role' => null,
+                ], 200);
+            }
+        } catch (\Exception $e) {
+
+            DB::rollback();
+            return $this->returnErrorData($e->getMessage(), 404);
+        }
     }
 }

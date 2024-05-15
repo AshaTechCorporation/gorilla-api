@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Customer;
+use App\Models\CustomerCredential;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
@@ -148,6 +149,13 @@ class CustomerController extends Controller
             
             $Item->save();
             //
+            
+            $latestId = $Item->id;
+
+            $customerCredential = new CustomerCredential();
+            $customerCredential->customer_id = $latestId;
+            $customerCredential->UID = $Item->email;
+            $customerCredential->save();
 
             //log
             $userId = $loginBy;
