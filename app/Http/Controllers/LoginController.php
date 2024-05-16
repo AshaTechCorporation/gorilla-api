@@ -185,9 +185,9 @@ class LoginController extends Controller
 
             $Login = new LoginController();
 
-            $key = $request->gmail;
+            $key = $request->email;
 
-            $Item = EmployeeCredential::where('email', $key)
+            $Item = EmployeeCredential::where('UID', $key)
                 ->first();
 
 
@@ -214,7 +214,7 @@ class LoginController extends Controller
                     'status' => false,
                     'message' => 'ไม่มีบัญชีนี้ในระบบ',
                     'id' => null,
-                    'role' => null,
+                    'role' => 'Employee',
                 ], 200);
             }
         } catch (\Exception $e) {

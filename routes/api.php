@@ -62,6 +62,7 @@ Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentatio
 // Influencer Social
 Route::post('/get_Tiktok_info', [SocialInfluencerController::class, 'getTiktokInfo']);
 Route::post('/get_Youtube_info', [SocialInfluencerController::class, 'getYoutubeInfo']);
+Route::post('/get_Instagram_info', [SocialInfluencerController::class, 'getInstagramInfo']);
 
 Route::resource('presentation', PresentationController::class);
 Route::post('/presentation_page', [PresentationController::class, 'getPage']);
@@ -109,7 +110,7 @@ Route::post('/customer_page', [CustomerController::class, 'getPage']);
 Route::get('/get_customer', [CustomerController::class, 'getList']);
 Route::get('/search_customer', [CustomerController::class, 'searchData']);
 
-// Influencer Login
+// customer Login
 Route::post('/google_customer', [LoginController::class, 'customerlogin']);
 
 // Employee
@@ -118,8 +119,9 @@ Route::post('/employee_page', [EmployeeController::class, 'getPage']);
 Route::get('/get_employee', [EmployeeController::class, 'getList']);
 Route::post('/add_emp_credential', [EmployeeController::class, 'addCredential']);
 Route::get('/search_employee', [EmployeeController::class, 'searchData']);
-/// Employee Login
-Route::post('/login_employee', [LoginController::class, 'employeelogin']);
+
+// Employee Login
+Route::post('/google_employee', [LoginController::class, 'employeelogin']);
 
 // Department
 Route::resource('department', DepartmentController::class);
