@@ -187,7 +187,7 @@ class LoginController extends Controller
 
             $key = $request->gmail;
 
-            $Item = EmployeeCredential::where('UID', $key)
+            $Item = EmployeeCredential::where('email', $key)
                 ->first();
 
 
@@ -197,7 +197,7 @@ class LoginController extends Controller
                     'status' => true,
                     'message' => 'เข้าสู่ระบบสำเร็จ',
                     'id' => $Item->employee_id,
-                    'role' => 'Customer',
+                    'role' => 'Employee',
                     'token' => $Login->genToken($Item->id, $key),
                 ], 200);
             } else {

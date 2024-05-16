@@ -182,6 +182,14 @@ class EmployeeController extends Controller
             $Item->save();
             //
 
+
+            $latestId = $Item->id;
+
+            $influCredential = new EmployeeCredential();
+            $influCredential->employee_id = $latestId;
+            $influCredential->UID = $request->email;
+            $influCredential->save();
+
             //log
             $userId = $loginBy;
             $type = 'เพิ่มพนักงาน';
