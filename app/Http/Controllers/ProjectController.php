@@ -108,11 +108,11 @@ class ProjectController extends Controller
                                     ->whereBetween('subscribe', [$minSubscribe, $maxSubscribe]);
                             });
                             $query->with('career')
-                            ->with('contentstyle')
-                            ->with(['platform_socials' => function ($query) {
-                                // Select only the name and subscribe columns from the pivot table
-                                $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name', 'subscribe', 'link');
-                            }]);
+                                ->with('contentstyle')
+                                ->with(['platform_socials' => function ($query) {
+                                    // Select only the name and subscribe columns from the pivot table
+                                    $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name', 'subscribe', 'link');
+                                }]);
                         }]);
                     }
                 }
@@ -173,38 +173,45 @@ class ProjectController extends Controller
 
     public function UpdateProjectStatus($id)
     {
-        try{
-        DB::beginTransaction();
-        
-        $Line = new LineNotifyProjectController;
-        $project = Project::find($id);
-        $message_data = 
-        "แจ้งเตือนโปรเจ็ค : " . $project->name . " 📱 \n" .
-        "มีการอัปเดตสถานะโปรเจ็คจาก " ."\n" .  $project->status . " เป็น " ;
-        if ($project) {
-            if($project->status == "open"){
-                $project->status = "ongoing";
-                $message_data = $message_data . "ongoing";
-                $Line->NoticeLine($message_data);
-            }elseif($project->status == "ongoing"){
-                $project->status = "closed";
-                $message_data = $message_data . "closed";
-                $Line->NoticeLine($message_data);
-            }else{
-                $message_data = "โปรเจคนี้ปิดไปแล้วครับพี่ 😅";
-                $Line->NoticeLine($message_data);
-            }
-            $project->save();
-            DB::commit();
-            return $this->returnSuccess('อัปเดตสถานะโปรเจคสําเร็จ ', $project);
-        }else{
-            return $this->returnErrorData('ไม่มีโปรเจคนี้ในระบบ ', 404);
-        }
-        }catch(\Exception $e){
-            DB::rollback();
-            return $this->returnErrorData('เกิดข้อผิดพลาดในการอัปเดคสถานะโปรเจค '. $e, 404);
-        }
+        $loginBy = "admin";
+        try {
 
+            DB::beginTransaction();
+
+            $Line = new LineNotifyProjectController;
+            $project = Project::find($id);
+            $message_data =
+                "แจ้งเตือนโปรเจ็ค : " . $project->name . " 📱 \n" .
+                "มีการอัปเดตสถานะโปรเจ็คจาก " . "\n" .  $project->status . " เป็น ";
+            if ($project) {
+                if ($project->status == "open") {
+                    $project->status = "ongoing";
+                    $message_data = $message_data . "ongoing";
+                    $Line->NoticeLine($message_data);
+                } elseif ($project->status == "ongoing") {
+                    $project->status = "closed";
+                    $message_data = $message_data . "closed";
+                    $Line->NoticeLine($message_data);
+                } else {
+                    $message_data = "โปรเจคนี้ปิดไปแล้วครับพี่ 😅";
+                    $Line->NoticeLine($message_data);
+                }
+                $project->save();
+
+                //log
+                $userId = $loginBy;
+                $type = 'อัปเดตสถานะโปรเจ็ค';
+                $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
+                $this->Log($userId, $description, $type);
+                DB::commit();
+                return $this->returnSuccess('อัปเดตสถานะโปรเจคสําเร็จ ', $project);
+            } else {
+                return $this->returnErrorData('ไม่มีโปรเจคนี้ในระบบ ', 404);
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $this->returnErrorData('เกิดข้อผิดพลาดในการอัปเดคสถานะโปรเจค ' . $e, 404);
+        }
     }
     public function index()
     {
