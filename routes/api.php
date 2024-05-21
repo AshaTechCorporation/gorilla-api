@@ -28,6 +28,7 @@ use App\Http\Controllers\PresentationController;
 use App\Http\Controllers\InfluencerAddressController;
 use App\Http\Controllers\ProjectTimelineController;
 use App\Http\Controllers\SocialInfluencerController;
+use App\Models\Project;
 use Illuminate\Support\Facades\Route;
 
 
@@ -58,6 +59,9 @@ Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
 
 // Presentatiion
 Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentation']);
+
+// Line Notification
+Route::get('/updateproject/{id}', [ProjectController::class, 'UpdateProjectStatus']);
 
 // Influencer Social
 Route::post('/get_Tiktok_info', [SocialInfluencerController::class, 'getTiktokInfo']);

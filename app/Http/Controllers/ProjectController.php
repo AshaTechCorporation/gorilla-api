@@ -8,6 +8,8 @@ use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\Influencer;
 use App\Models\SubType;
+
+use App\Http\Controllers\LineNotifyProjectController;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
@@ -167,6 +169,42 @@ class ProjectController extends Controller
         }
 
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $d);
+    }
+
+    public function UpdateProjectStatus($id)
+    {
+        try{
+        DB::beginTransaction();
+        
+        $Line = new LineNotifyProjectController;
+        $project = Project::find($id);
+        $message_data = 
+        "แจ้งเตือนโปรเจ็ค : " . $project->name . " 📱 \n" .
+        "มีการอัปเดตสถานะโปรเจ็คจาก " ."\n" .  $project->status . " เป็น " ;
+        if ($project) {
+            if($project->status == "open"){
+                $project->status = "ongoing";
+                $message_data = $message_data . "ongoing";
+                $Line->NoticeLine($message_data);
+            }elseif($project->status == "ongoing"){
+                $project->status = "closed";
+                $message_data = $message_data . "closed";
+                $Line->NoticeLine($message_data);
+            }else{
+                $message_data = "โปรเจคนี้ปิดไปแล้วครับพี่ 😅";
+                $Line->NoticeLine($message_data);
+            }
+            $project->save();
+            DB::commit();
+            return $this->returnSuccess('อัปเดตสถานะโปรเจคสําเร็จ ', $project);
+        }else{
+            return $this->returnErrorData('ไม่มีโปรเจคนี้ในระบบ ', 404);
+        }
+        }catch(\Exception $e){
+            DB::rollback();
+            return $this->returnErrorData('เกิดข้อผิดพลาดในการอัปเดคสถานะโปรเจค '. $e, 404);
+        }
+
     }
     public function index()
     {
