@@ -22,6 +22,7 @@ class EventServiceProvider extends ServiceProvider
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
             // ... other providers
             'SocialiteProviders\\Line\\LineExtendSocialite@handle',
+            \SocialiteProviders\YouTube\YouTubeExtendSocialite::class.'@handle',
         ],
         
     ];

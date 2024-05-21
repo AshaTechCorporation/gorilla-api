@@ -21,6 +21,20 @@ Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
 // Presentatiion
 Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentation']);
 
+// //Google
+// Route::get('/login/google', [App\Http\Controllers\Auth\SocialiteController::class, 'redirectToGoogle'])->name('login.google');
+// Route::get('/login/google/callback', [App\Http\Controllers\Auth\SocialiteController::class, 'handleGoogleCallback']);
+//Facebook
+Route::get('/login/facebook', [App\Http\Controllers\Auth\SocialiteController::class, 'redirectToFacebook'])->name('login.facebook');
+Route::get('/login/facebook/callback', [App\Http\Controllers\Auth\SocialiteController::class, 'handleFacebookCallback']);
+// //Github
+// Route::get('/login/github', [App\Http\Controllers\Auth\SocialiteController::class, 'redirectToGithub'])->name('login.github');
+// Route::get('/login/github/callback', [App\Http\Controllers\Auth\SocialiteController::class, 'handleGithubCallback']);
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
+
+// Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

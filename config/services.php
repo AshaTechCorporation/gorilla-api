@@ -30,21 +30,21 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    // 'facebook' => [
-    //     'client_id' => '733906460725761',
-    //     'client_secret' => '8650482ed058dc930a02090217d02acc',
-    //     'redirect' => 'http://localhost/asha/Affiliate/Affiliate-api/public/login/facebook/callback',
-    // ],
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => 'your_redirect_url',
+     ],
+     'facebook' => [
+        'client_id' => env('FACEBOOK_CLIENT_ID'),
+        'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
+        'redirect' => 'your_redirect_url',
+     ],
 
-    // 'google' => [
-    //     'client_id'     => '703305436277-mcpcoogi1mbqvl8ln5a1buppoesuo5ds.apps.googleusercontent.com',
-    //     'client_secret' => 'Tj8h0zrVp8mqV2eTrEf-yLc_',
-    //     'redirect'      => 'http://localhost/asha/Affiliate/Affiliate-api/public/login/google/callback'
-    // ],
-    'line' => [
-        'client_id' => env('LINE_CLIENT_ID'),
-        'client_secret' => env('LINE_CLIENT_SECRET'),
-        'redirect' => env('LINE_REDIRECT_URI'),
-    ],
+     'youtube' => [    
+        'client_id' => env('YOUTUBE_CLIENT_ID'),  
+        'client_secret' => env('YOUTUBE_CLIENT_SECRET'),  
+        'redirect' => "http://localhost:4200/sign-in"
+      ],
 
 ];
