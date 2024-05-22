@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SubType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SubtypeController extends Controller
 {
@@ -106,6 +107,30 @@ class SubtypeController extends Controller
      */
     public function store(Request $request)
     {
+
+        // $loginBy = $request->login_by;
+
+        // if (!isset($loginBy)) {
+        //     return $this->returnError('ไม่พบข้อมูลผู้ใช้งาน กรุณาเข้าสู่ระบบใหม่อีกครั้ง', 404);
+        // }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'max' => 'required|numeric',
+            'min' => 'required|numeric',
+        ], [
+            'name.required' => 'กรุณาระบุชื่อระดับ',
+            'max.required' => 'กรุณาระบุค่าสูงสุด',
+            'max.numeric' => 'กรุณาระบุค่าสูงสุดเป็นตัวเลข',
+            'min.required' => 'กรุณาระบุค่าต่ําสุด',
+            'min.numeric' => 'กรุณาระบุค่าต่ําสุดเป็นตัวเลข',
+
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            return $this->returnError('Invaild input data', $errors);
+        }
         DB::beginTransaction();
 
         try {
