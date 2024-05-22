@@ -129,7 +129,7 @@ class SubtypeController extends Controller
 
         if ($validator->fails()) {
             $errors = $validator->errors();
-            return $this->returnError('Invaild input data', $errors);
+            return $this->returnError('Invaild input data', $errors, 404);
         }
         DB::beginTransaction();
 
