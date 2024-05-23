@@ -15,6 +15,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use Intervention\Image\Facades\Image;
+use \Firebase\JWT\JWT;
 use Illuminate\Support\Facades\DB;
 use Berkayk\OneSignal\OneSignalFacade;
 use PhpParser\Node\Stmt\TryCatch;
@@ -629,6 +630,17 @@ class Controller extends BaseController
         return $query;
     }
 
+    public function decodername($data)
+    {
+        $token = str_replace('Bearer ', '', $data);
+
+            if ($token == "") {
+                return $this->returnError('Token Not Found', 401);
+            }
+            $name = JWT::decode($token, "key", array('HS256'))->lun;
+
+            return $name;
+    }
     /////////////////////////////////////////// seach datatable  ///////////////////////////////////////////
 
 }

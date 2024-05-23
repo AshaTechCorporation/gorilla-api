@@ -167,7 +167,7 @@ class EmployeeController extends Controller
 
             //log
             $userId = $loginBy;
-            $type = 'เพิ่มพนักงาน';
+            $type = 'สมัครเข้าใช้งานเป็นครั้งแรก';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);
             

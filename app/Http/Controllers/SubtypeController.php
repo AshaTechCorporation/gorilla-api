@@ -143,9 +143,10 @@ class SubtypeController extends Controller
             $Item->save();
             //
 
+            $Byname = $this->decodername($request->header('Authorization'));
             //log
-            $userId = "admin";
-            $type = 'เพิ่มsocial';
+            $userId = $Byname;
+            $type = 'เพิ่มระดับ follower';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);
 
@@ -227,9 +228,10 @@ class SubtypeController extends Controller
             $Item->save();
             //
 
+            $Byname = $this->decodername($request->header('Authorization'));
             //log
-            $userId = "admin";
-            $type = 'แก้ไขsocial';
+            $userId = $Byname;
+            $type = 'แก้ไขระดับ follower';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);
 
@@ -251,7 +253,7 @@ class SubtypeController extends Controller
      * @param  \App\Models\SubType  $SubType
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         DB::beginTransaction();
 
@@ -260,9 +262,10 @@ class SubtypeController extends Controller
             $Item = SubType::find($id);
             $Item->delete();
 
+            $Byname = $this->decodername($request->header('Authorization'));
             //log
-            $userId = "admin";
-            $type = 'ลบsocial';
+            $userId = $Byname;
+            $type = 'ลบระดับ follower';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type;
             $this->Log($userId, $description, $type);
             //

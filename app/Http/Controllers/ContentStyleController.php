@@ -109,7 +109,7 @@ class ContentStyleController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
         ], [
-            'name.required' => 'กรุณาระบุชื่อ',
+            'name.required' => 'กรุณาระบุชื่อคอนเทนท์',
         ]);
         
         if ($validator->fails()) {
@@ -126,8 +126,9 @@ class ContentStyleController extends Controller
             $Item->save();
             //
 
+            $Byname = $this->decodername($request->header('Authorization'));
             //log
-            $userId = "admin";
+            $userId = $Byname;
             $type = 'เพิ่มรายการ';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type . ' ' . $request->name;
             $this->Log($userId, $description, $type);
@@ -187,7 +188,7 @@ class ContentStyleController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
         ], [
-            'name.required' => 'กรุณาระบุชื่อ',
+            'name.required' => 'กรุณาระบุชื่อคอนเทนท์',
         ]);
         
         if ($validator->fails()) {
@@ -204,8 +205,9 @@ class ContentStyleController extends Controller
             $Item->save();
             //
 
+            $Byname = $this->decodername($request->header('Authorization'));
             //log
-            $userId = "admin";
+            $userId = $Byname;
             $type = 'เพิ่มรายการ';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type . ' ' . $request->name;
             $this->Log($userId, $description, $type);
@@ -228,7 +230,7 @@ class ContentStyleController extends Controller
      * @param  \App\Models\ContentStyle  $ContentStyle
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         DB::beginTransaction();
 
@@ -237,8 +239,9 @@ class ContentStyleController extends Controller
             $Item = ContentStyle::find($id);
             $Item->delete();
 
+            $Byname = $this->decodername($request->header('Authorization'));
             //log
-            $userId = "admin";
+            $userId = $Byname;
             $type = 'ลบผู้ใช้งาน';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type;
             $this->Log($userId, $description, $type);

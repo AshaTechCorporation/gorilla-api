@@ -104,11 +104,17 @@ class CareerController extends Controller
      */
     public function store(Request $request)
     {
-        $loginBy = $request->login_by;
 
-        if (!isset($request->name)) {
-            return $this->returnErrorData('กรุณาระบุข้อมูลให้เรียบร้อย', 404);
-        } else
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ], [
+            'name.required' => 'กรุณาระบุชื่ออาชีพ',
+        ]);
+        
+        if ($validator->fails()) {
+            $errors = $validator->errors()->first();
+            return $this->returnErrorData($errors, 422);
+        }
 
             DB::beginTransaction();
 
@@ -119,8 +125,9 @@ class CareerController extends Controller
             $Item->save();
             //
 
+            $Byname = $this->decodername($request->header('Authorization'));
             //log
-            $userId = "admin";
+            $userId = $Byname;
             $type = 'เพิ่มรายการ';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type . ' ' . $request->name;
             $this->Log($userId, $description, $type);
@@ -177,9 +184,17 @@ class CareerController extends Controller
     {
         $loginBy = $request->login_by;
 
-        if (!isset($id)) {
-            return $this->returnErrorData('กรุณาระบุข้อมูลให้เรียบร้อย', 404);
-        } else
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ], [
+            'name.required' => 'กรุณาระบุชื่ออาชีพ',
+        ]);
+        
+        if ($validator->fails()) {
+            $errors = $validator->errors()->first();
+            return $this->returnErrorData($errors, 422);
+        }
+
 
             DB::beginTransaction();
 
@@ -190,8 +205,9 @@ class CareerController extends Controller
             $Item->save();
             //
 
+            $Byname = $this->decodername($request->header('Authorization'));
             //log
-            $userId = "admin";
+            $userId = $Byname;
             $type = 'เพิ่มรายการ';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type . ' ' . $request->name;
             $this->Log($userId, $description, $type);
@@ -214,7 +230,7 @@ class CareerController extends Controller
      * @param  \App\Models\Career  $Career
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         DB::beginTransaction();
 
@@ -223,8 +239,9 @@ class CareerController extends Controller
             $Item = Career::find($id);
             $Item->delete();
 
+            $Byname = $this->decodername($request->header('Authorization'));
             //log
-            $userId = "admin";
+            $userId = $Byname;
             $type = 'ลบผู้ใช้งาน';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type;
             $this->Log($userId, $description, $type);
