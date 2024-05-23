@@ -188,8 +188,8 @@ class LoginController extends Controller
             $key = $request->email;
 
             $Item = EmployeeCredential::where('UID', $key)
-                ->first();
-
+            ->with('employees')    
+            ->first();
 
             if ($Item) {
                 return response()->json([
@@ -198,7 +198,8 @@ class LoginController extends Controller
                     'message' => 'เข้าสู่ระบบสำเร็จ',
                     'id' => $Item->employee_id,
                     'role' => 'Employee',
-                    'token' => $Login->genToken($Item->id, $key),
+                    'data' => $Item,
+                    'token' => $Login->genToken($Item->id, $Item->employees->fname ." ". $Item->employees->lname),
                 ], 200);
             } else {
 

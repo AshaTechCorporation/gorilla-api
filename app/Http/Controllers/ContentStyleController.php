@@ -106,9 +106,16 @@ class ContentStyleController extends Controller
     {
         $loginBy = $request->login_by;
 
-        if (!isset($request->name)) {
-            return $this->returnErrorData('กรุณาระบุข้อมูลให้เรียบร้อย', 404);
-        } else
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ], [
+            'name.required' => 'กรุณาระบุชื่อ',
+        ]);
+        
+        if ($validator->fails()) {
+            $errors = $validator->errors()->first();
+            return $this->returnErrorData($errors, 422);
+        }
 
             DB::beginTransaction();
 
@@ -177,9 +184,16 @@ class ContentStyleController extends Controller
     {
         $loginBy = $request->login_by;
 
-        if (!isset($id)) {
-            return $this->returnErrorData('กรุณาระบุข้อมูลให้เรียบร้อย', 404);
-        } else
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ], [
+            'name.required' => 'กรุณาระบุชื่อ',
+        ]);
+        
+        if ($validator->fails()) {
+            $errors = $validator->errors()->first();
+            return $this->returnErrorData($errors, 422);
+        }
 
             DB::beginTransaction();
 

@@ -126,6 +126,7 @@ Route::get('/search_employee', [EmployeeController::class, 'searchData']);
 
 // Employee Login
 Route::post('/google_employee', [LoginController::class, 'employeelogin']);
+Route::post('/selfassign_employee', [EmployeeController::class, 'selfassign']);
 
 // Department
 Route::resource('department', DepartmentController::class);

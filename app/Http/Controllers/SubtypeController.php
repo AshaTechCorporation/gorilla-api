@@ -116,21 +116,22 @@ class SubtypeController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'max' => 'required|numeric',
+            'max' => 'required|numeric|gt:min', // Added 'gt:min' rule
             'min' => 'required|numeric',
         ], [
             'name.required' => 'กรุณาระบุชื่อระดับ',
             'max.required' => 'กรุณาระบุค่าสูงสุด',
             'max.numeric' => 'กรุณาระบุค่าสูงสุดเป็นตัวเลข',
-            'min.required' => 'กรุณาระบุค่าต่ําสุด',
-            'min.numeric' => 'กรุณาระบุค่าต่ําสุดเป็นตัวเลข',
-
+            'max.gt' => 'ค่าสูงสุดต้องมากกว่าค่าต่ำสุด', // Added custom message for 'gt' rule
+            'min.required' => 'กรุณาระบุค่าต่ำสุด',
+            'min.numeric' => 'กรุณาระบุค่าต่ำสุดเป็นตัวเลข',
         ]);
-
+        
         if ($validator->fails()) {
-            $errors = $validator->errors();
-            return $this->returnError('Invaild input data', $errors, 404);
+            $errors = $validator->errors()->first();
+            return $this->returnErrorData($errors, 422);
         }
+        
         DB::beginTransaction();
 
         try {
@@ -197,6 +198,23 @@ class SubtypeController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'max' => 'required|numeric|gt:min', // Added 'gt:min' rule
+            'min' => 'required|numeric',
+        ], [
+            'name.required' => 'กรุณาระบุชื่อระดับ',
+            'max.required' => 'กรุณาระบุค่าสูงสุด',
+            'max.numeric' => 'กรุณาระบุค่าสูงสุดเป็นตัวเลข',
+            'max.gt' => 'ค่าสูงสุดต้องมากกว่าค่าต่ำสุด', // Added custom message for 'gt' rule
+            'min.required' => 'กรุณาระบุค่าต่ำสุด',
+            'min.numeric' => 'กรุณาระบุค่าต่ำสุดเป็นตัวเลข',
+        ]);
+        
+        if ($validator->fails()) {
+            $errors = $validator->errors()->first();
+            return $this->returnErrorData($errors, 422);
+        }
         DB::beginTransaction();
 
         try {

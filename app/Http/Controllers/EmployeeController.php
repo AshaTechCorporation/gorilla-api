@@ -104,6 +104,94 @@ class EmployeeController extends Controller
             return $this->returnErrorData($e->getMessage(), 404);
         }
     }
+
+    public function selfassign(Request $request)
+    {
+
+        if (!isset($request->ecode)) {
+            return $this->returnErrorData('กรุณาระบุ ecode ให้เรียบร้อย', 404);
+        }else if (!isset($request->prefix)) {
+            return $this->returnErrorData('กรุณาระบุ prefix ให้เรียบร้อย', 404);
+        }else if(!isset($request->fname)){
+            return $this->returnErrorData('กรุณาระบุ fname ให้เรียบร้อย', 404);
+        }else if (!isset($request->lname)) {
+            return $this->returnErrorData('กรุณาระบุ lname ให้เรียบร้อย', 404);
+        }else if (!isset($request->nickname)) {
+            return $this->returnErrorData('กรุณาระบุ nickname ให้เรียบร้อย', 404);
+        }else if (!isset($request->phone)) {
+            return $this->returnErrorData('กรุณาระบุ phone	ให้เรียบร้อย', 404);
+        }
+        else
+
+            DB::beginTransaction();
+
+        try {
+            $Item = new Employee();
+
+            $Item->department_id = $request->department_id;
+            $Item->position_id = $request->position_id;
+            // $Item->credentials_id = $request->credentials_id;
+
+            //get data
+            $Department = Department::find($Item->department_id);
+            if (!$Department) {
+                return $this->returnErrorData('ไม่พบแผนก', 404);
+            }
+            $Position = Position::find($Item->position_id);
+            if (!$Position) {
+                return $this->returnErrorData('ไม่พบตำแหน่ง', 404);
+            }
+            // $Credentials_id = EmployeeCredential::find($Item->credentials_id);
+            // if (!$Credentials_id) {
+            //     return $this->returnErrorData('ไม่พบพนักงานในระบบ', 404);
+            // }
+
+            $Item->ecode = $request->ecode;
+            $Item->prefix = $request->prefix;
+            $Item->fname = $request->fname;
+            $Item->lname= $request->lname;
+            $Item->nickname= $request->nickname;
+            $Item->phone= $request->phone;
+            
+            $Item->save();
+            //
+
+            $loginBy = $Item->fname ." " .$Item->lname;
+
+            $latestId = $Item->id;
+
+            $influCredential = new EmployeeCredential();
+            $influCredential->employee_id = $latestId;
+            $influCredential->UID = $request->email;
+            $influCredential->save();
+
+            //log
+            $userId = $loginBy;
+            $type = 'เพิ่มพนักงาน';
+            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
+            $this->Log($userId, $description, $type);
+            
+
+            DB::commit();
+
+            $Login = new LoginController();
+
+            return response()->json([
+                'code' => '200',
+                'status' => true,
+                'message' => 'เข้าสู่ระบบสำเร็จ',
+                'id' => $Item->employee_id,
+                'role' => 'Employee',
+                'data' => $Item,
+                'token' => $Login->genToken($Item->id, $loginBy),
+            ], 200);
+        } catch (\Throwable $e) {
+
+            DB::rollback();
+
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+        }
+    }
         /**
      * Display a listing of the resource.
      *
