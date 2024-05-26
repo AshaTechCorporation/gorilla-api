@@ -481,23 +481,54 @@ class InfluencerController extends Controller
      */
     public function store(Request $request)
     {
-        $loginBy = "admin";
         $socialID = $request->socials;
-        $projectID = $request->project_id;
 
-        if (!isset($request->fullname)) {
-            return $this->returnErrorData('กรุณาระบุ ชื่อ ให้เรียบร้อย', 404);
-        } else if (!isset($request->gender)) {
-            return $this->returnErrorData('กรุณาระบุ เพศ ให้เรียบร้อย', 404);
-        } else if (!isset($request->phone)) {
-            return $this->returnErrorData('กรุณาระบุ เบอร์โทร ให้เรียบร้อย', 404);
-        } else if (!isset($request->email)) {
-            return $this->returnErrorData('กรุณาระบุ อีเมล ให้เรียบร้อย', 404);
-        } else if (!isset($request->line_id)) {
-            return $this->returnErrorData('กรุณาระบุ Line ID ให้เรียบร้อย', 404);
-        } else if (!isset($request->birthday)) {
-            return $this->returnErrorData('กรุณาระบุ วันเกิด ให้เรียบร้อย', 404);
-        } else
+        $rules = [
+            'fullname' => 'required|string|max:255',
+            'gender' => 'required|string',
+            'phone' => 'required|numeric',
+            'career_id' => 'required',
+            'content_style_id' => 'required',
+            'email' => 'nullable|email|max:255',
+            'line_id' => 'nullable|string|max:255',
+            'birthday' => 'nullable|date',
+            'product_address' => 'nullable|string|max:255',
+            'product_province' => 'nullable|string|max:255',
+            'product_district' => 'nullable|string|max:255',
+            'product_subdistrict' => 'nullable|string|max:255',
+            'product_zip' => 'nullable|string|max:10',
+            'bank_id' => 'nullable|exists:banks,id',
+            'bank_account' => 'nullable|string|max:255',
+            'bank_brand' => 'nullable|string|max:255',
+            'id_card' => 'nullable|string|max:255',
+            'name_of_card' => 'nullable|string|max:255',
+            'address_of_card' => 'nullable|string|max:255',
+            'influencer_province' => 'nullable|string|max:255',
+            'influencer_district' => 'nullable|string|max:255',
+            'influencer_subdistrict' => 'nullable|string|max:255',
+            'influencer_zip' => 'nullable|string|max:10',
+            'map' => 'nullable|string|max:255',
+            'current_address' => 'nullable|string|max:255',
+            'note' => 'nullable|string|max:1000',
+            'project_id' => 'nullable|exists:projects,id',
+        ];
+    
+        $messages = [
+            'fullname.required' => 'กรุณาระบุชื่อระดับ',
+            'gender.required' => 'กรุณาระบุเพศ',
+            'phone.required' => 'กรุณาระบุเบอร์โทร',
+            'career_id.exists' => 'ไม่พบ career_id',
+            'content_style_id.exists' => 'ไม่พบ content_style_id',
+            'email.email' => 'รูปแบบอีเมลไม่ถูกต้อง',
+            'phone.numeric' => 'เบอร์โทรต้องเป็นตัวเลข',
+        ];
+    
+        $validator = Validator::make($request->all(), $rules, $messages);
+    
+        if ($validator->fails()) {
+            $errors = $validator->errors()->first();
+            return $this->returnErrorData($errors, 422);
+        }
 
             DB::beginTransaction();
 
@@ -605,8 +636,10 @@ class InfluencerController extends Controller
             $influCredential->GK = Str::random(5);
             $influCredential->save();
 
+            $Byname = $this->decodername($request->header('Authorization'));
             //log
-            $userId = $loginBy;
+
+            $userId = $Byname;
             $type = 'เพิ่มผู้ใช้งาน';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);

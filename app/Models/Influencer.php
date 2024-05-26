@@ -27,6 +27,11 @@ class Influencer extends Model
         return $this->belongsToMany(Project::class);
     }
 
+    public function products()
+    {
+        return $this->belongsToMany(Product::class);
+    }
+
     public function career()
     {
         return $this->belongsTo(Career::class);
