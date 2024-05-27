@@ -32,6 +32,11 @@ class Influencer extends Model
         return $this->belongsToMany(Product::class);
     }
 
+    public function timeline()
+    {
+        return $this->belongsToMany(InfluencerProjectTimeline::class, 'project_timeline_id');
+    }
+
     public function career()
     {
         return $this->belongsTo(Career::class);

@@ -10,6 +10,7 @@ use App\Models\Influencer;
 use App\Models\SubType;
 
 use App\Http\Controllers\LineNotifyProjectController;
+use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
@@ -51,7 +52,6 @@ class ProjectController extends Controller
         $orderby = array('id', 'customer_id', 'name', 'strdate', 'enddate', 'numinflu', 'projectdes', 'created_at');
 
         $D = Project::select($col)
-            ->with('customer')
             ->with('employees')
             ->with(['influencers' => function ($query) {
                 $query->with('career')
@@ -237,54 +237,55 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $loginBy = "admin";
-        $employeeID = $request->employees;
 
-        if (!isset($request->name)) {
-            return $this->returnErrorData('กรุณาระบุ name ให้เรียบร้อย', 404);
-        } else if (!isset($request->strdate)) {
-            return $this->returnErrorData('กรุณาระบุ strdate ให้เรียบร้อย', 404);
-        } else if (!isset($request->enddate)) {
-            return $this->returnErrorData('กรุณาระบุ enddate ให้เรียบร้อย', 404);
-        } else if (!isset($request->productname)) {
-            return $this->returnErrorData('กรุณาระบุ productname ให้เรียบร้อย', 404);
-        } else if (!isset($request->enddate)) {
-            return $this->returnErrorData('กรุณาระบุ enddate ให้เรียบร้อย', 404);
-        } else if (!isset($request->productname)) {
-            return $this->returnErrorData('กรุณาระบุ productname ให้เรียบร้อย', 404);
-        } else
-
-            DB::beginTransaction();
+        DB::beginTransaction();
 
         try {
             $Item = new Project();
 
-            $Item->customer_id = $request->customer_id;
-
-            $Customer = Customer::find($Item->customer_id);
-            if (!$Customer) {
-                return $this->returnErrorData('ไม่พบ customer_id', 404);
-            }
             $Item->name = $request->name;
             $Item->strdate = $request->strdate;
             $Item->enddate = $request->enddate;
-            $Item->productname = $request->productname;
-            $Item->numinflu = $request->numinflu;
-            $Item->projectdes = $request->projectdes;
+            $Item->customer_id = $request->customer_id;
 
             $Item->save();
 
-            if (isset($request->employees)) {
-                for ($i = 0; $i < count($employeeID); $i++) {
+            if (isset($request->products)) {
+                $products = $request->products;
+                foreach ($products as $product) {
 
-                    $employee = Employee::find($employeeID[$i]['employee_id']);
+                    $ItemP = new Product();
+                    $ItemP->project_id = $Item->id;
+                    $ItemP->name = $product['name'];
+                    $ItemP->productdes = $product['productdes'];
+                    $ItemP->save();
+                    if(isset($product['employees'])){
+                        $employees = $product['employees'];
+                        foreach ($employees as $employee) {
+                            $employee = Employee::find($employee['employee_id']);
 
-                    if ($employee == null) {
-                        return $this->returnErrorData('เกิดข้อผิดพลาดที่ $employee กรุณาลองใหม่อีกครั้ง ', 404);
-                    } else {
-                        $Item->employees()->attach($employee);
+                            if ($employee == null) {
+                                return $this->returnErrorData('เกิดข้อผิดพลาดที่ $employee กรุณาลองใหม่อีกครั้ง ', 404);
+                            } else {
+                                $ItemP->employees()->attach($employee);
+                            }
+                        }
                     }
                 }
             }
+
+            // if (isset($request->employees)) {
+            //     for ($i = 0; $i < count($employeeID); $i++) {
+
+            //         $employee = Employee::find($employeeID[$i]['employee_id']);
+
+            //         if ($employee == null) {
+            //             return $this->returnErrorData('เกิดข้อผิดพลาดที่ $employee กรุณาลองใหม่อีกครั้ง ', 404);
+            //         } else {
+            //             $Item->employees()->attach($employee);
+            //         }
+            //     }
+            // }
 
 
             //log

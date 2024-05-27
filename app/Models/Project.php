@@ -31,4 +31,9 @@ class Project extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
+    public function product_items()
+    {
+        return $this->hasMany(ProductItem::class);
+    }
 }

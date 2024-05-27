@@ -6,30 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Product extends Model
+class ProductItem extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    protected $table = 'products';
+    protected $table = 'product_items';
     protected $softDelete = true;
 
     protected $hidden = ['password', 'deleted_at'];
 
     //////////////////////////////////////// relation //////////////////////////////////////
-    public function influencers()
-    {
-        return $this->belongsToMany(Influencer::class);
-    }
 
-    public function employees()
+    public function product_timelines()
     {
-        return $this->belongsToMany(Employee::class);
+        return $this->belongsTo(ProductTimeline::class);
     }
-
-    public function projects()
-    {
-        return $this->belongsTo(Project::class);
-    }
-
 }

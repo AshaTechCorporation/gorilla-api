@@ -157,9 +157,11 @@ Route::get('/get_project', [ProjectController::class, 'getList']);
 Route::post('/add_project_influencer', [ProjectController::class, 'addInfluencer']);
 
 // Product
-Route::resource('product', ProductController::class);
-Route::post('/product_page', [ProductController::class, 'getPage']);
-Route::get('/get_product', [ProductController::class, 'getList']);
+// Route::resource('product', ProductController::class);
+// Route::post('/product_page', [ProductController::class, 'getPage']);
+// Route::get('/get_product', [ProductController::class, 'getList']);
+Route::get('/get_product/{id}', [ProductController::class, 'getProductbyProject']);
+Route::post('/product_item', [ProductController::class, 'addProductItem']);
 
 // Past Project
 Route::resource('pastproject', PastProjectController::class);

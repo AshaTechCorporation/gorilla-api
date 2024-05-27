@@ -19,7 +19,6 @@ class CreateProductsTable extends Migration
             $table->integer('project_id')->unsigned()->index();
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
             $table->string('name', 250)->charset('utf8')->nullable();
-            $table->string('numinflu', 100)->charset('utf8')->nullable();
             $table->string('productdes', 250)->charset('utf8')->nullable();
 
             $table->string('create_by', 100)->charset('utf8')->nullable();

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEmployeeProductsTable extends Migration
+class CreateInfluencerProjectTimelinesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,15 @@ class CreateEmployeeProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('employee_product', function (Blueprint $table) {
+        Schema::create('influencer_project_timelines', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('employee_id')->unsigned()->index();
-            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
+            $table->integer('influencer_id')->unsigned()->index();
+            $table->foreign('influencer_id')->references('id')->on('influencers')->onDelete('cascade');
 
-            $table->integer('product_id')->unsigned()->index();
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->integer('project_timeline_id')->unsigned()->index();
+            $table->foreign('project_timeline_id')->references('id')->on('project_timelines')->onDelete('cascade');
            
-            $table->enum('status', ['working', 'done', 'not'])->charset('utf8')->default('not');
             $table->string('create_by', 100)->charset('utf8')->nullable();
             $table->string('update_by', 100)->charset('utf8')->nullable();
 
@@ -38,6 +37,6 @@ class CreateEmployeeProductsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('employee_products');
+        Schema::dropIfExists('influencer_project_timelines');
     }
 }

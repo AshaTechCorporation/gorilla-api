@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
 use \Firebase\JWT\JWT;
 use App\Http\Controllers\LoginController;
+use Mockery\Undefined;
 
 class InfluencerController extends Controller
 {
@@ -354,6 +355,7 @@ class InfluencerController extends Controller
         $socialID = $request->socials;
         $id = $request->influencer_id;
 
+
         if (!isset($id)) {
             return $this->returnErrorData('ไม่พบข้อมูล id', 404);
         }
@@ -363,15 +365,54 @@ class InfluencerController extends Controller
         try {
             $Item = Influencer::find($id);
 
-            $Item->career_id = $Item->career_id;
-            $Item->content_style_id = $Item->content_style_id;
+            if($request->career_id != null){
+                $Item->career_id = $request->career_id;
+            }else{
+                $Item->career_id = $Item->career_id;
+            }
 
-            $Item->fullname = $Item->fullname;
-            $Item->gender = $Item->gender;
-            $Item->email = $Item->email;
-            $Item->phone = $Item->phone;
-            $Item->line_id = $Item->line_id;
-            $Item->birthday = $Item->birthday;
+            if($request->content_style_id != null){
+                $Item->content_style_id = $request->content_style_id;
+            }else{
+                $Item->content_style_id = $Item->content_style_id;
+            }
+
+            if($request->fullname != null){
+                $Item->fullname = $request->fullname;
+            }else{
+                $Item->fullname = $Item->fullname;
+            }
+
+            if($request->gender != null){
+                $Item->gender = $request->gender;
+            }else{
+                $Item->gender = $Item->gender;
+            }
+
+
+            if($request->email != null){
+                $Item->email = $request->email;
+            }else{
+                $Item->email = $Item->email;
+            }
+
+            if($request->phone != null){
+                $Item->phone = $request->phone;
+            }else{
+                $Item->phone = $Item->phone;
+            }
+            
+            if($request->line_id != null){
+                $Item->line_id = $request->line_id;
+            }else{
+                $Item->line_id = $Item->line_id;
+            }
+
+            if($request->birthday != null){
+                $Item->birthday = $request->birthday;
+            }else{  
+                $Item->birthday = $Item->birthday;
+            }
 
             $Item->product_address = $request->product_address;
             $Item->product_province = $request->product_province;
@@ -394,11 +435,11 @@ class InfluencerController extends Controller
             $Item->longitude = $request->longitude;
             $Item->note = $request->note;
 
-            if ($request->image_bank && $request->image_bank != null && $request->image_bank != 'null') {
+            if ($request->image_bank && $request->image_bank != null && $request->image_bank != 'null' && $request->image_bank != 'undefined') {
                 $Item->image_bank = $this->uploadImage($request->image_bank, '/image_bank');
             }
 
-            if ($request->image_card && $request->image_card != null && $request->image_card != 'null') {
+            if ($request->image_card && $request->image_card != null && $request->image_card != 'null' && $request->image_card != 'undefined') {
                 $Item->image_card = $this->uploadImage($request->image_card, '/image_card');
             }
             $Item->status = "Yes";
@@ -449,7 +490,7 @@ class InfluencerController extends Controller
             return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
         } catch (\Throwable $e) {
             DB::rollback();
-            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 404);
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
         }
     }
 
