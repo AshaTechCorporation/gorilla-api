@@ -38,6 +38,20 @@ class InfluencerController extends Controller
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
     }
 
+    public function getInfluencerTimeline(Request $request)
+    {
+        $social = $request->platform_social_id;
+        $subscirbe = $request->subscirbe;
+
+        $InfluencerProject = Influencer::with(['platform_socials' => function ($query) use ($social,$subscirbe) {
+            $query->where('platform_social_id', $social);
+            $query->where('subscirbe', $subscirbe);
+        }]);
+
+
+        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $InfluencerProject);
+    }
+
     public function getPage(Request $request)
     {
         $columns = $request->columns;
@@ -208,13 +222,56 @@ class InfluencerController extends Controller
     public function selfassign(Request $request)
     {
 
-        // $key = "key";
-        // $header = $request->header('Authorization');
-        // $token = str_replace('Bearer ', '', $header);
-        // $payload = JWT::decode($token, $key, array('HS256'));
-        
+        $loginBy = $this->decodername($request->header('Authorization'));
+
+        $rules = [
+            'fullname' => 'required|string|max:255',
+            'gender' => 'required|string',
+            'phone' => 'required|numeric',
+            'career_id' => 'required',
+            'content_style_id' => 'required',
+            'email' => 'nullable|email|max:255',
+            'line_id' => 'nullable|string|max:255',
+            'birthday' => 'nullable|date',
+            'product_address' => 'nullable|string|max:255',
+            'product_province' => 'nullable|string|max:255',
+            'product_district' => 'nullable|string|max:255',
+            'product_subdistrict' => 'nullable|string|max:255',
+            'product_zip' => 'nullable|string|max:10',
+            'bank_id' => 'nullable|exists:banks,id',
+            'bank_account' => 'nullable|string|max:255',
+            'bank_brand' => 'nullable|string|max:255',
+            'id_card' => 'nullable|string|max:255',
+            'name_of_card' => 'nullable|string|max:255',
+            'address_of_card' => 'nullable|string|max:255',
+            'influencer_province' => 'nullable|string|max:255',
+            'influencer_district' => 'nullable|string|max:255',
+            'influencer_subdistrict' => 'nullable|string|max:255',
+            'influencer_zip' => 'nullable|string|max:10',
+            'map' => 'nullable|string|max:255',
+            'current_address' => 'nullable|string|max:255',
+            'note' => 'nullable|string|max:1000',
+            'project_id' => 'nullable|exists:projects,id',
+        ];
+
+        $messages = [
+            'fullname.required' => 'กรุณาระบุชื่อระดับ',
+            'gender.required' => 'กรุณาระบุเพศ',
+            'phone.required' => 'กรุณาระบุเบอร์โทร',
+            'career_id.exists' => 'ไม่พบ career_id',
+            'content_style_id.exists' => 'ไม่พบ content_style_id',
+            'email.email' => 'รูปแบบอีเมลไม่ถูกต้อง',
+            'phone.numeric' => 'เบอร์โทรต้องเป็นตัวเลข',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->first();
+            return $this->returnErrorData($errors, 422);
+        }
+
         $socialID = $request->socials;
-        $projectID = $request->project_id;
 
         if (!isset($request->fullname)) {
             return $this->returnErrorData('กรุณาระบุ ชื่อ ให้เรียบร้อย', 404);
@@ -339,7 +396,7 @@ class InfluencerController extends Controller
             DB::commit();
             $Login = new LoginController();
             $latestId = Influencer::latest('id')->value('id');
-            
+
             return $this->returnSuccess('ดำเนินการสำเร็จ', $latestId);
         } catch (\Throwable $e) {
 
@@ -365,52 +422,52 @@ class InfluencerController extends Controller
         try {
             $Item = Influencer::find($id);
 
-            if($request->career_id != null){
+            if ($request->career_id != null) {
                 $Item->career_id = $request->career_id;
-            }else{
+            } else {
                 $Item->career_id = $Item->career_id;
             }
 
-            if($request->content_style_id != null){
+            if ($request->content_style_id != null) {
                 $Item->content_style_id = $request->content_style_id;
-            }else{
+            } else {
                 $Item->content_style_id = $Item->content_style_id;
             }
 
-            if($request->fullname != null){
+            if ($request->fullname != null) {
                 $Item->fullname = $request->fullname;
-            }else{
+            } else {
                 $Item->fullname = $Item->fullname;
             }
 
-            if($request->gender != null){
+            if ($request->gender != null) {
                 $Item->gender = $request->gender;
-            }else{
+            } else {
                 $Item->gender = $Item->gender;
             }
 
 
-            if($request->email != null){
+            if ($request->email != null) {
                 $Item->email = $request->email;
-            }else{
+            } else {
                 $Item->email = $Item->email;
             }
 
-            if($request->phone != null){
+            if ($request->phone != null) {
                 $Item->phone = $request->phone;
-            }else{
+            } else {
                 $Item->phone = $Item->phone;
             }
-            
-            if($request->line_id != null){
+
+            if ($request->line_id != null) {
                 $Item->line_id = $request->line_id;
-            }else{
+            } else {
                 $Item->line_id = $Item->line_id;
             }
 
-            if($request->birthday != null){
+            if ($request->birthday != null) {
                 $Item->birthday = $request->birthday;
-            }else{  
+            } else {
                 $Item->birthday = $Item->birthday;
             }
 
@@ -553,7 +610,7 @@ class InfluencerController extends Controller
             'note' => 'nullable|string|max:1000',
             'project_id' => 'nullable|exists:projects,id',
         ];
-    
+
         $messages = [
             'fullname.required' => 'กรุณาระบุชื่อระดับ',
             'gender.required' => 'กรุณาระบุเพศ',
@@ -563,15 +620,15 @@ class InfluencerController extends Controller
             'email.email' => 'รูปแบบอีเมลไม่ถูกต้อง',
             'phone.numeric' => 'เบอร์โทรต้องเป็นตัวเลข',
         ];
-    
+
         $validator = Validator::make($request->all(), $rules, $messages);
-    
+
         if ($validator->fails()) {
             $errors = $validator->errors()->first();
             return $this->returnErrorData($errors, 422);
         }
 
-            DB::beginTransaction();
+        DB::beginTransaction();
 
         try {
             $Item = new Influencer();
@@ -886,7 +943,7 @@ class InfluencerController extends Controller
      * @param  \App\Models\Influencer  $influencer
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         DB::beginTransaction();
 
@@ -896,8 +953,9 @@ class InfluencerController extends Controller
             $Item->platform_socials()->detach();
             $Item->delete();
 
+            $Byname = $this->decodername($request->header('Authorization'));
             //log
-            $userId = "admin";
+            $userId = $Byname;
             $type = 'ลบผู้ใช้งาน';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type;
             $this->Log($userId, $description, $type);
@@ -916,9 +974,56 @@ class InfluencerController extends Controller
 
     public function fixdataInfluencer(Request $request)
     {
-        $loginBy = "admin";
+        $Byname = $this->decodername($request->header('Authorization'));
         $socialID = $request->socials;
         $id = $request->influencer_id;
+
+        $rules = [
+            'fullname' => 'required|string|max:255',
+            'gender' => 'required|string',
+            'phone' => 'required|numeric',
+            'career_id' => 'required',
+            'content_style_id' => 'required',
+            'email' => 'nullable|email|max:255',
+            'line_id' => 'nullable|string|max:255',
+            'birthday' => 'nullable|date',
+            'product_address' => 'nullable|string|max:255',
+            'product_province' => 'nullable|string|max:255',
+            'product_district' => 'nullable|string|max:255',
+            'product_subdistrict' => 'nullable|string|max:255',
+            'product_zip' => 'nullable|string|max:10',
+            'bank_id' => 'nullable|exists:banks,id',
+            'bank_account' => 'nullable|string|max:255',
+            'bank_brand' => 'nullable|string|max:255',
+            'id_card' => 'nullable|string|max:255',
+            'name_of_card' => 'nullable|string|max:255',
+            'address_of_card' => 'nullable|string|max:255',
+            'influencer_province' => 'nullable|string|max:255',
+            'influencer_district' => 'nullable|string|max:255',
+            'influencer_subdistrict' => 'nullable|string|max:255',
+            'influencer_zip' => 'nullable|string|max:10',
+            'map' => 'nullable|string|max:255',
+            'current_address' => 'nullable|string|max:255',
+            'note' => 'nullable|string|max:1000',
+            'project_id' => 'nullable|exists:projects,id',
+        ];
+
+        $messages = [
+            'fullname.required' => 'กรุณาระบุชื่อระดับ',
+            'gender.required' => 'กรุณาระบุเพศ',
+            'phone.required' => 'กรุณาระบุเบอร์โทร',
+            'career_id.exists' => 'ไม่พบ career_id',
+            'content_style_id.exists' => 'ไม่พบ content_style_id',
+            'email.email' => 'รูปแบบอีเมลไม่ถูกต้อง',
+            'phone.numeric' => 'เบอร์โทรต้องเป็นตัวเลข',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->first();
+            return $this->returnErrorData($errors, 422);
+        }
 
         if (!isset($id)) {
             return $this->returnErrorData('ไม่พบข้อมูล id', 404);
@@ -977,36 +1082,9 @@ class InfluencerController extends Controller
                 $Item->image_card = $this->uploadImage($request->image_card, '/image_card');
             }
             $Item->status = "Yes";
-            $Item->update_by = $loginBy;
+            $Item->update_by = $Byname;
 
             $Item->save();
-
-
-            // if ($request->socials === "SocialTemp") {
-            //     $request->merge([
-            //         'socials' => [
-            //             [
-            //                 'platform_social_id' => 1,
-            //                 'name' => 'Facebook',
-            //                 'subscribe' => 1000,
-            //                 'link' => 'https://www.facebook.com/example'
-            //             ],
-            //             [
-            //                 'platform_social_id' => 2,
-            //                 'name' => 'Tiktok',
-            //                 'subscribe' => 15000,
-            //                 'link' => 'https://www.tiktok.com/example'
-            //             ],
-            //             [
-            //                 'platform_social_id' => 3,
-            //                 'name' => 'Youtube',
-            //                 'subscribe' => 3000,
-            //                 'link' => 'https://www.youtube.com/example'
-            //             ]
-            //         ]
-            //     ]);
-            // }
-
 
             if (isset($request->socials)) {
                 $decodedSocials = [];
@@ -1045,8 +1123,10 @@ class InfluencerController extends Controller
                     $Item->projects()->attach($project, ['status' => $status]);
                 }
             }
+
             //log
-            $userId = $loginBy;
+
+            $userId = $Byname;
             $type = 'แก้ไขผู้ใช้งาน';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);

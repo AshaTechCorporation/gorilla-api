@@ -16,19 +16,24 @@ class CreateProjectTimelinesTable extends Migration
         Schema::create('project_timelines', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('year')->nullable();
-            $table->integer('month')->nullable();
+            $table->integer('product_item_id')->unsigned()->index();
+            $table->foreign('product_item_id')->references('id')->on('product_items')->onDelete('cascade');
 
-            $table->integer('project_id')->unsigned()->index();
-            $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
+            $table->integer('influencer_id')->unsigned()->index();
+            $table->foreign('influencer_id')->references('id')->on('influencers')->onDelete('cascade');
 
-            $table->integer('product_id')->unsigned()->index();
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->text('draft_link1')->charset('utf8')->nullable();
+            $table->text('client_feedback1')->charset('utf8')->nullable();
+            $table->text('admin_feedback1')->charset('utf8')->nullable();
 
-            $table->text('draft_link')->charset('utf8')->nullable();
-            $table->text('client_feedback')->charset('utf8')->nullable();
-            $table->text('admin_feedback')->charset('utf8')->nullable();
-            $table->enum('round_draft', ['round1', 'round2', 'round3', 'done'])->charset('utf8')->default('round1');
+            $table->text('draft_link2')->charset('utf8')->nullable();
+            $table->text('client_feedback2')->charset('utf8')->nullable();
+            $table->text('admin_feedback2')->charset('utf8')->nullable();
+
+            $table->text('draft_link3')->charset('utf8')->nullable();
+            $table->text('client_feedback3')->charset('utf8')->nullable();
+            $table->text('admin_feedback3')->charset('utf8')->nullable();
+
             $table->enum('admin_status', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
             $table->enum('client_status', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
 

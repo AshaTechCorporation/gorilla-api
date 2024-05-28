@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Employee;
 use App\Models\Department;
 use App\Models\Position;
@@ -15,8 +16,8 @@ class EmployeeController extends Controller
     public function getList()
     {
         $Item = Employee::with('department')
-        ->with('position')
-        ->get()->toarray();
+            ->with('position')
+            ->get()->toarray();
 
         if (!empty($Item)) {
 
@@ -38,9 +39,9 @@ class EmployeeController extends Controller
         $page = $start / $length + 1;
 
 
-        $col = array('id','department_id','position_id', 'ecode', 'prefix', 'fname', 'lname', 'nickname', 'phone');
+        $col = array('id', 'department_id', 'position_id', 'ecode', 'prefix', 'fname', 'lname', 'nickname', 'phone');
 
-        $orderby = array('id','department_id','position_id', 'ecode', 'prefix', 'fname', 'lname', 'nickname', 'phone');
+        $orderby = array('id', 'department_id', 'position_id', 'ecode', 'prefix', 'fname', 'lname', 'nickname', 'phone');
 
         $D = Employee::select($col)
             ->with('department')
@@ -84,23 +85,23 @@ class EmployeeController extends Controller
     }
     public function searchData(Request $request)
     {
-        try{
+        try {
             $key = $request->input('key');
-            $Item = Employee::where('fname','like',"%{$key}%")
-            ->orWhere('lname', 'like', "%{$key}%")
-            ->orWhere('nickname', 'like', "%{$key}%")
-            ->limit(20)
-            ->get()->toarray();
-    
+            $Item = Employee::where('fname', 'like', "%{$key}%")
+                ->orWhere('lname', 'like', "%{$key}%")
+                ->orWhere('nickname', 'like', "%{$key}%")
+                ->limit(20)
+                ->get()->toarray();
+
             if (!empty($Item)) {
-    
+
                 for ($i = 0; $i < count($Item); $i++) {
                     $Item[$i]['No'] = $i + 1;
                 }
             }
-    
+
             return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return $this->returnErrorData($e->getMessage(), 404);
         }
     }
@@ -110,18 +111,17 @@ class EmployeeController extends Controller
 
         if (!isset($request->ecode)) {
             return $this->returnErrorData('กรุณาระบุ ecode ให้เรียบร้อย', 404);
-        }else if (!isset($request->prefix)) {
+        } else if (!isset($request->prefix)) {
             return $this->returnErrorData('กรุณาระบุ prefix ให้เรียบร้อย', 404);
-        }else if(!isset($request->fname)){
+        } else if (!isset($request->fname)) {
             return $this->returnErrorData('กรุณาระบุ fname ให้เรียบร้อย', 404);
-        }else if (!isset($request->lname)) {
+        } else if (!isset($request->lname)) {
             return $this->returnErrorData('กรุณาระบุ lname ให้เรียบร้อย', 404);
-        }else if (!isset($request->nickname)) {
+        } else if (!isset($request->nickname)) {
             return $this->returnErrorData('กรุณาระบุ nickname ให้เรียบร้อย', 404);
-        }else if (!isset($request->phone)) {
+        } else if (!isset($request->phone)) {
             return $this->returnErrorData('กรุณาระบุ phone	ให้เรียบร้อย', 404);
-        }
-        else
+        } else
 
             DB::beginTransaction();
 
@@ -149,14 +149,14 @@ class EmployeeController extends Controller
             $Item->ecode = $request->ecode;
             $Item->prefix = $request->prefix;
             $Item->fname = $request->fname;
-            $Item->lname= $request->lname;
-            $Item->nickname= $request->nickname;
-            $Item->phone= $request->phone;
-            
+            $Item->lname = $request->lname;
+            $Item->nickname = $request->nickname;
+            $Item->phone = $request->phone;
+
             $Item->save();
             //
 
-            $loginBy = $Item->fname ." " .$Item->lname;
+            $loginBy = $Item->fname . " " . $Item->lname;
 
             $latestId = $Item->id;
 
@@ -170,7 +170,7 @@ class EmployeeController extends Controller
             $type = 'สมัครเข้าใช้งานเป็นครั้งแรก';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);
-            
+
 
             DB::commit();
 
@@ -192,7 +192,7 @@ class EmployeeController extends Controller
             return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
         }
     }
-        /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -220,24 +220,47 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        $loginBy = "admin";
+        $loginBy = $this->decodername($request->header('Authorization'));
 
-        if (!isset($request->ecode)) {
-            return $this->returnErrorData('กรุณาระบุ ecode ให้เรียบร้อย', 404);
-        }else if (!isset($request->prefix)) {
-            return $this->returnErrorData('กรุณาระบุ prefix ให้เรียบร้อย', 404);
-        }else if(!isset($request->fname)){
-            return $this->returnErrorData('กรุณาระบุ fname ให้เรียบร้อย', 404);
-        }else if (!isset($request->lname)) {
-            return $this->returnErrorData('กรุณาระบุ lname ให้เรียบร้อย', 404);
-        }else if (!isset($request->nickname)) {
-            return $this->returnErrorData('กรุณาระบุ nickname ให้เรียบร้อย', 404);
-        }else if (!isset($request->phone)) {
-            return $this->returnErrorData('กรุณาระบุ phone	ให้เรียบร้อย', 404);
+        // Define validation rules
+        $rules = [
+            'department_id' => 'required|exists:departments,id',
+            'position_id' => 'required|exists:positions,id',
+            'ecode' => 'required|string|max:255',
+            'prefix' => 'required|string|max:10',
+            'fname' => 'required|string|max:255',
+            'lname' => 'required|string|max:255',
+            'nickname' => 'nullable|string|max:255',
+            'phone' => 'required|string|max:15',
+            'email' => 'required|email|max:255',
+        ];
+
+        // Define custom error messages
+        $messages = [
+            'department_id.required' => 'กรุณาระบุรหัสแผนก',
+            'department_id.exists' => 'ไม่พบแผนกที่ระบุ',
+            'position_id.required' => 'กรุณาระบุรหัสตำแหน่ง',
+            'position_id.exists' => 'ไม่พบตำแหน่งที่ระบุ',
+            'ecode.required' => 'กรุณาระบุรหัสพนักงาน',
+            'prefix.required' => 'กรุณาระบุคำนำหน้า',
+            'fname.required' => 'กรุณาระบุชื่อ',
+            'lname.required' => 'กรุณาระบุนามสกุล',
+            'phone.required' => 'กรุณาระบุเบอร์โทร',
+            'phone.string' => 'เบอร์โทรต้องเป็นตัวอักษร',
+            'phone.max' => 'เบอร์โทรต้องไม่เกิน 15 ตัวอักษร',
+            'email.required' => 'กรุณาระบุอีเมล',
+            'email.email' => 'รูปแบบอีเมลไม่ถูกต้อง',
+            'email.max' => 'อีเมลต้องไม่เกิน 255 ตัวอักษร',
+        ];
+
+        // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
-        else
 
-            DB::beginTransaction();
+        DB::beginTransaction();
 
         try {
             $Item = new Employee();
@@ -255,18 +278,14 @@ class EmployeeController extends Controller
             if (!$Position) {
                 return $this->returnErrorData('ไม่พบตำแหน่ง', 404);
             }
-            // $Credentials_id = EmployeeCredential::find($Item->credentials_id);
-            // if (!$Credentials_id) {
-            //     return $this->returnErrorData('ไม่พบพนักงานในระบบ', 404);
-            // }
 
             $Item->ecode = $request->ecode;
             $Item->prefix = $request->prefix;
             $Item->fname = $request->fname;
-            $Item->lname= $request->lname;
-            $Item->nickname= $request->nickname;
-            $Item->phone= $request->phone;
-            
+            $Item->lname = $request->lname;
+            $Item->nickname = $request->nickname;
+            $Item->phone = $request->phone;
+
             $Item->save();
             //
 
@@ -283,7 +302,7 @@ class EmployeeController extends Controller
             $type = 'เพิ่มพนักงาน';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);
-            
+
 
             DB::commit();
 
@@ -311,7 +330,7 @@ class EmployeeController extends Controller
         $Item = Employee::with('department')
             ->with('position')
             ->where('id', $id)
-            ->first();  
+            ->first();
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
     }
 
@@ -335,22 +354,45 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $loginBy = "admin";
+        $loginBy = $this->decodername($request->header('Authorization'));
 
-        if (!isset($request->ecode)) {
-            return $this->returnErrorData('กรุณาระบุ ecode ให้เรียบร้อย', 404);
-        }else if (!isset($request->prefix)) {
-            return $this->returnErrorData('กรุณาระบุ prefix ให้เรียบร้อย', 404);
-        }else if(!isset($request->fname)){
-            return $this->returnErrorData('กรุณาระบุ fname ให้เรียบร้อย', 404);
-        }else if (!isset($request->lname)) {
-            return $this->returnErrorData('กรุณาระบุ lname ให้เรียบร้อย', 404);
-        }else if (!isset($request->nickname)) {
-            return $this->returnErrorData('กรุณาระบุ nickname ให้เรียบร้อย', 404);
-        }else if (!isset($request->phone)) {
-            return $this->returnErrorData('กรุณาระบุ phone	ให้เรียบร้อย', 404);
+        // Define validation rules
+        $rules = [
+            'department_id' => 'required|exists:departments,id',
+            'position_id' => 'required|exists:positions,id',
+            'ecode' => 'required|string|max:255',
+            'prefix' => 'required|string|max:10',
+            'fname' => 'required|string|max:255',
+            'lname' => 'required|string|max:255',
+            'nickname' => 'nullable|string|max:255',
+            'phone' => 'required|string|max:15',
+            'email' => 'required|email|max:255',
+        ];
+
+        // Define custom error messages
+        $messages = [
+            'department_id.required' => 'กรุณาระบุรหัสแผนก',
+            'department_id.exists' => 'ไม่พบแผนกที่ระบุ',
+            'position_id.required' => 'กรุณาระบุรหัสตำแหน่ง',
+            'position_id.exists' => 'ไม่พบตำแหน่งที่ระบุ',
+            'ecode.required' => 'กรุณาระบุรหัสพนักงาน',
+            'prefix.required' => 'กรุณาระบุคำนำหน้า',
+            'fname.required' => 'กรุณาระบุชื่อ',
+            'lname.required' => 'กรุณาระบุนามสกุล',
+            'phone.required' => 'กรุณาระบุเบอร์โทร',
+            'phone.string' => 'เบอร์โทรต้องเป็นตัวอักษร',
+            'phone.max' => 'เบอร์โทรต้องไม่เกิน 15 ตัวอักษร',
+            'email.required' => 'กรุณาระบุอีเมล',
+            'email.email' => 'รูปแบบอีเมลไม่ถูกต้อง',
+            'email.max' => 'อีเมลต้องไม่เกิน 255 ตัวอักษร',
+        ];
+
+        // Validate the request data
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
-        else
 
             DB::beginTransaction();
 
@@ -373,10 +415,10 @@ class EmployeeController extends Controller
             $Item->ecode = $request->ecode;
             $Item->prefix = $request->prefix;
             $Item->fname = $request->fname;
-            $Item->lname= $request->lname;
-            $Item->nickname= $request->nickname;
-            $Item->phone= $request->phone;
-            
+            $Item->lname = $request->lname;
+            $Item->nickname = $request->nickname;
+            $Item->phone = $request->phone;
+
             $Item->save();
             //
 
@@ -385,7 +427,7 @@ class EmployeeController extends Controller
             $type = 'แก้ไขพนักงาน';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);
-            
+
 
             DB::commit();
 
@@ -404,8 +446,10 @@ class EmployeeController extends Controller
      * @param  \App\Models\Employee $employee
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
+        $loginBy = $this->decodername($request->header('Authorization'));
+
         DB::beginTransaction();
 
         try {
@@ -414,7 +458,7 @@ class EmployeeController extends Controller
             $Item->delete();
 
             //log
-            $userId = "admin";
+            $userId = $loginBy;
             $type = 'ลบพนักงาน';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type;
             $this->Log($userId, $description, $type);
@@ -429,16 +473,15 @@ class EmployeeController extends Controller
 
             return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
         }
-    
     }
 
     public function addCredential(Request $request)
     {
-        $loginBy = "admin";
+        $loginBy = $this->decodername($request->header('Authorization'));
 
         if (!isset($request->email)) {
             return $this->returnErrorData('กรุณาระบุ email ให้เรียบร้อย', 404);
-        }else if (!isset($request->password)) {
+        } else if (!isset($request->password)) {
             return $this->returnErrorData('กรุณาระบุ password ให้เรียบร้อย', 404);
         }
         DB::beginTransaction();
@@ -451,7 +494,7 @@ class EmployeeController extends Controller
 
             $Item->save();
             //log
-            $userId = "admin";
+            $userId = $loginBy;
             $type = 'เพิ่มพนักงาน';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type;
             $this->Log($userId, $description, $type);
@@ -466,6 +509,5 @@ class EmployeeController extends Controller
 
             return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
         }
-    
     }
 }

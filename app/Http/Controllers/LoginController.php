@@ -203,13 +203,6 @@ class LoginController extends Controller
                 ], 200);
             } else {
 
-                // DB::beginTransaction();
-
-                // $CustomerCredential = new CustomerCredential();
-                // $CustomerCredential->UID = $key;
-                // $CustomerCredential->save();
-
-                // DB::commit();
                 return response()->json([
                     'code' => '404',
                     'status' => false,

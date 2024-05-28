@@ -99,7 +99,14 @@ class ProjectTimelineController extends Controller
             ->with('product_items')
             ->get();
 
-        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $item);
+        $productItems = $item->flatMap(function ($item) {
+            return $item->product_items;
+        });
+
+        // Convert the result to an array
+        $productItemsArray = $productItems->toArray();
+
+        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $productItemsArray);
     }
     public function index()
     {
@@ -126,30 +133,60 @@ class ProjectTimelineController extends Controller
     {
         $loginBy = "admin";
 
-        if (!isset($request->project_id)) {
-            return $this->returnErrorData('กรุณาระบุ project_id ให้เรียบร้อย', 404);
-        } else if (!isset($request->influencer_id)) {
-            return $this->returnErrorData('กรุณาระบุ influencer_id ให้เรียบร้อย', 404);
-        } else
-
-            DB::beginTransaction();
+        DB::beginTransaction();
 
         try {
             $Item = new ProjectTimeline();
 
             $Item->project_id = $request->project_id;
-
-            $project_id = Project::find($Item->project_id);
-            if (!$project_id) {
-                return $this->returnErrorData('ไม่พบ project_id', 404);
-            }
-
             $Item->influencer_id = $request->influencer_id;
-
-            $influencer_id = Influencer::find($Item->influencer_id);
-            if (!$influencer_id) {
-                return $this->returnErrorData('ไม่พบ influencer_id', 404);
-            }
+            $Item->product_item_id = $request->product_item_id;
+            $Item->draft_link1 = $request->draft_link1;
+            $Item->client_feedback1 = $request->client_feedback1;
+            $Item->admin_feedback1 = $request->admin_feedback1;
+            $Item->draft_link2 = $request->draft_link2;
+            $Item->client_feedback2 = $request->client_feedback2;
+            $Item->admin_feedback2 = $request->admin_feedback2;
+            $Item->draft_link3 = $request->draft_link3;
+            $Item->client_feedback3 = $request->client_feedback3;
+            $Item->admin_feedback3 = $request->admin_feedback3;
+            $Item->admin_status = $request->admin_status;
+            $Item->client_status = $request->client_status;
+            $Item->draft_status = $request->draft_status;
+            $Item->post_date = $request->post_date;
+            $Item->post_status = $request->post_status;
+            $Item->post_link = $request->post_link;
+            $Item->post_code = $request->post_code;
+            $Item->stat_view = $request->stat_view;
+            $Item->stat_like = $request->stat_like;
+            $Item->stat_comment = $request->stat_comment;
+            $Item->stat_share = $request->stat_share;
+            $Item->note1 = $request->note1;
+            $Item->contact = $request->contact;
+            $Item->pay_rate = $request->pay_rate;
+            $Item->sum_rate = $request->sum_rate;
+            $Item->des_bill = $request->des_bill;
+            $Item->content_style_id = $request->content_style_id;
+            $Item->vat = $request->vat;
+            $Item->withholding = $request->withholding;
+            $Item->product_price = $request->product_price;
+            $Item->transfer_amount = $request->transfer_amount;
+            $Item->transfer_date = $request->transfer_date;
+            $Item->bank_account = $request->bank_account;
+            $Item->bank_id = $request->bank_id;
+            $Item->bank_brand = $request->bank_brand;
+            $Item->name_of_card = $request->name_of_card;
+            $Item->id_card = $request->id_card;
+            $Item->address_of_card = $request->address_of_card;
+            $Item->product_address = $request->product_address;
+            $Item->line_id = $request->line_id;
+            $Item->image_card = $request->image_card;
+            $Item->transfer_email = $request->transfer_email;
+            $Item->transfer_link = $request->transfer_link;
+            $Item->image_quotation = $request->image_quotation;
+            $Item->ecode = $request->ecode;
+            $Item->create_by = $loginBy;
+            $Item->update_by = $loginBy;
 
             $Item->save();
 
@@ -159,17 +196,16 @@ class ProjectTimelineController extends Controller
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);
 
-
             DB::commit();
 
             return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
         } catch (\Throwable $e) {
-
             DB::rollback();
 
-            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 500);
         }
     }
+
 
     /**
      * Display the specified resource.
