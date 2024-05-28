@@ -128,6 +128,10 @@ class ProjectController extends Controller
             foreach ($d as $project) {
                 $project->strdate = date('d/m/Y', strtotime($project->strdate . ' +543 years'));
                 $project->enddate = date('d/m/Y', strtotime($project->enddate . ' +543 years'));
+
+                $customer = Customer::find($project->customer_id);
+                $project->customer_name = $customer->name;
+
                 foreach ($project->influencers as $influencer) {
                     $influencer->count = 0;
                     $No++;
@@ -306,9 +310,17 @@ class ProjectController extends Controller
         if (!$checkId) {
             return $this->returnErrorData('ไม่พบข้อมูลที่ท่านต้องการ', 404);
         }
+
+
         $Item = Project::with('customer')
             ->where('id', $id)
             ->first();
+
+        $Item->strdate = date('d/m/Y', strtotime($Item->strdate . ' +543 years'));
+        $Item->enddate = date('d/m/Y', strtotime($Item->enddate . ' +543 years'));
+
+        $customer = Customer::find($Item->customer_id);
+        $Item->customer_name = $customer->name;
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
     }
 

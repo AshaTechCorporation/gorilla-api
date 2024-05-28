@@ -173,6 +173,8 @@ Route::resource('project_timeline', ProjectTimelineController::class);
 Route::post('/project_timeline_page', [ProjectTimelineController::class, 'getPage']);
 Route::get('/get_project_timeline', [ProjectTimelineController::class, 'getList']);
 
+Route::post('/item_bymonth', [ProjectTimelineController::class, 'getProductTimelineByMonth']);
+
 
 // Client
 // Route::resource('client', ClientsController::class);

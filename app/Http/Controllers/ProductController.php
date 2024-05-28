@@ -27,8 +27,8 @@ class ProductController extends Controller
 
     public function getProductbyProject($id)
     {
-        $Item = Product::get()
-            ->where('project_id', $id)
+        $Item = Product::where('project_id', $id)
+            ->get()
             ->toarray();
 
         if (!empty($Item)) {
@@ -58,8 +58,8 @@ class ProductController extends Controller
                 $Item->month = $value['month'];
                 $Item->save();
 
-                if (isset($request->item)) {
-                    $productItems = $request->item;
+                if (isset($value['productitem'])) {
+                    $productItems = $value['productitem'];
                     foreach ($productItems as $productItem) {
 
                         $ItemP = new ProductItem();

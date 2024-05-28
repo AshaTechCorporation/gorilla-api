@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProjectTimeline;
+use App\Models\ProductTimeline;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\Customer;
@@ -86,6 +87,20 @@ class ProjectTimelineController extends Controller
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $d);
     }
 
+    public function getProductTimelineByMonth(Request $request)
+    {
+        $project_id = $request->project_id;
+        $month = $request->month;
+        $year = $request->year;
+
+        $item = ProductTimeline::where('project_id', $project_id)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->with('product_items')
+            ->get();
+
+        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $item);
+    }
     public function index()
     {
         //
