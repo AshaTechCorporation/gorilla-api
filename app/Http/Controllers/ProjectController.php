@@ -47,9 +47,9 @@ class ProjectController extends Controller
         $page = $start / $length + 1;
 
 
-        $col = array('id', 'customer_id', 'name', 'strdate', 'enddate', 'numinflu', 'projectdes', 'created_at', 'updated_at');
+        $col = array('id', 'customer_id', 'name', 'strdate', 'enddate',  'created_at', 'updated_at');
 
-        $orderby = array('id', 'customer_id', 'name', 'strdate', 'enddate', 'numinflu', 'projectdes', 'created_at');
+        $orderby = array('id', 'customer_id', 'name', 'strdate', 'enddate',  'created_at');
 
         $D = Project::select($col)
             ->with('employees')
@@ -126,6 +126,8 @@ class ProjectController extends Controller
             //run no
             $No = (($page - 1) * $length);
             foreach ($d as $project) {
+                $project->strdate = date('d/m/Y', strtotime($project->strdate . ' +543 years'));
+                $project->enddate = date('d/m/Y', strtotime($project->enddate . ' +543 years'));
                 foreach ($project->influencers as $influencer) {
                     $influencer->count = 0;
                     $No++;
@@ -259,7 +261,7 @@ class ProjectController extends Controller
                     $ItemP->name = $product['name'];
                     $ItemP->productdes = $product['productdes'];
                     $ItemP->save();
-                    if(isset($product['employees'])){
+                    if (isset($product['employees'])) {
                         $employees = $product['employees'];
                         foreach ($employees as $employee) {
                             $employee = Employee::find($employee['employee_id']);
@@ -273,20 +275,6 @@ class ProjectController extends Controller
                     }
                 }
             }
-
-            // if (isset($request->employees)) {
-            //     for ($i = 0; $i < count($employeeID); $i++) {
-
-            //         $employee = Employee::find($employeeID[$i]['employee_id']);
-
-            //         if ($employee == null) {
-            //             return $this->returnErrorData('เกิดข้อผิดพลาดที่ $employee กรุณาลองใหม่อีกครั้ง ', 404);
-            //         } else {
-            //             $Item->employees()->attach($employee);
-            //         }
-            //     }
-            // }
-
 
             //log
             $userId = $loginBy;
@@ -345,57 +333,46 @@ class ProjectController extends Controller
     public function update(Request $request, $id)
     {
         $loginBy = "admin";
-        $employeeID = $request->employees;
 
-        if (!isset($request->name)) {
-            return $this->returnErrorData('กรุณาระบุ name ให้เรียบร้อย', 404);
-        } else if (!isset($request->strdate)) {
-            return $this->returnErrorData('กรุณาระบุ strdate ให้เรียบร้อย', 404);
-        } else if (!isset($request->enddate)) {
-            return $this->returnErrorData('กรุณาระบุ enddate ให้เรียบร้อย', 404);
-        } else if (!isset($request->productname)) {
-            return $this->returnErrorData('กรุณาระบุ productname ให้เรียบร้อย', 404);
-        } else if (!isset($request->enddate)) {
-            return $this->returnErrorData('กรุณาระบุ enddate ให้เรียบร้อย', 404);
-        } else if (!isset($request->productname)) {
-            return $this->returnErrorData('กรุณาระบุ productname ให้เรียบร้อย', 404);
-        } else
-
-            DB::beginTransaction();
+        DB::beginTransaction();
 
         try {
             $Item = Project::find($id);
 
-            $Item->customer_id = $request->customer_id;
-
-            $Customer = Customer::find($Item->customer_id);
-            if (!$Customer) {
-                return $this->returnErrorData('ไม่พบ customer_id', 404);
-            }
             $Item->name = $request->name;
             $Item->strdate = $request->strdate;
             $Item->enddate = $request->enddate;
-            $Item->productname = $request->productname;
-            $Item->numinflu = $request->numinflu;
-            $Item->projectdes = $request->projectdes;
+            $Item->customer_id = $request->customer_id;
 
             $Item->save();
 
-            if (isset($request->employees)) {
-                for ($i = 0; $i < count($employeeID); $i++) {
+            if (isset($request->products)) {
+                $products = $request->products;
+                foreach ($products as $product) {
 
-                    $employee = Employee::find($employeeID[$i]['employee_id']);
+                    $ItemP = new Product();
+                    $ItemP->project_id = $Item->id;
+                    $ItemP->name = $product['name'];
+                    $ItemP->productdes = $product['productdes'];
+                    $ItemP->save();
+                    if (isset($product['employees'])) {
+                        $employees = $product['employees'];
+                        foreach ($employees as $employee) {
+                            $employee = Employee::find($employee['employee_id']);
 
-                    if ($employee == null) {
-                        return $this->returnErrorData('เกิดข้อผิดพลาดที่ $employee กรุณาลองใหม่อีกครั้ง ', 404);
-                    } else {
-                        $Item->employees()->attach($employee);
+                            if ($employee == null) {
+                                return $this->returnErrorData('เกิดข้อผิดพลาดที่ $employee กรุณาลองใหม่อีกครั้ง ', 404);
+                            } else {
+                                $ItemP->employees()->attach($employee);
+                            }
+                        }
                     }
                 }
             }
+
             //log
             $userId = $loginBy;
-            $type = 'แก้ไขลูกค้า';
+            $type = 'เพิ่มลูกค้า';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);
 
@@ -424,6 +401,21 @@ class ProjectController extends Controller
         try {
 
             $Item = Project::find($id);
+            $Item->influencers()->detach();
+            $Item->employees()->detach();
+
+            // if ($Item->product_items) {
+            //     foreach ($Item->product_items as $productItem) {
+            //         $productItem->delete();
+            //     }
+            // }
+            // if ($Item->products) {
+            //     foreach ($Item->products as $product) {
+            //         $product->delete();
+            //     }
+            // }
+
+
             $Item->delete();
 
             //log
@@ -489,5 +481,21 @@ class ProjectController extends Controller
 
             return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
         }
+    }
+
+    public function getallProductInProject($id)
+    {
+        // Check if the project with the given ID exists
+        $project = Project::find($id);
+        if (!$project) {
+            return $this->returnErrorData('ไม่พบข้อมูลที่ท่านต้องการ', 404);
+        }
+
+        // Fetch the project along with its associated products
+        $projectWithProducts = Project::with(['products' => function ($query) use ($id) {
+            $query->where('project_id', $id);
+        }])->where('id', $id)->first();
+
+        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $projectWithProducts);
     }
 }

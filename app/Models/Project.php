@@ -36,4 +36,9 @@ class Project extends Model
     {
         return $this->hasMany(ProductItem::class);
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

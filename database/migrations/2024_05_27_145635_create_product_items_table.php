@@ -19,7 +19,16 @@ class CreateProductItemsTable extends Migration
             $table->integer('product_timeline_id')->unsigned()->index();
             $table->foreign('product_timeline_id')->references('id')->on('product_timelines')->onDelete('cascade');
 
+            $table->integer('product_id')->unsigned()->index();
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+
             $table->string('name', 250)->charset('utf8')->nullable();
+
+            $table->integer('platform_social_id')->unsigned()->index();
+            $table->foreign('platform_social_id')->references('id')->on('platform_socials')->onDelete('cascade');
+            $table->integer('subscribe')->nullable();
+
+            $table->text('description')->charset('utf8')->nullable();
             $table->integer('qty')->nullable();
 
             $table->timestamps();

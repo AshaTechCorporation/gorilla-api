@@ -49,24 +49,32 @@ class ProductController extends Controller
         DB::beginTransaction();
 
         try {
-            $Item = new ProductTimeline();
+            $InsertItem = $request->insertitem;
+            foreach ($InsertItem as $key => $value) {
+                $Item = new ProductTimeline();
 
-            $Item->product_id = $request->product_id;
-            $Item->project_id = $request->project_id;
-            $Item->year = $request->year;
-            $Item->month = $request->month;
-            $Item->save();
+                $Item->project_id = $value['project_id'];
+                $Item->year = $value['year'];
+                $Item->month = $value['month'];
+                $Item->save();
 
-            if (isset($request->item)) {
-                $productItems = $request->item;
-                foreach ($productItems as $productItem) {
+                if (isset($request->item)) {
+                    $productItems = $request->item;
+                    foreach ($productItems as $productItem) {
 
-                    $ItemP = new ProductItem();
-                    $ItemP->product_timeline_id = $Item->id;
-                    $ItemP->name = $productItem['name'];
-                    $ItemP->save();
+                        $ItemP = new ProductItem();
+                        $ItemP->product_timeline_id = $Item->id;
+                        $ItemP->name = $productItem['name'];
+                        $ItemP->qty = $productItem['qty'];
+                        $ItemP->platform_social_id = $productItem['platform_social_id'];
+                        $ItemP->product_id = $productItem['product_id'];
+                        $ItemP->subscribe = $productItem['subscribe'];
+                        $ItemP->description = $productItem['description'];
+                        $ItemP->save();
+                    }
                 }
             }
+
 
             //log
             $userId = $loginBy;
