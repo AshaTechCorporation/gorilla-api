@@ -14,7 +14,7 @@ class CreateProductItemsTable extends Migration
     public function up()
     {
         Schema::create('product_items', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
 
             $table->integer('product_timeline_id')->unsigned()->index();
             $table->foreign('product_timeline_id')->references('id')->on('product_timelines')->onDelete('cascade');

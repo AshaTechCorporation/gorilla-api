@@ -79,6 +79,7 @@ Route::post('/influencer_page', [InfluencerController::class, 'getPage']);
 Route::get('/get_influencer', [InfluencerController::class, 'getList']);
 Route::post('/fix_influencer', [InfluencerController::class, 'fixdataInfluencer']);
 Route::get('/search_influencer', [InfluencerController::class, 'searchData']);
+Route::post('/get_influtimeline', [InfluencerController::class, 'getInfluencerTimeline']);
 
 // Influencer Self management
 // Route::post('/line_influencer', [InfluencerController::class, 'Line_Influencer']);

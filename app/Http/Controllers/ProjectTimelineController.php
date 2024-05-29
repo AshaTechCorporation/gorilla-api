@@ -132,79 +132,85 @@ class ProjectTimelineController extends Controller
     public function store(Request $request)
     {
         $loginBy = "admin";
-
+    
         DB::beginTransaction();
-
+    
         try {
-            $Item = new ProjectTimeline();
-
-            $Item->project_id = $request->project_id;
-            $Item->influencer_id = $request->influencer_id;
-            $Item->product_item_id = $request->product_item_id;
-            $Item->draft_link1 = $request->draft_link1;
-            $Item->client_feedback1 = $request->client_feedback1;
-            $Item->admin_feedback1 = $request->admin_feedback1;
-            $Item->draft_link2 = $request->draft_link2;
-            $Item->client_feedback2 = $request->client_feedback2;
-            $Item->admin_feedback2 = $request->admin_feedback2;
-            $Item->draft_link3 = $request->draft_link3;
-            $Item->client_feedback3 = $request->client_feedback3;
-            $Item->admin_feedback3 = $request->admin_feedback3;
-            $Item->admin_status = $request->admin_status;
-            $Item->client_status = $request->client_status;
-            $Item->draft_status = $request->draft_status;
-            $Item->post_date = $request->post_date;
-            $Item->post_status = $request->post_status;
-            $Item->post_link = $request->post_link;
-            $Item->post_code = $request->post_code;
-            $Item->stat_view = $request->stat_view;
-            $Item->stat_like = $request->stat_like;
-            $Item->stat_comment = $request->stat_comment;
-            $Item->stat_share = $request->stat_share;
-            $Item->note1 = $request->note1;
-            $Item->contact = $request->contact;
-            $Item->pay_rate = $request->pay_rate;
-            $Item->sum_rate = $request->sum_rate;
-            $Item->des_bill = $request->des_bill;
-            $Item->content_style_id = $request->content_style_id;
-            $Item->vat = $request->vat;
-            $Item->withholding = $request->withholding;
-            $Item->product_price = $request->product_price;
-            $Item->transfer_amount = $request->transfer_amount;
-            $Item->transfer_date = $request->transfer_date;
-            $Item->bank_account = $request->bank_account;
-            $Item->bank_id = $request->bank_id;
-            $Item->bank_brand = $request->bank_brand;
-            $Item->name_of_card = $request->name_of_card;
-            $Item->id_card = $request->id_card;
-            $Item->address_of_card = $request->address_of_card;
-            $Item->product_address = $request->product_address;
-            $Item->line_id = $request->line_id;
-            $Item->image_card = $request->image_card;
-            $Item->transfer_email = $request->transfer_email;
-            $Item->transfer_link = $request->transfer_link;
-            $Item->image_quotation = $request->image_quotation;
-            $Item->ecode = $request->ecode;
-            $Item->create_by = $loginBy;
-            $Item->update_by = $loginBy;
-
-            $Item->save();
-
+            foreach($request->tables as $table){
+                foreach($table['rows'] as $value){
+                    $Item = new ProjectTimeline();
+    
+                    // $Item->project_id = $value['project_id'];
+                    $Item->influencer_id = $value['influencer_id'];
+                    $Item->product_item_id = $value['product_item_id'];
+                    $Item->draft_link1 = $value['draft_link1'];
+                    $Item->client_feedback1 = $value['client_feedback1'];
+                    $Item->admin_feedback1 = $value['admin_feedback1'];
+                    $Item->draft_link2 = $value['draft_link2'];
+                    $Item->client_feedback2 = $value['client_feedback2'];
+                    $Item->admin_feedback2 = $value['admin_feedback2'];
+                    $Item->draft_link3 = $value['draft_link3'];
+                    $Item->client_feedback3 = $value['client_feedback3'];
+                    $Item->admin_feedback3 = $value['admin_feedback3'];
+                    $Item->admin_status = $value['admin_status'];
+                    $Item->client_status = $value['client_status'];
+                    $Item->draft_status = $value['draft_status'];
+                    $Item->post_date = $value['post_date'];
+                    $Item->post_status = $value['post_status'];
+                    $Item->post_link = $value['post_link'];
+                    $Item->post_code = $value['post_code'];
+                    $Item->stat_view = $value['stat_view'];
+                    $Item->stat_like = $value['stat_like'];
+                    $Item->stat_comment = $value['stat_comment'];
+                    $Item->stat_share = $value['stat_share'];
+                    $Item->note1 = $value['note1'];
+                    $Item->note2 = $value['note2'];
+                    $Item->contact = $value['contact'];
+                    $Item->pay_rate = $value['pay_rate'];
+                    $Item->sum_rate = $value['sum_rate'];
+                    $Item->des_bill = $value['des_bill'];
+                    $Item->content_style_id = $value['content_style_id'];
+                    $Item->vat = $value['vat'];
+                    $Item->withholding = $value['withholding'];
+                    $Item->product_price = $value['product_price'];
+                    $Item->transfer_amount = $value['transfer_amount'];
+                    $Item->transfer_date = $value['transfer_date'];
+                    $Item->bank_account = $value['bank_account'];
+                    $Item->bank_id = $value['bank_id'];
+                    $Item->bank_brand = $value['bank_brand'];
+                    $Item->name_of_card = $value['name_of_card'];
+                    $Item->id_card = $value['id_card'];
+                    $Item->address_of_card = $value['address_of_card'];
+                    $Item->product_address = $value['product_address'];
+                    $Item->line_id = $value['line_id'];
+                    $Item->image_card = $value['image_card'];
+                    $Item->transfer_email = $value['transfer_email'];
+                    $Item->transfer_link = $value['transfer_link'];
+                    $Item->image_quotation = $value['image_quotation'];
+                    $Item->ecode = $value['ecode'];
+                    $Item->create_by = $loginBy;
+                    $Item->update_by = $loginBy;
+    
+                    $Item->save();
+                }
+            }
+    
             //log
             $userId = $loginBy;
             $type = 'เพิ่มข้อมูล';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);
-
+    
             DB::commit();
-
+    
             return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
         } catch (\Throwable $e) {
             DB::rollback();
-
+    
             return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 500);
         }
     }
+    
 
 
     /**

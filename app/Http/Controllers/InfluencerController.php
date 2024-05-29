@@ -10,6 +10,7 @@ use App\Models\Career;
 use App\Models\Project;
 use App\Models\SubType;
 use App\Models\InfluencerCredential;
+use App\Models\InfluSocial;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
@@ -41,14 +42,13 @@ class InfluencerController extends Controller
     public function getInfluencerTimeline(Request $request)
     {
         $social = $request->platform_social_id;
-        $subscirbe = $request->subscirbe;
-
-        $InfluencerProject = Influencer::with(['platform_socials' => function ($query) use ($social,$subscirbe) {
+        $subscribe = $request->subscribe;
+        //debug
+        $InfluencerProject = Influencer::whereHas('platform_socials', function ($query) use ($social, $subscribe) {
             $query->where('platform_social_id', $social);
-            $query->where('subscirbe', $subscirbe);
-        }]);
-
-
+            $query->where('subscribe', '>', $subscribe);
+        })->get()->toArray();
+    
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $InfluencerProject);
     }
 

@@ -51,6 +51,7 @@ class CreateProjectTimelinesTable extends Migration
             $table->integer('stat_share')->nullable();
 
             $table->text('note1')->charset('utf8')->nullable();
+            $table->text('note2')->charset('utf8')->nullable();
             $table->text('contact')->charset('utf8')->nullable();
             $table->integer('pay_rate')->nullable();
             $table->integer('sum_rate')->nullable();
