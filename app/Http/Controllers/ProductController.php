@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\ProductTimeline;
+use App\Models\ProjectTimeline;
 use App\Models\ProductItem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -71,6 +72,15 @@ class ProductController extends Controller
                         $ItemP->subscribe = $productItem['subscribe'];
                         $ItemP->description = $productItem['description'];
                         $ItemP->save();
+                        for($i=0;$i<$ItemP->qty;$i++){
+                            $ItemInf = new ProjectTimeline();
+    
+                            $ItemInf->product_item_id = $ItemP->id;
+                            $ItemInf->create_by = $loginBy;
+                            $ItemInf->ecode = 'IN'. $ItemP->id . '-' . $i;
+            
+                            $ItemInf->save();
+                        }
                     }
                 }
             }

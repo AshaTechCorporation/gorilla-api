@@ -21,4 +21,9 @@ class ProjectTimeline extends Model
     {
         return $this->belongsToMany(Influencer::class);
     }
+
+    public function product_items()
+    {
+        return $this->belongsTo(ProductItem::class);
+    }
 }

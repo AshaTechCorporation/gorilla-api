@@ -93,10 +93,10 @@ class ProjectTimelineController extends Controller
         $month = $request->month;
         $year = $request->year;
 
-        $item = ProductTimeline::where('project_id', $project_id)
+        $item = ProductTimeline::with(['product_items.project_timelines'])
+            ->where('project_id', $project_id)
             ->where('month', $month)
             ->where('year', $year)
-            ->with('product_items')
             ->get();
 
         $productItems = $item->flatMap(function ($item) {
@@ -282,6 +282,87 @@ class ProjectTimelineController extends Controller
             DB::rollback();
 
             return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+        }
+    }
+
+    public function updateTimeline(Request $request)
+    {
+        $loginBy = "admin";
+    
+        DB::beginTransaction();
+    
+        try {
+            foreach($request->tables as $table){
+                foreach($table['rows'] as $value){
+                    $Item = ProjectTimeline::find($value['item_id']);
+    
+                    $Item->influencer_id = $value['influencer_id'];
+                    $Item->product_item_id = $value['product_item_id'];
+                    $Item->draft_link1 = $value['draft_link1'];
+                    $Item->client_feedback1 = $value['client_feedback1'];
+                    $Item->admin_feedback1 = $value['admin_feedback1'];
+                    $Item->draft_link2 = $value['draft_link2'];
+                    $Item->client_feedback2 = $value['client_feedback2'];
+                    $Item->admin_feedback2 = $value['admin_feedback2'];
+                    $Item->draft_link3 = $value['draft_link3'];
+                    $Item->client_feedback3 = $value['client_feedback3'];
+                    $Item->admin_feedback3 = $value['admin_feedback3'];
+                    $Item->admin_status = $value['admin_status'];
+                    $Item->client_status = $value['client_status'];
+                    $Item->draft_status = $value['draft_status'];
+                    $Item->post_date = $value['post_date'];
+                    $Item->post_status = $value['post_status'];
+                    $Item->post_link = $value['post_link'];
+                    $Item->post_code = $value['post_code'];
+                    $Item->stat_view = $value['stat_view'];
+                    $Item->stat_like = $value['stat_like'];
+                    $Item->stat_comment = $value['stat_comment'];
+                    $Item->stat_share = $value['stat_share'];
+                    $Item->note1 = $value['note1'];
+                    $Item->note2 = $value['note2'];
+                    $Item->contact = $value['contact'];
+                    $Item->pay_rate = $value['pay_rate'];
+                    $Item->sum_rate = $value['sum_rate'];
+                    $Item->des_bill = $value['des_bill'];
+                    $Item->content_style_id = $value['content_style_id'];
+                    $Item->vat = $value['vat'];
+                    $Item->withholding = $value['withholding'];
+                    $Item->product_price = $value['product_price'];
+                    $Item->transfer_amount = $value['transfer_amount'];
+                    $Item->transfer_date = $value['transfer_date'];
+                    $Item->bank_account = $value['bank_account'];
+                    $Item->bank_id = $value['bank_id'];
+                    $Item->bank_brand = $value['bank_brand'];
+                    $Item->name_of_card = $value['name_of_card'];
+                    $Item->id_card = $value['id_card'];
+                    $Item->address_of_card = $value['address_of_card'];
+                    $Item->product_address = $value['product_address'];
+                    $Item->line_id = $value['line_id'];
+                    $Item->image_card = $value['image_card'];
+                    $Item->transfer_email = $value['transfer_email'];
+                    $Item->transfer_link = $value['transfer_link'];
+                    $Item->image_quotation = $value['image_quotation'];
+                    $Item->ecode = $value['ecode'];
+                    $Item->create_by = $loginBy;
+                    $Item->update_by = $loginBy;
+    
+                    $Item->save();
+                }
+            }
+    
+            //log
+            $userId = $loginBy;
+            $type = 'เพิ่มข้อมูล';
+            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
+            $this->Log($userId, $description, $type);
+    
+            DB::commit();
+    
+            return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
+        } catch (\Throwable $e) {
+            DB::rollback();
+    
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 500);
         }
     }
 }

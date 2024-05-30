@@ -16,10 +16,10 @@ class CreateProjectTimelinesTable extends Migration
         Schema::create('project_timelines', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('product_item_id')->unsigned()->index();
+            $table->integer('product_item_id')->nullable()->unsigned()->index();
             $table->foreign('product_item_id')->references('id')->on('product_items')->onDelete('cascade');
 
-            $table->integer('influencer_id')->unsigned()->index();
+            $table->integer('influencer_id')->nullable()->unsigned()->index();
             $table->foreign('influencer_id')->references('id')->on('influencers')->onDelete('cascade');
 
             $table->text('draft_link1')->charset('utf8')->nullable();

@@ -22,4 +22,9 @@ class ProductItem extends Model
     {
         return $this->belongsTo(ProductTimeline::class);
     }
+
+    public function project_timelines()
+    {
+        return $this->hasMany(ProjectTimeline::class);
+    }
 }

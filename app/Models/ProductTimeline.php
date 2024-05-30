@@ -18,6 +18,6 @@ class ProductTimeline extends Model
 
     public function product_items()
     {
-        return $this->hasMany(ProductItem::class);
+        return $this->hasMany(ProductItem::class, 'product_timeline_id');
     }
 }
