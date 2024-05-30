@@ -22,6 +22,8 @@ class CreateProjectTimelinesTable extends Migration
             $table->integer('influencer_id')->nullable()->unsigned()->index();
             $table->foreign('influencer_id')->references('id')->on('influencers')->onDelete('cascade');
 
+            $table->text('link_social')->charset('utf8')->nullable();
+
             $table->text('draft_link1')->charset('utf8')->nullable();
             $table->text('client_feedback1')->charset('utf8')->nullable();
             $table->text('admin_feedback1')->charset('utf8')->nullable();
@@ -40,7 +42,7 @@ class CreateProjectTimelinesTable extends Migration
 
             $table->enum('draft_status', ['TRUE', 'FALSE', 'WAIT'])->charset('utf8')->default('WAIT');
 
-            $table->date('post_date')->nullable();
+            $table->string('post_date', 250)->charset('utf8')->nullable();
             $table->enum('post_status', ['TRUE', 'FALSE', 'WAIT'])->charset('utf8')->default('WAIT');
             $table->text('post_link')->charset('utf8')->nullable();
             $table->text('post_code')->charset('utf8')->nullable();
@@ -64,7 +66,7 @@ class CreateProjectTimelinesTable extends Migration
             $table->integer('withholding')->nullable();
             $table->integer('product_price')->nullable();
             $table->integer('transfer_amount')->nullable();
-            $table->date('transfer_date')->nullable();
+            $table->string('transfer_date', 250)->charset('utf8')->nullable();
 
             $table->text('bank_account')->charset('utf8')->nullable();
             $table->integer('bank_id')->nullable();

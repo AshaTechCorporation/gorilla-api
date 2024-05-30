@@ -29,6 +29,7 @@ use App\Http\Controllers\InfluencerAddressController;
 use App\Http\Controllers\ProjectTimelineController;
 use App\Http\Controllers\SocialInfluencerController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ExcelController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -59,6 +60,9 @@ Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
 
 // Presentatiion
 Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentation']);
+
+// Excel
+Route::get('/get_excel/{id}', [ExcelController::class, 'ExportServiceCenterByComp']);
 
 // Line Notification
 Route::get('/updateproject/{id}', [ProjectController::class, 'UpdateProjectStatus']);
@@ -175,6 +179,7 @@ Route::post('/project_timeline_page', [ProjectTimelineController::class, 'getPag
 Route::get('/get_project_timeline', [ProjectTimelineController::class, 'getList']);
 
 Route::post('/item_bymonth', [ProjectTimelineController::class, 'getProductTimelineByMonth']);
+Route::post('/update_timeline', [ProjectTimelineController::class, 'updateTimeline']);
 
 
 // Client

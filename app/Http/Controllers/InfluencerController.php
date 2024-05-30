@@ -238,7 +238,6 @@ class InfluencerController extends Controller
             'product_district' => 'nullable|string|max:255',
             'product_subdistrict' => 'nullable|string|max:255',
             'product_zip' => 'nullable|string|max:10',
-            'bank_id' => 'nullable|exists:banks,id',
             'bank_account' => 'nullable|string|max:255',
             'bank_brand' => 'nullable|string|max:255',
             'id_card' => 'nullable|string|max:255',
@@ -595,7 +594,6 @@ class InfluencerController extends Controller
             'product_district' => 'nullable|string|max:255',
             'product_subdistrict' => 'nullable|string|max:255',
             'product_zip' => 'nullable|string|max:10',
-            'bank_id' => 'nullable|exists:banks,id',
             'bank_account' => 'nullable|string|max:255',
             'bank_brand' => 'nullable|string|max:255',
             'id_card' => 'nullable|string|max:255',
@@ -992,7 +990,6 @@ class InfluencerController extends Controller
             'product_district' => 'nullable|string|max:255',
             'product_subdistrict' => 'nullable|string|max:255',
             'product_zip' => 'nullable|string|max:10',
-            'bank_id' => 'nullable|exists:banks,id',
             'bank_account' => 'nullable|string|max:255',
             'bank_brand' => 'nullable|string|max:255',
             'id_card' => 'nullable|string|max:255',
@@ -1005,7 +1002,6 @@ class InfluencerController extends Controller
             'map' => 'nullable|string|max:255',
             'current_address' => 'nullable|string|max:255',
             'note' => 'nullable|string|max:1000',
-            'project_id' => 'nullable|exists:projects,id',
         ];
 
         $messages = [
