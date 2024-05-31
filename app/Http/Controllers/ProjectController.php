@@ -119,6 +119,11 @@ class ProjectController extends Controller
             }
         }
 
+        if ($request->page_type == 'customer') {
+            $customer_id = $this->decoderid($request->header('Authorization'));
+            $D->where('customer_id', $customer_id);
+        }
+        
         $d = $D->paginate($length, ['*'], 'page', $page);
 
         if ($d->isNotEmpty()) {
@@ -131,7 +136,6 @@ class ProjectController extends Controller
 
                 $customer = Customer::find($project->customer_id);
                 $project->customer_name = $customer->name;
-
                 foreach ($project->influencers as $influencer) {
                     $influencer->count = 0;
                     $No++;
@@ -171,10 +175,6 @@ class ProjectController extends Controller
                     $influencer->image_bank = url($influencer->image_bank);
                     $influencer->image_card = url($influencer->image_card);
                 }
-            }
-            if($request->page_type == 'customer'){
-                $customer_id = $this->decoderid($request->header('Authorization'));
-                $d->where('customer_id', $customer_id);
             }
         }
 

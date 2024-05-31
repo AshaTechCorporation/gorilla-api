@@ -32,4 +32,9 @@ class Product extends Model
         return $this->belongsTo(Project::class);
     }
 
+    public function product_items()
+    {
+        return $this->hasMany(ProductItem::class);
+    }
+
 }

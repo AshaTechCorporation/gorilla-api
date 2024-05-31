@@ -262,7 +262,9 @@ class Controller extends BaseController
     }
     public function uploadFile(Request $request)
     {
-
+        if(!$request->hasFile('file')) {
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 404);
+        }
         $file = $request->file;
 
         $input['filename'] = time() . '.' . $file->extension();

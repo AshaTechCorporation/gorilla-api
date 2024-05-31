@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\Influencer;
 use App\Models\SubType;
+use App\Models\InfluProject;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
@@ -297,6 +298,14 @@ class ProjectTimelineController extends Controller
                     $Item = ProjectTimeline::find($value['item_id']);
     
                     $Item->influencer_id = $value['influencer_id'];
+
+                    // $InfluProduct = new InfluProject();
+                    // $InfluProduct->influencer_id = $value['influencer_id'];
+                    // $InfluProduct->project_id = $value['project_id'];
+                    // $InfluProduct->status = "working";
+
+                    // $InfluProduct->save();
+
                     $Item->product_item_id = $value['product_item_id'];
                     $Item->social_name = $value['social_name'];
                     $Item->link_social = $value['link_social'];

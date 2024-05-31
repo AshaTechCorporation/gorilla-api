@@ -1081,8 +1081,9 @@ class PresentationController extends Controller
 
     public function generatePresentation($id)
     {
-        $project = Project::with('influencers')->find($id);
+        $project = Project::with('products.product_items.project_timelines')->find($id);
 
+        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $project);
         $this->Thumbnail($project->name);
         $this->Status();
         $this->createInfluSide($project->influencers);
