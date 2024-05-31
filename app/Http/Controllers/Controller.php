@@ -277,9 +277,61 @@ class Controller extends BaseController
         $destinationPath = public_path('files');
         $file->move($destinationPath, $input['filename']);
 
-        return '/files' .'/'. $input['filename'];
+        return $this->returnSuccess('ดำเนินการสำเร็จ','/files' .'/'. $input['filename']);
     }
 
+    public function downloadFile(Request $request)
+    {
+        $filePath = $request->file_path;
+        if (!File::exists(public_path($filePath))) {
+            return $this->returnErrorData('File not found.', 404);
+        }
+    
+        // Get the file extension
+        $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
+    
+        // Set the appropriate headers based on the file extension
+        switch (strtolower($fileExtension)) {
+            case 'pdf':
+                $contentType = 'application/pdf';
+                break;
+            case 'xlsx':
+            case 'xls':
+                $contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                break;
+            case 'docx':
+            case 'doc':
+                $contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                break;
+            case 'pptx':
+            case 'ppt':
+                $contentType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+                break;
+            case 'jpeg':
+            case 'jpg':
+                $contentType = 'image/jpeg';
+                break;
+            case 'png':
+                $contentType = 'image/png';
+                break;
+            default:
+                $contentType = File::mimeType(public_path($filePath));
+                break;
+        }
+    
+        // Get the file name from the path
+        $fileName = pathinfo($filePath, PATHINFO_BASENAME);
+    
+        // Set the appropriate headers for file download
+        $headers = [
+            'Content-Type' => $contentType,
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            'Content-Transfer-Encoding' => 'binary',
+        ];
+    
+        // Return the file for download
+        return response()->download(public_path($filePath), $fileName, $headers);
+    }
 
     public function getDropDownYear()
     {

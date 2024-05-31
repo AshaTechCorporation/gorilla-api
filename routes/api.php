@@ -66,6 +66,7 @@ Route::post('/get_excel', [ExcelController::class, 'ExportServiceCenterByComp'])
 
 // Upload File
 Route::post('/upload_file', [Controller::class, 'uploadFile']);
+Route::post('/download_file', [Controller::class, 'downloadFile']);
 
 // Line Notification
 Route::get('/updateproject/{id}', [ProjectController::class, 'UpdateProjectStatus']);
@@ -180,6 +181,7 @@ Route::get('/get_pastproject', [PastProjectController::class, 'getList']);
 Route::resource('project_timeline', ProjectTimelineController::class);
 Route::post('/project_timeline_page', [ProjectTimelineController::class, 'getPage']);
 Route::get('/get_project_timeline', [ProjectTimelineController::class, 'getList']);
+Route::post('/update_draft_status', [ProjectTimelineController::class, 'updateStatus']);
 
 Route::post('/item_bymonth', [ProjectTimelineController::class, 'getProductTimelineByMonth']);
 Route::post('/update_timeline', [ProjectTimelineController::class, 'updateTimeline']);

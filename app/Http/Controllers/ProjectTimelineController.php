@@ -133,14 +133,14 @@ class ProjectTimelineController extends Controller
     public function store(Request $request)
     {
         $loginBy = "admin";
-    
+
         DB::beginTransaction();
-    
+
         try {
-            foreach($request->tables as $table){
-                foreach($table['rows'] as $value){
+            foreach ($request->tables as $table) {
+                foreach ($table['rows'] as $value) {
                     $Item = new ProjectTimeline();
-    
+
                     // $Item->project_id = $value['project_id'];
                     $Item->influencer_id = $value['influencer_id'];
                     $Item->product_item_id = $value['product_item_id'];
@@ -191,27 +191,27 @@ class ProjectTimelineController extends Controller
                     $Item->ecode = $value['ecode'];
                     $Item->create_by = $loginBy;
                     $Item->update_by = $loginBy;
-    
+
                     $Item->save();
                 }
             }
-    
+
             //log
             $userId = $loginBy;
             $type = 'เพิ่มข้อมูล';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);
-    
+
             DB::commit();
-    
+
             return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
         } catch (\Throwable $e) {
             DB::rollback();
-    
+
             return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 500);
         }
     }
-    
+
 
 
     /**
@@ -289,14 +289,14 @@ class ProjectTimelineController extends Controller
     public function updateTimeline(Request $request)
     {
         $loginBy = "admin";
-    
+
         DB::beginTransaction();
-    
+
         try {
-            foreach($request->tables as $table){
-                foreach($table['rows'] as $value){
+            foreach ($request->tables as $table) {
+                foreach ($table['rows'] as $value) {
                     $Item = ProjectTimeline::find($value['item_id']);
-    
+
                     $Item->influencer_id = $value['influencer_id'];
 
                     // $InfluProduct = new InfluProject();
@@ -356,23 +356,101 @@ class ProjectTimelineController extends Controller
                     $Item->ecode = $value['ecode'];
                     $Item->create_by = $loginBy;
                     $Item->update_by = $loginBy;
-    
+
                     $Item->save();
                 }
             }
-    
+
             //log
             $userId = $loginBy;
             $type = 'เพิ่มข้อมูล';
             $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
             $this->Log($userId, $description, $type);
-    
+
             DB::commit();
-    
+
             return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
         } catch (\Throwable $e) {
             DB::rollback();
-    
+
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $loginBy = "admin";
+        DB::beginTransaction();
+        try {
+            $Item = ProjectTimeline::find($request->id);
+            if ($request->user_type == 'employee') {
+                if ($Item->round == 0) {
+                    $Item->admin_status = $request->admin_status;
+                    if ($Item->admin_status == "approve" && $Item->client_status == "approve") {
+                        $Item->draft_status = "TRUE";
+                        $Item->admin_feedback1 = $request->feedback;
+                    } else {
+                        $Item->admin_feedback1 = $request->feedback;
+                    }
+                } elseif ($Item->round == 1) {
+                    $Item->admin_status = $request->admin_status;
+                    if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
+                        $Item->draft_status = "TRUE";
+                        $Item->admin_feedback2 = $request->feedback;
+                    } else {
+                        $Item->admin_feedback2 = $request->feedback;
+                    }
+                } elseif ($Item->round == 2) {
+                    $Item->admin_status = $request->admin_status;
+                    if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
+                        $Item->draft_status = "TRUE";
+                        $Item->admin_feedback3 = $request->feedback;
+                    } else {
+                        $Item->admin_feedback3 = $request->feedback;
+                    }
+                } else {
+                    $Item->draft_status = "FALSE";
+                }
+            }
+
+            if ($request->user_type == 'customer') {
+                if ($Item->round = 0) {
+                    $Item->client_status = $request->client_status;
+                    if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
+                        $Item->draft_status = "TRUE";
+                        $Item->client_feedback1 = $request->feedback;
+                    } else {
+                        $Item->client_feedback1 = $request->feedback;
+                        $Item->admin_status = "waiting";
+                        $Item->round = 1;
+                    }
+                } elseif ($Item->round = 1) {
+                    $Item->client_status = $request->client_status;
+                    if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
+                        $Item->draft_status = "TRUE";
+                        $Item->client_feedback2 = $request->feedback;
+                    } else {
+                        $Item->client_feedback2 = $request->feedback;
+                        $Item->admin_status = "waiting";
+                        $Item->round = 2;
+                    }
+                } elseif ($Item->round = 2) {
+                    $Item->client_status = $request->client_status;
+                    if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
+                        $Item->draft_status = "TRUE";
+                        $Item->client_feedback3 = $request->feedback;
+                    } else {
+                        $Item->client_feedback3 = $request->feedback;
+                        $Item->draft_status = "FALSE";
+                    }
+                }
+            }
+            $Item->update_by = $loginBy;
+            $Item->save();
+            DB::commit();
+            return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
+        } catch (\Throwable $e) {
+            DB::rollback();
             return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 500);
         }
     }
