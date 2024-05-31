@@ -43,13 +43,28 @@ class InfluencerController extends Controller
     {
         $social = $request->platform_social_id;
         $subscribe = $request->subscribe;
-        //debug
-        $InfluencerProject = Influencer::whereHas('platform_socials', function ($query) use ($social, $subscribe) {
+        
+        $influencers = Influencer::whereHas('platform_socials', function ($query) use ($social, $subscribe) {
             $query->where('platform_social_id', $social);
             $query->where('subscribe', '>', $subscribe);
-        })->get()->toArray();
+        })->with(['platform_socials' => function ($query) use ($social, $subscribe) {
+            $query->where('platform_social_id', $social);
+            $query->where('subscribe', '>', $subscribe)
+                  ->withPivot('name', 'subscribe', 'link');
+        }])->get();
     
-        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $InfluencerProject);
+        $influencersData = [];
+        foreach ($influencers as $influencer) {
+            $influencerData = $influencer->toArray();
+            foreach ($influencer->platform_socials as $platformSocial) {
+                $influencerData['social_name'] = $platformSocial->pivot->name;
+                $influencerData['subscribers'] = $platformSocial->pivot->subscribe;
+                $influencerData['link'] = $platformSocial->pivot->link;
+            }
+            $influencersData[] = $influencerData;
+        }
+    
+        return $this->returnSuccess('Data retrieved successfully', $influencersData);
     }
 
     public function getPage(Request $request)
@@ -153,8 +168,8 @@ class InfluencerController extends Controller
                 // Add age to the item
                 $item->age = $age;
                 // $item->typefollower = "-";
-                $item->image_bank = url($item->image_bank);
-                $item->image_card = url($item->image_card);
+                $item->image_bank = $item->image_bank;
+                $item->image_card = $item->image_card;
             }
         }
 
@@ -941,7 +956,7 @@ class InfluencerController extends Controller
      * @param  \App\Models\Influencer  $influencer
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request,$id)
+    public function destroy(Request $request, $id)
     {
         DB::beginTransaction();
 

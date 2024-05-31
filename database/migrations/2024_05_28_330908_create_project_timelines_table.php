@@ -21,7 +21,8 @@ class CreateProjectTimelinesTable extends Migration
 
             $table->integer('influencer_id')->nullable()->unsigned()->index();
             $table->foreign('influencer_id')->references('id')->on('influencers')->onDelete('cascade');
-
+            
+            $table->string('social_name', 255)->nullable()->charset('utf8');
             $table->text('link_social')->charset('utf8')->nullable();
 
             $table->text('draft_link1')->charset('utf8')->nullable();

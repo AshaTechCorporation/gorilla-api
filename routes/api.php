@@ -62,7 +62,7 @@ Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
 Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentation']);
 
 // Excel
-Route::get('/get_excel/{id}', [ExcelController::class, 'ExportServiceCenterByComp']);
+Route::post('/get_excel', [ExcelController::class, 'ExportServiceCenterByComp']);
 
 // Line Notification
 Route::get('/updateproject/{id}', [ProjectController::class, 'UpdateProjectStatus']);

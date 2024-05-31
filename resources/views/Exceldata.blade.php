@@ -16,20 +16,35 @@
 @endphp
 
 <table>
+    @php
+        // Assuming $data is not empty
+        $firstProductTimeline = $data[0];
+        $monthName = isset($months[$firstProductTimeline->month]) ? $months[$firstProductTimeline->month] : 'Unknown';
+        $year = $firstProductTimeline->year;
+    @endphp
+
+    <tr></tr> <!-- Skip the rows -->
+    <tr>
+        <td></td> <!-- Skip the column -->
+        <th colspan="47" rowspan="2"
+            style="text-align:center; vertical-align: middle; font-size: 16px; background-color: yellow; border: 5px solid black; font-weight: bold;">
+            Checklist Draft &amp; Stat_{{ $monthName }} {{ $year }}
+        </th>
+    </tr>
+    <tr></tr> <!-- Skip the rows -->
     @foreach ($data as $productTimeline)
-        @php
+        {{-- @php
             $monthName = isset($months[$productTimeline->month]) ? $months[$productTimeline->month] : 'Unknown';
         @endphp
-        <tr></tr> <!-- Skip the rows -->
+        <tr></tr> 
         <tr>
-            <td></td> <!-- Skip the column -->
+            <td></td> 
             <th colspan="47" rowspan="2"
                 style="text-align:center; vertical-align: middle; font-size: 16px; background-color: yellow; border: 5px solid black; font-weight: bold;">
                 Checklist Draft &amp; Stat_{{ $monthName }} {{ $productTimeline->year }}
             </th>
         </tr>
-        <tr></tr> <!-- Skip the rows -->
-        <tr></tr> <!-- Skip the rows -->
+        <tr></tr>  --}}
         @foreach ($productTimeline->product_items as $productItem)
             <tr>
                 <td></td> <!-- Skip the column -->
