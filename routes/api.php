@@ -64,6 +64,9 @@ Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentatio
 // Excel
 Route::post('/get_excel', [ExcelController::class, 'ExportServiceCenterByComp']);
 
+// Upload File
+Route::post('/upload_file', [Controller::class, 'uploadFile']);
+
 // Line Notification
 Route::get('/updateproject/{id}', [ProjectController::class, 'UpdateProjectStatus']);
 

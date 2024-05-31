@@ -298,6 +298,8 @@ class ProjectTimelineController extends Controller
     
                     $Item->influencer_id = $value['influencer_id'];
                     $Item->product_item_id = $value['product_item_id'];
+                    $Item->social_name = $value['social_name'];
+                    $Item->link_social = $value['link_social'];
                     $Item->draft_link1 = $value['draft_link1'];
                     $Item->client_feedback1 = $value['client_feedback1'];
                     $Item->admin_feedback1 = $value['admin_feedback1'];

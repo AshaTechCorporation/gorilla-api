@@ -172,6 +172,10 @@ class ProjectController extends Controller
                     $influencer->image_card = url($influencer->image_card);
                 }
             }
+            if($request->page_type == 'customer'){
+                $customer_id = $this->decoderid($request->header('Authorization'));
+                $d->where('customer_id', $customer_id);
+            }
         }
 
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $d);

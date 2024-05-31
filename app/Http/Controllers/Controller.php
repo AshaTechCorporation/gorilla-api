@@ -264,34 +264,20 @@ class Controller extends BaseController
     {
 
         $file = $request->file;
-        $path = $request->path;
 
         $input['filename'] = time() . '.' . $file->extension();
 
-        $destinationPath = public_path('/file_thumbnail');
+        $destinationPath = public_path('files');
         if (!File::exists($destinationPath)) {
             File::makeDirectory($destinationPath, 0777, true);
         }
 
-        $destinationPath = public_path($path);
+        $destinationPath = public_path('files');
         $file->move($destinationPath, $input['filename']);
 
-        return $path . $input['filename'];
+        return '/files' .'/'. $input['filename'];
     }
 
-    // public function uploadFile($file, $path)
-    // {
-    //     $input['filename'] = time() . '.' . $file->extension();
-    //     $destinationPath = public_path('/file_thumbnail');
-    //     if (!File::exists($destinationPath)) {
-    //         File::makeDirectory($destinationPath, 0777, true);
-    //     }
-
-    //     $destinationPath = public_path($path);
-    //     $file->move($destinationPath, $input['filename']);
-
-    //     return $path . $input['filename'];
-    // }
 
     public function getDropDownYear()
     {
@@ -638,6 +624,18 @@ class Controller extends BaseController
                 return $this->returnError('Token Not Found', 401);
             }
             $name = JWT::decode($token, "key", array('HS256'))->lun;
+
+            return $name;
+    }
+
+    public function decoderid($data)
+    {
+        $token = str_replace('Bearer ', '', $data);
+
+            if ($token == "") {
+                return $this->returnError('Token Not Found', 401);
+            }
+            $name = JWT::decode($token, "key", array('HS256'))->aud;
 
             return $name;
     }

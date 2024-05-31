@@ -74,6 +74,7 @@ class InfluencerController extends Controller
         $order = $request->order;
         $search = $request->search;
         $start = $request->start;
+        // return "test:".$start."/".$length;
         $page = $start / $length + 1;
 
         $type = $request->type;

@@ -18,573 +18,573 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\DB;
 use Berkayk\OneSignal\OneSignalFacade;
 
-class Controller extends BaseController
-{
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+// class Controller extends BaseController
+// {
+//     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function returnSuccess($massage, $data)
-    {
+//     public function returnSuccess($massage, $data)
+//     {
 
-        return response()->json([
-            'code' => strval(200),
-            'status' => true,
-            'message' => $massage,
-            'data' => $data,
-        ], 200);
-    }
+//         return response()->json([
+//             'code' => strval(200),
+//             'status' => true,
+//             'message' => $massage,
+//             'data' => $data,
+//         ], 200);
+//     }
 
-    public function returnUpdate($massage)
-    {
-        return response()->json([
-            'code' => strval(201),
-            'status' => true,
-            'message' => $massage,
-            'data' => [],
-        ], 201);
-    }
+//     public function returnUpdate($massage)
+//     {
+//         return response()->json([
+//             'code' => strval(201),
+//             'status' => true,
+//             'message' => $massage,
+//             'data' => [],
+//         ], 201);
+//     }
 
-    public function returnUpdateReturnData($massage, $data)
-    {
-        return response()->json([
-            'code' => strval(201),
-            'status' => true,
-            'message' => $massage,
-            'data' => $data,
-        ], 201);
-    }
+//     public function returnUpdateReturnData($massage, $data)
+//     {
+//         return response()->json([
+//             'code' => strval(201),
+//             'status' => true,
+//             'message' => $massage,
+//             'data' => $data,
+//         ], 201);
+//     }
 
-    public function returnErrorData($massage, $code)
-    {
-        return response()->json([
-            'code' => strval($code),
-            'status' => false,
-            'message' => $massage,
-            'data' => [],
-        ], 404);
-    }
+//     public function returnErrorData($massage, $code)
+//     {
+//         return response()->json([
+//             'code' => strval($code),
+//             'status' => false,
+//             'message' => $massage,
+//             'data' => [],
+//         ], 404);
+//     }
 
-    public function returnError($massage)
-    {
-        return response()->json([
-            'code' => strval(401),
-            'status' => false,
-            'message' => $massage,
-            'data' => [],
-        ], 401);
-    }
+//     public function returnError($massage)
+//     {
+//         return response()->json([
+//             'code' => strval(401),
+//             'status' => false,
+//             'message' => $massage,
+//             'data' => [],
+//         ], 401);
+//     }
 
-    public function Log($userId, $description, $type)
-    {
-        $Log = new Log();
-        $Log->user_id = $userId;
-        $Log->description = $description;
-        $Log->type = $type;
-        $Log->save();
-    }
+//     public function Log($userId, $description, $type)
+//     {
+//         $Log = new Log();
+//         $Log->user_id = $userId;
+//         $Log->description = $description;
+//         $Log->type = $type;
+//         $Log->save();
+//     }
 
-    public function sendMail($email, $data, $title, $type)
-    {
+//     public function sendMail($email, $data, $title, $type)
+//     {
 
-        $mail = new SendMail($email, $data, $title, $type);
-        Mail::to($email)->send($mail);
-    }
+//         $mail = new SendMail($email, $data, $title, $type);
+//         Mail::to($email)->send($mail);
+//     }
 
-    public function sendLine($line_token, $text)
-    {
+//     public function sendLine($line_token, $text)
+//     {
 
-        $sToken = $line_token;
-        $sMessage = $text;
+//         $sToken = $line_token;
+//         $sMessage = $text;
 
-        $chOne = curl_init();
-        curl_setopt($chOne, CURLOPT_URL, "https://notify-api.line.me/api/notify");
-        curl_setopt($chOne, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($chOne, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($chOne, CURLOPT_POST, 1);
-        curl_setopt($chOne, CURLOPT_POSTFIELDS, "message=" . $sMessage);
-        $headers = array('Content-type: application/x-www-form-urlencoded', 'Authorization: Bearer ' . $sToken . '');
-        curl_setopt($chOne, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($chOne, CURLOPT_RETURNTRANSFER, 1);
-        $result = curl_exec($chOne);
+//         $chOne = curl_init();
+//         curl_setopt($chOne, CURLOPT_URL, "https://notify-api.line.me/api/notify");
+//         curl_setopt($chOne, CURLOPT_SSL_VERIFYHOST, 0);
+//         curl_setopt($chOne, CURLOPT_SSL_VERIFYPEER, 0);
+//         curl_setopt($chOne, CURLOPT_POST, 1);
+//         curl_setopt($chOne, CURLOPT_POSTFIELDS, "message=" . $sMessage);
+//         $headers = array('Content-type: application/x-www-form-urlencoded', 'Authorization: Bearer ' . $sToken . '');
+//         curl_setopt($chOne, CURLOPT_HTTPHEADER, $headers);
+//         curl_setopt($chOne, CURLOPT_RETURNTRANSFER, 1);
+//         $result = curl_exec($chOne);
 
-        curl_close($chOne);
-    }
+//         curl_close($chOne);
+//     }
 
-    public function uploadImages(Request $request)
-    {
-        try {
-            $image = $request->image;
-            $path = $request->path;
+//     public function uploadImages(Request $request)
+//     {
+//         try {
+//             $image = $request->image;
+//             $path = $request->path;
     
-            $input['imagename'] = md5(rand(0, 999999) . $image->getClientOriginalName()) . '.' . $image->extension();
-            $destinationPath = public_path('/images');
-            if (!File::exists($destinationPath)) {
-                File::makeDirectory($destinationPath, 0777, true);
-            }
+//             $input['imagename'] = md5(rand(0, 999999) . $image->getClientOriginalName()) . '.' . $image->extension();
+//             $destinationPath = public_path('/images');
+//             if (!File::exists($destinationPath)) {
+//                 File::makeDirectory($destinationPath, 0777, true);
+//             }
     
-            $img = Image::make($image->path());
-            $img->save($destinationPath . '/' . $input['imagename']);
-            $destinationPath = public_path('/images' . $path);
-            $image->move($destinationPath, $input['imagename']);
+//             $img = Image::make($image->path());
+//             $img->save($destinationPath . '/' . $input['imagename']);
+//             $destinationPath = public_path('/images' . $path);
+//             $image->move($destinationPath, $input['imagename']);
     
-            // Construct the image URL using Laravel's asset() helper function
-            $imageUrl = asset('images/' . $path . '/' . $input['imagename']);
+//             $imageUrl = asset('images/' . $path . '/' . $input['imagename']);
     
-            return $this->returnSuccess('ดำเนินการสำเร็จ', $imageUrl); 
-        } catch (\Throwable $e) {
-            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
-        }
-    }
+//             return $this->returnSuccess('ดำเนินการสำเร็จ', $imageUrl); 
+//         } catch (\Throwable $e) {
+//             return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+//         }
+//     }
+
+//     public function uploadFile(Request $request)
+//     {
+//         return "return";
+//         $file = $request->file;
+
+//         $input['filename'] = time() . '.' . $file->extension();
+
+//         $destinationPath = public_path('/files');
+//         if (!File::exists($destinationPath)) {
+//             File::makeDirectory($destinationPath, 0777, true);
+//         }
+
+//         $destinationPath = public_path('/files');
+//         $file->move($destinationPath, $input['filename']);
 
-    // public function uploadSignature(Request $request)
-    // {
+//         $imageUrl = asset('files/' .  $input['filename']);
+
+//         // return $imageUrl;
+//     }
+//     // public function uploadSignature(Request $request)
+//     // {
 
-    //     $image = $request->image;
-    //     $path = $request->path;
-    //     $refno = $request->refno;
-    //     $action = $request->action;
-
-    //     $input['imagename'] = md5(rand(0, 999999) . $image->getClientOriginalName()) . '.' . $image->extension();
-    //     $destinationPath = public_path('/thumbnail');
-    //     if (!File::exists($destinationPath)) {
-    //         File::makeDirectory($destinationPath, 0777, true);
-    //     }
+//     //     $image = $request->image;
+//     //     $path = $request->path;
+//     //     $refno = $request->refno;
+//     //     $action = $request->action;
 
-    //     $img = Image::make($image->path());
-    //     $img->save($destinationPath . '/' . $input['imagename']);
-    //     $destinationPath = public_path($path);
-    //     $image->move($destinationPath, $input['imagename']);
+//     //     $input['imagename'] = md5(rand(0, 999999) . $image->getClientOriginalName()) . '.' . $image->extension();
+//     //     $destinationPath = public_path('/thumbnail');
+//     //     if (!File::exists($destinationPath)) {
+//     //         File::makeDirectory($destinationPath, 0777, true);
+//     //     }
 
-    //     DB::beginTransaction();
+//     //     $img = Image::make($image->path());
+//     //     $img->save($destinationPath . '/' . $input['imagename']);
+//     //     $destinationPath = public_path($path);
+//     //     $image->move($destinationPath, $input['imagename']);
 
-    //     try {
+//     //     DB::beginTransaction();
 
-    //         $Item = new Signature();
-    //         $Item->refno = $refno;
-    //         $Item->path = $path . $input['imagename'];
-    //         $Item->action = $action;
-    //         $Item->save();
+//     //     try {
 
-    //         $ItemOrder = Orders::where('code', $refno)->first();
-    //         if ($ItemOrder) {
-    //             if ($Item->action == "Receive to Client") {
-    //                 $ItemOrder->status = "ToClient";
-    //             } else {
-    //                 $ItemOrder->status = "Recived";
-    //             }
+//     //         $Item = new Signature();
+//     //         $Item->refno = $refno;
+//     //         $Item->path = $path . $input['imagename'];
+//     //         $Item->action = $action;
+//     //         $Item->save();
 
-    //             $ItemOrder->save();
+//     //         $ItemOrder = Orders::where('code', $refno)->first();
+//     //         if ($ItemOrder) {
+//     //             if ($Item->action == "Receive to Client") {
+//     //                 $ItemOrder->status = "ToClient";
+//     //             } else {
+//     //                 $ItemOrder->status = "Recived";
+//     //             }
 
-    //             OneSignalFacade::sendNotificationToAll("แจ้งเตือนรายการนำเข้าโกดังสำเร็จรายการ : " . $refno);
-    //         }
+//     //             $ItemOrder->save();
 
-    //         //
+//     //             OneSignalFacade::sendNotificationToAll("แจ้งเตือนรายการนำเข้าโกดังสำเร็จรายการ : " . $refno);
+//     //         }
 
-    //         //log
-    //         $userId = "admin";
-    //         $type = 'เพิ่มรายการ';
-    //         $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type . ' ' . $request->name;
-    //         $this->Log($userId, $description, $type);
-    //         //
+//     //         //
 
-    //         DB::commit();
+//     //         //log
+//     //         $userId = "admin";
+//     //         $type = 'เพิ่มรายการ';
+//     //         $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type . ' ' . $request->name;
+//     //         $this->Log($userId, $description, $type);
+//     //         //
 
-    //         return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
-    //     } catch (\Throwable $e) {
+//     //         DB::commit();
 
-    //         DB::rollback();
+//     //         return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
+//     //     } catch (\Throwable $e) {
 
-    //         return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
-    //     }
+//     //         DB::rollback();
 
-    //     // return $this->returnSuccess('ดำเนินการสำเร็จ', $path . $input['imagename']);
-    // }
+//     //         return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+//     //     }
 
-    public function uploadImage($image, $path)
-    {
-        $input['imagename'] = md5(rand(0, 999999) . $image->getClientOriginalName()) . '.' . $image->extension();
-        $destinationPath = public_path('/thumbnail');
-        if (!File::exists($destinationPath)) {
-            File::makeDirectory($destinationPath, 0777, true);
-        }
+//     //     // return $this->returnSuccess('ดำเนินการสำเร็จ', $path . $input['imagename']);
+//     // }
 
-        $img = Image::make($image->path());
-        $img->save($destinationPath . '/' . $input['imagename']);
-        $destinationPath = public_path($path);
-        $image->move($destinationPath, $input['imagename']);
+//     public function uploadImage($image, $path)
+//     {
+//         $input['imagename'] = md5(rand(0, 999999) . $image->getClientOriginalName()) . '.' . $image->extension();
+//         $destinationPath = public_path('/thumbnail');
+//         if (!File::exists($destinationPath)) {
+//             File::makeDirectory($destinationPath, 0777, true);
+//         }
 
-        return $path . $input['imagename'];
-    }
+//         $img = Image::make($image->path());
+//         $img->save($destinationPath . '/' . $input['imagename']);
+//         $destinationPath = public_path($path);
+//         $image->move($destinationPath, $input['imagename']);
 
-    public function uploadFile(Request $request)
-    {
+//         return $path . $input['imagename'];
+//     }
 
-        $file = $request->file;
-        $path = $request->path;
 
-        $input['filename'] = time() . '.' . $file->extension();
+//     // public function uploadFile($file, $path)
+//     // {
+//     //     $input['filename'] = time() . '.' . $file->extension();
+//     //     $destinationPath = public_path('/file_thumbnail');
+//     //     if (!File::exists($destinationPath)) {
+//     //         File::makeDirectory($destinationPath, 0777, true);
+//     //     }
 
-        $destinationPath = public_path('/file_thumbnail');
-        if (!File::exists($destinationPath)) {
-            File::makeDirectory($destinationPath, 0777, true);
-        }
+//     //     $destinationPath = public_path($path);
+//     //     $file->move($destinationPath, $input['filename']);
 
-        $destinationPath = public_path($path);
-        $file->move($destinationPath, $input['filename']);
+//     //     return $path . $input['filename'];
+//     // }
 
-        return $path . $input['filename'];
-    }
+//     public function getDropDownYear()
+//     {
+//         $Year = intval(((date('Y')) + 1) + 543);
 
-    // public function uploadFile($file, $path)
-    // {
-    //     $input['filename'] = time() . '.' . $file->extension();
-    //     $destinationPath = public_path('/file_thumbnail');
-    //     if (!File::exists($destinationPath)) {
-    //         File::makeDirectory($destinationPath, 0777, true);
-    //     }
+//         $data = [];
 
-    //     $destinationPath = public_path($path);
-    //     $file->move($destinationPath, $input['filename']);
+//         for ($i = 0; $i < 10; $i++) {
 
-    //     return $path . $input['filename'];
-    // }
+//             $Year = $Year - 1;
+//             $data[$i]['year'] = $Year;
+//         }
 
-    public function getDropDownYear()
-    {
-        $Year = intval(((date('Y')) + 1) + 543);
+//         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $data);
+//     }
 
-        $data = [];
+//     public function getDropDownProvince()
+//     {
 
-        for ($i = 0; $i < 10; $i++) {
+//         $province = array("กระบี่", "กรุงเทพมหานคร", "กาญจนบุรี", "กาฬสินธุ์", "กำแพงเพชร", "ขอนแก่น", "จันทบุรี", "ฉะเชิงเทรา", "ชลบุรี", "ชัยนาท", "ชัยภูมิ", "ชุมพร", "เชียงราย", "เชียงใหม่", "ตรัง", "ตราด", "ตาก", "นครนายก", "นครปฐม", "นครพนม", "นครราชสีมา", "นครศรีธรรมราช", "นครสวรรค์", "นนทบุรี", "นราธิวาส", "น่าน", "บุรีรัมย์", "บึงกาฬ", "ปทุมธานี", "ประจวบคีรีขันธ์", "ปราจีนบุรี", "ปัตตานี", "พะเยา", "พังงา", "พัทลุง", "พิจิตร", "พิษณุโลก", "เพชรบุรี", "เพชรบูรณ์", "แพร่", "ภูเก็ต", "มหาสารคาม", "มุกดาหาร", "แม่ฮ่องสอน", "ยโสธร", "ยะลา", "ร้อยเอ็ด", "ระนอง", "ระยอง", "ราชบุรี", "ลพบุรี", "ลำปาง", "ลำพูน", "เลย", "ศรีสะเกษ", "สกลนคร", "สงขลา", "สตูล", "สมุทรปราการ", "สมุทรสงคราม", "สมุทรสาคร", "สระแก้ว", "สระบุรี", "สิงห์บุรี", "สุโขทัย", "สุพรรณบุรี", "สุราษฎร์ธานี", "สุรินทร์", "หนองคาย", "หนองบัวลำภู", "อยุธยา", "อ่างทอง", "อำนาจเจริญ", "อุดรธานี", "อุตรดิตถ์", "อุทัยธานี", "อุบลราชธานี");
 
-            $Year = $Year - 1;
-            $data[$i]['year'] = $Year;
-        }
+//         $data = [];
 
-        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $data);
-    }
+//         for ($i = 0; $i < count($province); $i++) {
 
-    public function getDropDownProvince()
-    {
+//             $data[$i]['province'] = $province[$i];
+//         }
 
-        $province = array("กระบี่", "กรุงเทพมหานคร", "กาญจนบุรี", "กาฬสินธุ์", "กำแพงเพชร", "ขอนแก่น", "จันทบุรี", "ฉะเชิงเทรา", "ชลบุรี", "ชัยนาท", "ชัยภูมิ", "ชุมพร", "เชียงราย", "เชียงใหม่", "ตรัง", "ตราด", "ตาก", "นครนายก", "นครปฐม", "นครพนม", "นครราชสีมา", "นครศรีธรรมราช", "นครสวรรค์", "นนทบุรี", "นราธิวาส", "น่าน", "บุรีรัมย์", "บึงกาฬ", "ปทุมธานี", "ประจวบคีรีขันธ์", "ปราจีนบุรี", "ปัตตานี", "พะเยา", "พังงา", "พัทลุง", "พิจิตร", "พิษณุโลก", "เพชรบุรี", "เพชรบูรณ์", "แพร่", "ภูเก็ต", "มหาสารคาม", "มุกดาหาร", "แม่ฮ่องสอน", "ยโสธร", "ยะลา", "ร้อยเอ็ด", "ระนอง", "ระยอง", "ราชบุรี", "ลพบุรี", "ลำปาง", "ลำพูน", "เลย", "ศรีสะเกษ", "สกลนคร", "สงขลา", "สตูล", "สมุทรปราการ", "สมุทรสงคราม", "สมุทรสาคร", "สระแก้ว", "สระบุรี", "สิงห์บุรี", "สุโขทัย", "สุพรรณบุรี", "สุราษฎร์ธานี", "สุรินทร์", "หนองคาย", "หนองบัวลำภู", "อยุธยา", "อ่างทอง", "อำนาจเจริญ", "อุดรธานี", "อุตรดิตถ์", "อุทัยธานี", "อุบลราชธานี");
+//         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $data);
+//     }
 
-        $data = [];
+//     public function getDownloadFomatImport($params)
+//     {
 
-        for ($i = 0; $i < count($province); $i++) {
+//         $file = $params;
+//         $destinationPath = public_path() . "/fomat_import/";
 
-            $data[$i]['province'] = $province[$i];
-        }
+//         return response()->download($destinationPath . $file);
+//     }
 
-        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $data);
-    }
+//     public function checkDigitMemberId($memberId)
+//     {
 
-    public function getDownloadFomatImport($params)
-    {
+//         $sum = 0;
+//         for ($i = 0; $i < 12; $i++) {
 
-        $file = $params;
-        $destinationPath = public_path() . "/fomat_import/";
+//             $sum += (int) ($memberId[$i]) * (13 - $i);
+//         }
 
-        return response()->download($destinationPath . $file);
-    }
+//         if ((11 - ($sum % 11)) % 10 == (int) ($memberId[12])) {
+//             return 'true';
+//         } else {
+//             return 'false';
+//         }
+//     }
 
-    public function checkDigitMemberId($memberId)
-    {
+//     public function genCode(Model $model, $prefix, $number)
+//     {
 
-        $sum = 0;
-        for ($i = 0; $i < 12; $i++) {
+//         $countPrefix = strlen($prefix);
+//         $countRunNumber = strlen($number);
 
-            $sum += (int) ($memberId[$i]) * (13 - $i);
-        }
+//         //get last code
+//         $Property_type = $model::orderby('code', 'desc')->first();
+//         if ($Property_type) {
+//             $lastCode = $Property_type->code;
+//         } else {
+//             $lastCode = $prefix . $number;
+//         }
 
-        if ((11 - ($sum % 11)) % 10 == (int) ($memberId[12])) {
-            return 'true';
-        } else {
-            return 'false';
-        }
-    }
+//         $codelast = substr($lastCode, $countPrefix, $countRunNumber);
 
-    public function genCode(Model $model, $prefix, $number)
-    {
+//         $newNumber = intval($codelast) + 1;
+//         $Number = sprintf('%0' . strval($countRunNumber) . 'd', $newNumber);
 
-        $countPrefix = strlen($prefix);
-        $countRunNumber = strlen($number);
+//         $runNumber = $prefix . $Number;
 
-        //get last code
-        $Property_type = $model::orderby('code', 'desc')->first();
-        if ($Property_type) {
-            $lastCode = $Property_type->code;
-        } else {
-            $lastCode = $prefix . $number;
-        }
+//         return $runNumber;
+//     }
 
-        $codelast = substr($lastCode, $countPrefix, $countRunNumber);
 
-        $newNumber = intval($codelast) + 1;
-        $Number = sprintf('%0' . strval($countRunNumber) . 'd', $newNumber);
+//     // public function dateBetween($dateStart, $dateStop)
+//     // {
+//     //     $datediff = strtotime($dateStop) - strtotime($this->dateform($dateStart));
+//     //     return abs($datediff / (60 * 60 * 24));
+//     // }
 
-        $runNumber = $prefix . $Number;
+//     // public function log_noti($Title, $Description, $Url, $Pic, $Type)
+//     // {
+//     //     $log_noti = new Log_noti();
+//     //     $log_noti->title = $Title;
+//     //     $log_noti->description = $Description;
+//     //     $log_noti->url = $Url;
+//     //     $log_noti->pic = $Pic;
+//     //     $log_noti->log_noti_type = $Type;
 
-        return $runNumber;
-    }
+//     //     $log_noti->save();
+//     // }
 
+//     /////////////////////////////////////////// seach datatable  ///////////////////////////////////////////
 
-    // public function dateBetween($dateStart, $dateStop)
-    // {
-    //     $datediff = strtotime($dateStop) - strtotime($this->dateform($dateStart));
-    //     return abs($datediff / (60 * 60 * 24));
-    // }
+//     public function withPermission($query, $search)
+//     {
 
-    // public function log_noti($Title, $Description, $Url, $Pic, $Type)
-    // {
-    //     $log_noti = new Log_noti();
-    //     $log_noti->title = $Title;
-    //     $log_noti->description = $Description;
-    //     $log_noti->url = $Url;
-    //     $log_noti->pic = $Pic;
-    //     $log_noti->log_noti_type = $Type;
+//         $col = array('id', 'name', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-    //     $log_noti->save();
-    // }
+//         $query->orWhereHas('permission', function ($query) use ($search, $col) {
 
-    /////////////////////////////////////////// seach datatable  ///////////////////////////////////////////
+//             $query->Where(function ($query) use ($search, $col) {
 
-    public function withPermission($query, $search)
-    {
+//                 //search datatable
+//                 $query->orwhere(function ($query) use ($search, $col) {
+//                     foreach ($col as &$c) {
+//                         $query->orWhere($c, 'like', '%' . $search['value'] . '%');
+//                     }
+//                 });
+//             });
+//         });
 
-        $col = array('id', 'name', 'create_by', 'update_by', 'created_at', 'updated_at');
+//         return $query;
+//     }
 
-        $query->orWhereHas('permission', function ($query) use ($search, $col) {
+//     public function withMember($query, $search)
+//     {
 
-            $query->Where(function ($query) use ($search, $col) {
+//         // $col = array('id', 'member_group_id','code', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-                //search datatable
-                $query->orwhere(function ($query) use ($search, $col) {
-                    foreach ($col as &$c) {
-                        $query->orWhere($c, 'like', '%' . $search['value'] . '%');
-                    }
-                });
-            });
-        });
+//         // $query->orWhereHas('member', function ($query) use ($search, $col) {
 
-        return $query;
-    }
+//         //     $query->Where(function ($query) use ($search, $col) {
 
-    public function withMember($query, $search)
-    {
+//         //         //search datatable
+//         //         $query->orwhere(function ($query) use ($search, $col) {
+//         //             foreach ($col as &$c) {
+//         //                 $query->orWhere($c, 'like', '%' . $search['value'] . '%');
+//         //             }
+//         //         });
+//         //     });
 
-        // $col = array('id', 'member_group_id','code', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
+//         // });
 
-        // $query->orWhereHas('member', function ($query) use ($search, $col) {
+//         // return $query;
+//     }
 
-        //     $query->Where(function ($query) use ($search, $col) {
 
-        //         //search datatable
-        //         $query->orwhere(function ($query) use ($search, $col) {
-        //             foreach ($col as &$c) {
-        //                 $query->orWhere($c, 'like', '%' . $search['value'] . '%');
-        //             }
-        //         });
-        //     });
+//     public function withInquiryType($query, $search)
+//     {
 
-        // });
+//         $col = array('id', 'code', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-        // return $query;
-    }
+//         $query->orWhereHas('inquiry_type', function ($query) use ($search, $col) {
 
+//             $query->Where(function ($query) use ($search, $col) {
 
-    public function withInquiryType($query, $search)
-    {
+//                 //search datatable
+//                 $query->orwhere(function ($query) use ($search, $col) {
+//                     foreach ($col as &$c) {
+//                         $query->orWhere($c, 'like', '%' . $search['value'] . '%');
+//                     }
+//                 });
+//             });
+//         });
 
-        $col = array('id', 'code', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
+//         return $query;
+//     }
 
-        $query->orWhereHas('inquiry_type', function ($query) use ($search, $col) {
+//     public function withPropertyType($query, $search)
+//     {
 
-            $query->Where(function ($query) use ($search, $col) {
+//         $col = array('id', 'code', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-                //search datatable
-                $query->orwhere(function ($query) use ($search, $col) {
-                    foreach ($col as &$c) {
-                        $query->orWhere($c, 'like', '%' . $search['value'] . '%');
-                    }
-                });
-            });
-        });
+//         $query->orWhereHas('property_type', function ($query) use ($search, $col) {
 
-        return $query;
-    }
+//             $query->Where(function ($query) use ($search, $col) {
 
-    public function withPropertyType($query, $search)
-    {
+//                 //search datatable
+//                 $query->orwhere(function ($query) use ($search, $col) {
+//                     foreach ($col as &$c) {
+//                         $query->orWhere($c, 'like', '%' . $search['value'] . '%');
+//                     }
+//                 });
+//             });
+//         });
 
-        $col = array('id', 'code', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
+//         return $query;
+//     }
 
-        $query->orWhereHas('property_type', function ($query) use ($search, $col) {
+//     public function withPropertySubType($query, $search)
+//     {
 
-            $query->Where(function ($query) use ($search, $col) {
+//         $col = array('id', 'property_type_id', 'code', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-                //search datatable
-                $query->orwhere(function ($query) use ($search, $col) {
-                    foreach ($col as &$c) {
-                        $query->orWhere($c, 'like', '%' . $search['value'] . '%');
-                    }
-                });
-            });
-        });
+//         $query->orWhereHas('property_sub_type', function ($query) use ($search, $col) {
 
-        return $query;
-    }
+//             $query->Where(function ($query) use ($search, $col) {
 
-    public function withPropertySubType($query, $search)
-    {
+//                 //search datatable
+//                 $query->orwhere(function ($query) use ($search, $col) {
+//                     foreach ($col as &$c) {
+//                         $query->orWhere($c, 'like', '%' . $search['value'] . '%');
+//                     }
+//                 });
+//             });
+//         });
 
-        $col = array('id', 'property_type_id', 'code', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
+//         return $query;
+//     }
 
-        $query->orWhereHas('property_sub_type', function ($query) use ($search, $col) {
+//     public function withPropertyAnnouncer($query, $search)
+//     {
 
-            $query->Where(function ($query) use ($search, $col) {
+//         $col = array('id', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-                //search datatable
-                $query->orwhere(function ($query) use ($search, $col) {
-                    foreach ($col as &$c) {
-                        $query->orWhere($c, 'like', '%' . $search['value'] . '%');
-                    }
-                });
-            });
-        });
+//         $query->orWhereHas('property_announcer', function ($query) use ($search, $col) {
 
-        return $query;
-    }
+//             $query->Where(function ($query) use ($search, $col) {
 
-    public function withPropertyAnnouncer($query, $search)
-    {
+//                 //search datatable
+//                 $query->orwhere(function ($query) use ($search, $col) {
+//                     foreach ($col as &$c) {
+//                         $query->orWhere($c, 'like', '%' . $search['value'] . '%');
+//                     }
+//                 });
+//             });
+//         });
 
-        $col = array('id', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
+//         return $query;
+//     }
 
-        $query->orWhereHas('property_announcer', function ($query) use ($search, $col) {
+//     public function withPropertyColorLand($query, $search)
+//     {
 
-            $query->Where(function ($query) use ($search, $col) {
+//         $col = array('id', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-                //search datatable
-                $query->orwhere(function ($query) use ($search, $col) {
-                    foreach ($col as &$c) {
-                        $query->orWhere($c, 'like', '%' . $search['value'] . '%');
-                    }
-                });
-            });
-        });
+//         $query->orWhereHas('property_color_land', function ($query) use ($search, $col) {
 
-        return $query;
-    }
+//             $query->Where(function ($query) use ($search, $col) {
 
-    public function withPropertyColorLand($query, $search)
-    {
+//                 //search datatable
+//                 $query->orwhere(function ($query) use ($search, $col) {
+//                     foreach ($col as &$c) {
+//                         $query->orWhere($c, 'like', '%' . $search['value'] . '%');
+//                     }
+//                 });
+//             });
+//         });
 
-        $col = array('id', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
+//         return $query;
+//     }
 
-        $query->orWhereHas('property_color_land', function ($query) use ($search, $col) {
+//     public function withPropertyOwnership($query, $search)
+//     {
 
-            $query->Where(function ($query) use ($search, $col) {
+//         $col = array('id', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-                //search datatable
-                $query->orwhere(function ($query) use ($search, $col) {
-                    foreach ($col as &$c) {
-                        $query->orWhere($c, 'like', '%' . $search['value'] . '%');
-                    }
-                });
-            });
-        });
+//         $query->orWhereHas('property_ownership', function ($query) use ($search, $col) {
 
-        return $query;
-    }
+//             $query->Where(function ($query) use ($search, $col) {
 
-    public function withPropertyOwnership($query, $search)
-    {
+//                 //search datatable
+//                 $query->orwhere(function ($query) use ($search, $col) {
+//                     foreach ($col as &$c) {
+//                         $query->orWhere($c, 'like', '%' . $search['value'] . '%');
+//                     }
+//                 });
+//             });
+//         });
 
-        $col = array('id', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
+//         return $query;
+//     }
 
-        $query->orWhereHas('property_ownership', function ($query) use ($search, $col) {
+//     public function withPropertyFacility($query, $search)
+//     {
 
-            $query->Where(function ($query) use ($search, $col) {
+//         $col = array('id', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-                //search datatable
-                $query->orwhere(function ($query) use ($search, $col) {
-                    foreach ($col as &$c) {
-                        $query->orWhere($c, 'like', '%' . $search['value'] . '%');
-                    }
-                });
-            });
-        });
+//         $query->orWhereHas('property_facility', function ($query) use ($search, $col) {
 
-        return $query;
-    }
+//             $query->Where(function ($query) use ($search, $col) {
 
-    public function withPropertyFacility($query, $search)
-    {
+//                 //search datatable
+//                 $query->orwhere(function ($query) use ($search, $col) {
+//                     foreach ($col as &$c) {
+//                         $query->orWhere($c, 'like', '%' . $search['value'] . '%');
+//                     }
+//                 });
+//             });
+//         });
 
-        $col = array('id', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
+//         return $query;
+//     }
 
-        $query->orWhereHas('property_facility', function ($query) use ($search, $col) {
+//     public function withPropertySubFacility($query, $search)
+//     {
 
-            $query->Where(function ($query) use ($search, $col) {
+//         $col = array('id', 'property_facility_id', 'name', 'icon', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-                //search datatable
-                $query->orwhere(function ($query) use ($search, $col) {
-                    foreach ($col as &$c) {
-                        $query->orWhere($c, 'like', '%' . $search['value'] . '%');
-                    }
-                });
-            });
-        });
+//         $query->orWhereHas('property_sub_facility', function ($query) use ($search, $col) {
 
-        return $query;
-    }
+//             $query->Where(function ($query) use ($search, $col) {
 
-    public function withPropertySubFacility($query, $search)
-    {
+//                 //search datatable
+//                 $query->orwhere(function ($query) use ($search, $col) {
+//                     foreach ($col as &$c) {
+//                         $query->orWhere($c, 'like', '%' . $search['value'] . '%');
+//                     }
+//                 });
 
-        $col = array('id', 'property_facility_id', 'name', 'icon', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
+//                 $query = $this->withPropertyFacility($query, $search);
+//             });
+//         });
 
-        $query->orWhereHas('property_sub_facility', function ($query) use ($search, $col) {
+//         return $query;
+//     }
 
-            $query->Where(function ($query) use ($search, $col) {
+//     public function withPropertySubFacilityExplend($query, $search)
+//     {
 
-                //search datatable
-                $query->orwhere(function ($query) use ($search, $col) {
-                    foreach ($col as &$c) {
-                        $query->orWhere($c, 'like', '%' . $search['value'] . '%');
-                    }
-                });
+//         $col = array('id', 'property_sub_facility_id', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
 
-                $query = $this->withPropertyFacility($query, $search);
-            });
-        });
+//         $query->orWhereHas('property_sub_facility_explend', function ($query) use ($search, $col) {
 
-        return $query;
-    }
+//             $query->Where(function ($query) use ($search, $col) {
 
-    public function withPropertySubFacilityExplend($query, $search)
-    {
+//                 //search datatable
+//                 $query->orwhere(function ($query) use ($search, $col) {
+//                     foreach ($col as &$c) {
+//                         $query->orWhere($c, 'like', '%' . $search['value'] . '%');
+//                     }
+//                 });
 
-        $col = array('id', 'property_sub_facility_id', 'name', 'status', 'create_by', 'update_by', 'created_at', 'updated_at');
+//                 $query = $this->withPropertySubFacility($query, $search);
+//             });
+//         });
 
-        $query->orWhereHas('property_sub_facility_explend', function ($query) use ($search, $col) {
+//         return $query;
+//     }
 
-            $query->Where(function ($query) use ($search, $col) {
+//     /////////////////////////////////////////// seach datatable  ///////////////////////////////////////////
 
-                //search datatable
-                $query->orwhere(function ($query) use ($search, $col) {
-                    foreach ($col as &$c) {
-                        $query->orWhere($c, 'like', '%' . $search['value'] . '%');
-                    }
-                });
-
-                $query = $this->withPropertySubFacility($query, $search);
-            });
-        });
-
-        return $query;
-    }
-
-    /////////////////////////////////////////// seach datatable  ///////////////////////////////////////////
-
-}
+// }
