@@ -26,4 +26,5 @@ class ProjectTimeline extends Model
     {
         return $this->belongsTo(ProductItem::class);
     }
+
 }

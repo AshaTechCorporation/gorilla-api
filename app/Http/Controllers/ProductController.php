@@ -52,12 +52,20 @@ class ProductController extends Controller
         try {
             $InsertItem = $request->insertitem;
             foreach ($InsertItem as $key => $value) {
-                $Item = new ProductTimeline();
+                $existingProductTimeline = ProductTimeline::where('project_id', $value['project_id'])
+                ->where('year', $value['year'])
+                ->where('month', $value['month'])
+                ->first();
 
+            if ($existingProductTimeline) {
+                $Item = $existingProductTimeline;
+            } else {
+                $Item = new ProductTimeline();
                 $Item->project_id = $value['project_id'];
                 $Item->year = $value['year'];
                 $Item->month = $value['month'];
                 $Item->save();
+            }
 
                 if (isset($value['productitem'])) {
                     $productItems = $value['productitem'];

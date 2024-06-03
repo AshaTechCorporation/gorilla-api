@@ -41,8 +41,9 @@ class PresentationController extends Controller
         $this->presentation = new PhpPresentation();
         $this->presentation->getLayout()->setDocumentLayout(DocumentLayout::LAYOUT_SCREEN_16X9, true);
     }
-    public function Thumbnail($name)
+    public function Thumbnail($project, $nummonth)
     {
+
         $imagePath = public_path(Presentation::where('Template_Name', 'Thumbnail')
             ->value('Background_Template'));
 
@@ -91,7 +92,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun($name);
+        $textRun = $textShape->createTextRun($project->name);
         $textRun->getFont()->setSize(86);
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setColor(new Color('FFFFFF'));
@@ -119,7 +120,8 @@ class PresentationController extends Controller
         $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('E1AB16'))->setEndColor(new Color('E1AB16'));
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('3 Month 2024');
+        $currentYear = date('Y'); // Get the current year
+        $textRun = $textShape->createTextRun($nummonth . ' Month ' . $currentYear);
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setColor(new Color('FFFFFF'));
@@ -354,7 +356,7 @@ class PresentationController extends Controller
     public function Influ_format_3($influencer)
     {
         // ************************* Add the third slide *****************************
-        $imagePath = public_path(Presentation::where('Template_Name', 'Influ_format_3')
+        $imagePath = public_path(Presentation::where('Template_Name', 'Influ_format')
             ->value('Background_Template'));
 
         $thirdSlide = $this->presentation->createSlide();
@@ -379,7 +381,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun($influencer[0]->fullname);
+        $textRun = $textShape->createTextRun(isset($influencer[0]->social_name) ? $influencer[0]->social_name : 'ไม่มีข้อมูล');
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new Color('00000'));
         $textRun->getFont()->setBold(true);
@@ -417,7 +419,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun($influencer[1]->fullname);
+        $textRun = $textShape->createTextRun(isset($influencer[1]->social_name) ? $influencer[1]->social_name : 'ไม่มีข้อมูล');
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('00000'));
         $textRun->getFont()->setBold(true);
@@ -455,7 +457,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun($influencer[2]->fullname);
+        $textRun = $textShape->createTextRun(isset($influencer[2]->social_name) ? $influencer[2]->social_name : 'ไม่มีข้อมูล');
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('00000'));
         $textRun->getFont()->setBold(true);
@@ -484,7 +486,7 @@ class PresentationController extends Controller
     public function Influ_format_2($influencer)
     {
         // ************************* Add the third slide *****************************
-        $imagePath = public_path(Presentation::where('Template_Name', 'Influ_format_3')
+        $imagePath = public_path(Presentation::where('Template_Name', 'Influ_format')
             ->value('Background_Template'));
 
         $thirdSlide = $this->presentation->createSlide();
@@ -510,7 +512,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun($influencer[0]->fullname);
+        $textRun = $textShape->createTextRun(isset($influencer[0]->social_name) ? $influencer[0]->social_name : 'ไม่มีข้อมูล');
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new Color('00000'));
         $textRun->getFont()->setBold(true);
@@ -551,7 +553,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Text run
-        $textRun = $textShape->createTextRun($influencer[1]->fullname);
+        $textRun = $textShape->createTextRun(isset($influencer[1]->social_name) ? $influencer[1]->social_name : 'ไม่มีข้อมูล');
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('00000'));
         $textRun->getFont()->setBold(true);
@@ -582,7 +584,7 @@ class PresentationController extends Controller
     public function Influ_format_1($influencer)
     {
         // ************************* Add the third slide *****************************
-        $imagePath = public_path(Presentation::where('Template_Name', 'Influ_format_3')
+        $imagePath = public_path(Presentation::where('Template_Name', 'Influ_format')
             ->value('Background_Template'));
 
         $thirdSlide = $this->presentation->createSlide();
@@ -607,7 +609,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun($influencer[0]->fullname);
+        $textRun = $textShape->createTextRun(isset($influencer[0]->social_name) ? $influencer[0]->social_name : 'ไม่มีข้อมูล');
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('00000'));
         $textRun->getFont()->setBold(true);
@@ -994,7 +996,7 @@ class PresentationController extends Controller
             ->setOffsetY(175);
     }
 
-    public function Title()
+    public function Title($project, $month, $number)
     {
         $imagePath = public_path(Presentation::where('Template_Name', 'Thumbnail')
             ->value('Background_Template'));
@@ -1044,7 +1046,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('ProductName');
+        $textRun = $textShape->createTextRun($project->name);
         $textRun->getFont()->setSize(86);
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setColor(new Color('FFFFFF'));
@@ -1072,7 +1074,7 @@ class PresentationController extends Controller
         $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('E1AB16'))->setEndColor(new Color('E1AB16'));
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('3 Month 2024');
+        $textRun = $textShape->createTextRun($month . '( Month ' . $number . ' )');
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setColor(new Color('FFFFFF'));
@@ -1081,15 +1083,37 @@ class PresentationController extends Controller
 
     public function generatePresentation($id)
     {
-        $project = Project::with('products.product_items.project_timelines')->find($id);
+        $projects = Project::with('product_timelines.product_items.project_timelines')->find($id);
 
-        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $project);
-        $this->Thumbnail($project->name);
-        $this->Status();
-        $this->createInfluSide($project->influencers);
-        $this->Insertdata();
-        $this->Topperform();
-        $this->Title();
+        $months = [
+            1 => 'January', 2 => 'February', 3 => 'March',
+            4 => 'April', 5 => 'May', 6 => 'June',
+            7 => 'July', 8 => 'August', 9 => 'September',
+            10 => 'October', 11 => 'November', 12 => 'December'
+        ];
+
+        // return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $projects);
+
+        if ($projects) {
+            $productTimelineCount = count($projects->product_timelines);
+            $this->Thumbnail($projects, $productTimelineCount);
+            $this->Status();
+            foreach ($projects->product_timelines as $timeline) {
+                $monthName = $months[$timeline['month']];
+                $this->Title($projects, $monthName, $timeline['month']);
+                $count = count($timeline->product_items);
+                foreach ($timeline->product_items as $status) {
+                    $this->Status();
+                }
+                foreach ($timeline->product_items as $item) {
+                    $this->createInfluSide($item->project_timelines);
+                }
+            }
+        }
+
+
+        // $this->Insertdata();
+        // $this->Topperform();
         // Save the presentation
         header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation");
@@ -1098,22 +1122,23 @@ class PresentationController extends Controller
         return $objWriter->save('php://output');
     }
     public function createInfluSide($influencers)
-    {   
+    {
         $chunkSize = 3;
         $chunkIndex = 0;
         $chunks = collect();
-    
+
         foreach ($influencers as $index => $influencer) {
             if ($index % $chunkSize === 0) {
-                $chunks->push(collect()); 
-                $chunkIndex++; 
+                $chunks->push(collect());
+                $chunkIndex++;
             }
-            $chunks[$chunkIndex - 1]->push($influencer); 
+            $chunks[$chunkIndex - 1]->push($influencer);
         }
-    
+
         foreach ($chunks as $chunk) {
             $chunkCount = $chunk->count();
             if ($chunkCount === 3) {
+                $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $chunk[0]->id);
                 $this->Influ_format_3($chunk);
             } elseif ($chunkCount === 2) {
                 $this->Influ_format_2($chunk);

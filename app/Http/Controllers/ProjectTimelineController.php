@@ -299,12 +299,17 @@ class ProjectTimelineController extends Controller
 
                     $Item->influencer_id = $value['influencer_id'];
 
-                    // $InfluProduct = new InfluProject();
-                    // $InfluProduct->influencer_id = $value['influencer_id'];
-                    // $InfluProduct->project_id = $value['project_id'];
-                    // $InfluProduct->status = "working";
+                    if ($value['project_id']) {
 
-                    // $InfluProduct->save();
+                        $project = Project::find($value['project_id']);
+        
+                        if ($project == null) {
+                            return $this->returnErrorData('เกิดข้อผิดพลาดที่ $projects กรุณาลองใหม่อีกครั้ง ', 404);
+                        } else {
+                            $status = "working";
+                            $project->influencers()->attach($project, ['status' => $status]);
+                        }
+                    }
 
                     $Item->product_item_id = $value['product_item_id'];
                     $Item->social_name = $value['social_name'];

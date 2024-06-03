@@ -36,4 +36,9 @@ class Project extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+    public function product_timelines()
+    {
+        return $this->hasMany(ProductTimeline::class);
+    }
 }

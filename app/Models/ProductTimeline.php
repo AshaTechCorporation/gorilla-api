@@ -20,4 +20,9 @@ class ProductTimeline extends Model
     {
         return $this->hasMany(ProductItem::class, 'product_timeline_id');
     }
+
+    public function projects()
+    {
+        return $this->belongsTo(Project::class);
+    }
 }
