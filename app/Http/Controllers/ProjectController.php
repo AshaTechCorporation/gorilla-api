@@ -47,9 +47,9 @@ class ProjectController extends Controller
         $page = $start / $length + 1;
 
 
-        $col = array('id', 'customer_id', 'name', 'strdate', 'enddate',  'created_at', 'updated_at');
+        $col = array('id', 'customer_id', 'name', 'strdate', 'enddate','pcode',  'created_at', 'updated_at');
 
-        $orderby = array('id', 'customer_id', 'name', 'strdate', 'enddate',  'created_at');
+        $orderby = array('id', 'customer_id', 'name', 'strdate', 'enddate','pcode',  'created_at');
 
         $D = Project::select($col)
             ->with('employees')
@@ -257,6 +257,7 @@ class ProjectController extends Controller
             $Item->strdate = $request->strdate;
             $Item->enddate = $request->enddate;
             $Item->customer_id = $request->customer_id;
+            $Item->pcode = md5(rand(0, 999) .$request->name);
 
             $Item->save();
 
@@ -419,17 +420,6 @@ class ProjectController extends Controller
             $Item = Project::find($id);
             $Item->influencers()->detach();
             $Item->employees()->detach();
-
-            // if ($Item->product_items) {
-            //     foreach ($Item->product_items as $productItem) {
-            //         $productItem->delete();
-            //     }
-            // }
-            // if ($Item->products) {
-            //     foreach ($Item->products as $product) {
-            //         $product->delete();
-            //     }
-            // }
 
 
             $Item->delete();

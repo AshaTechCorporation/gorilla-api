@@ -100,7 +100,8 @@ class ProjectTimelineController extends Controller
         $query = ProductTimeline::query()
             ->where('project_id', $project_id)
             ->where('month', $month)
-            ->where('year', $year);
+            ->where('year', $year)
+            ->orderBy('id', 'asc');
     
         // Apply whereHas if platform_social_id is provided
         if ($platform_social_id) {
