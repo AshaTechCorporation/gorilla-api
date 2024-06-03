@@ -6,6 +6,7 @@ use App\Models\ProjectTimeline;
 use App\Models\ProductTimeline;
 use Illuminate\Http\Request;
 use App\Models\Project;
+use App\Models\ProductItem;
 use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\Influencer;
@@ -299,17 +300,23 @@ class ProjectTimelineController extends Controller
 
                     $Item->influencer_id = $value['influencer_id'];
 
-                    if ($value['project_id']) {
+                    $existingProductTimeline = InfluProject::where('project_id', $value['project_id'])
+                        ->where('influencer_id', $value['influencer_id'])
+                        ->first();
 
-                        $project = Project::find($value['project_id']);
-        
-                        if ($project == null) {
-                            return $this->returnErrorData('เกิดข้อผิดพลาดที่ $projects กรุณาลองใหม่อีกครั้ง ', 404);
-                        } else {
-                            $status = "working";
-                            $project->influencers()->attach($project, ['status' => $status]);
+                    if (!$existingProductTimeline) {
+                        if ($value['project_id']) {
+                            $project = Project::find($value['project_id']);
+
+                            if ($project == null) {
+                                return $this->returnErrorData('เกิดข้อผิดพลาดที่ $projects กรุณาลองใหม่อีกครั้ง ', 404);
+                            } else {
+                                $status = "working";
+                                $project->influencers()->attach($value['influencer_id'], ['status' => $status]);
+                            }
                         }
                     }
+
 
                     $Item->product_item_id = $value['product_item_id'];
                     $Item->social_name = $value['social_name'];
@@ -458,5 +465,126 @@ class ProjectTimelineController extends Controller
             DB::rollback();
             return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 500);
         }
+    }
+
+    public function kpicalculate(Request $request)
+    {
+        try {
+            $projectId = $request->input('project_id');
+            $month = $request->input('month');
+            $year = $request->input('year');
+            $productItemId = $request->input('product_item_id');
+
+            if ($projectId && !$month && !$year && !$productItemId) {
+                // Query for the sum at the project level
+                $project = Project::with('product_timelines.product_items.project_timelines')
+                    ->findOrFail($projectId);
+
+                $data = $this->calculateProjectTotals($project);
+
+                return $this->returnSuccess('ดำเนินการสำเร็จ', $data);
+            } elseif ($projectId && $month && $year && !$productItemId) {
+                // Query for the sum at the product_timelines level
+                $productTimeline = ProductTimeline::whereHas('projects', function ($query) use ($projectId) {
+                    $query->where('id', $projectId);
+                })->where('month', $month)
+                    ->where('year', $year)
+                    ->with('product_items.project_timelines')
+                    ->firstOrFail();
+
+                $data = $this->calculateProductTimelineTotals($productTimeline);
+
+                return $this->returnSuccess('ดำเนินการสำเร็จ', $data);
+            } elseif ($projectId && $month && $year && $productItemId) {
+                // Query for the sum at the product_items level
+                $productItem = ProductItem::whereHas('product_timeline', function ($query) use ($projectId, $month, $year) {
+                    $query->whereHas('project', function ($query) use ($projectId) {
+                        $query->where('id', $projectId);
+                    })->where('month', $month)
+                        ->where('year', $year);
+                })->with('project_timelines')
+                    ->findOrFail($productItemId);
+
+                $data = $this->calculateProductItemTotals($productItem);
+
+                return $this->returnSuccess('ดำเนินการสำเร็จ', $data);
+            } else {
+                return $this->returnErrorData('ข้อมูลไม่ถูกต้อง', 400);
+            }
+        } catch (\Throwable $e) {
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 500);
+        }
+    }
+
+    private function calculateProjectTotals($project)
+    {
+        $totalView = 0;
+        $totalLike = 0;
+        $totalComment = 0;
+        $totalShare = 0;
+
+        foreach ($project->product_timelines as $productTimeline) {
+            foreach ($productTimeline->product_items as $productItem) {
+                foreach ($productItem->project_timelines as $projectTimeline) {
+                    $totalView += $projectTimeline->stat_view ?? 0;
+                    $totalLike += $projectTimeline->stat_like ?? 0;
+                    $totalComment += $projectTimeline->stat_comment ?? 0;
+                    $totalShare += $projectTimeline->stat_share ?? 0;
+                }
+            }
+        }
+
+        return [
+            'total_view' => $totalView,
+            'total_like' => $totalLike,
+            'total_comment' => $totalComment,
+            'total_share' => $totalShare,
+        ];
+    }
+
+    private function calculateProductTimelineTotals($productTimeline)
+    {
+        $totalView = 0;
+        $totalLike = 0;
+        $totalComment = 0;
+        $totalShare = 0;
+    
+        foreach ($productTimeline->product_items as $productItem) {
+            foreach ($productItem->project_timelines as $projectTimeline) {
+                $totalView += $projectTimeline->stat_view ?? 0;
+                $totalLike += $projectTimeline->stat_like ?? 0;
+                $totalComment += $projectTimeline->stat_comment ?? 0;
+                $totalShare += $projectTimeline->stat_share ?? 0;
+            }
+        }
+    
+        return [
+            'total_view' => $totalView,
+            'total_like' => $totalLike,
+            'total_comment' => $totalComment,
+            'total_share' => $totalShare,
+        ];
+    }
+
+    private function calculateProductItemTotals($productItem)
+    {
+        $totalView = 0;
+        $totalLike = 0;
+        $totalComment = 0;
+        $totalShare = 0;
+
+        foreach ($productItem->project_timelines as $projectTimeline) {
+            $totalView += $projectTimeline->stat_view ?? 0;
+            $totalLike += $projectTimeline->stat_like ?? 0;
+            $totalComment += $projectTimeline->stat_comment ?? 0;
+            $totalShare += $projectTimeline->stat_share ?? 0;
+        }
+
+        return [
+            'total_view' => $totalView,
+            'total_like' => $totalLike,
+            'total_comment' => $totalComment,
+            'total_share' => $totalShare,
+        ];
     }
 }

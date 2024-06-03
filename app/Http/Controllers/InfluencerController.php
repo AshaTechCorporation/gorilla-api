@@ -42,17 +42,23 @@ class InfluencerController extends Controller
     public function getInfluencerTimeline(Request $request)
     {
         $social = $request->platform_social_id;
+        $projec_id = $request->project_id;
         $subscribe = $request->subscribe;
-        
+
         $influencers = Influencer::whereHas('platform_socials', function ($query) use ($social, $subscribe) {
             $query->where('platform_social_id', $social);
             $query->where('subscribe', '>', $subscribe);
-        })->with(['platform_socials' => function ($query) use ($social, $subscribe) {
-            $query->where('platform_social_id', $social);
-            $query->where('subscribe', '>', $subscribe)
-                  ->withPivot('name', 'subscribe', 'link');
-        }])->get();
-    
+        })
+            ->whereHas('projects', function ($query) use ($projec_id) {
+                $query->where('project_id', $projec_id);
+            })
+            ->where('influencers.status', "Request")
+            ->with(['platform_socials' => function ($query) use ($social, $subscribe) {
+                $query->where('platform_social_id', $social);
+                $query->where('subscribe', '>', $subscribe)
+                    ->withPivot('name', 'subscribe', 'link');
+            }])->get();
+
         $influencersData = [];
         foreach ($influencers as $influencer) {
             $influencerData = $influencer->toArray();
@@ -63,7 +69,7 @@ class InfluencerController extends Controller
             }
             $influencersData[] = $influencerData;
         }
-    
+
         return $this->returnSuccess('Data retrieved successfully', $influencersData);
     }
 
@@ -1150,6 +1156,41 @@ class InfluencerController extends Controller
         } catch (\Throwable $e) {
             DB::rollback();
             return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 404);
+        }
+    }
+
+    public function block(Request $request, $id)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $Item = Influencer::find($id);
+
+            if ($Item->status == "Request") {
+                $Item->status = "Blocked";
+            } else {
+                $Item->status = "Request";
+            }
+
+            $Item->save();
+
+            $Byname = $this->decodername($request->header('Authorization'));
+            //log
+            $userId = $Byname;
+            $type = 'block ผู้ใช้งาน';
+            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ' . $type .$Item->fullname;
+            $this->Log($userId, $description, $type);
+            //
+
+            DB::commit();
+
+            return $this->returnUpdate('ดำเนินการสำเร็จ');
+        } catch (\Throwable $e) {
+
+            DB::rollback();
+
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
         }
     }
 }

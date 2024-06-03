@@ -65,6 +65,7 @@ Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentatio
 Route::post('/get_excel', [ExcelController::class, 'ExportServiceCenterByComp']);
 
 // Upload File
+Route::post('/upload_postimage', [Controller::class, 'uploadPostImage']);
 Route::post('/upload_file', [Controller::class, 'uploadFile']);
 Route::post('/download_file', [Controller::class, 'downloadFile']);
 
@@ -88,6 +89,7 @@ Route::get('/get_influencer', [InfluencerController::class, 'getList']);
 Route::post('/fix_influencer', [InfluencerController::class, 'fixdataInfluencer']);
 Route::get('/search_influencer', [InfluencerController::class, 'searchData']);
 Route::post('/get_influtimeline', [InfluencerController::class, 'getInfluencerTimeline']);
+Route::get('/influencer_block/{id}', [InfluencerController::class, 'block']);
 
 // Influencer Self management
 // Route::post('/line_influencer', [InfluencerController::class, 'Line_Influencer']);
@@ -182,67 +184,11 @@ Route::resource('project_timeline', ProjectTimelineController::class);
 Route::post('/project_timeline_page', [ProjectTimelineController::class, 'getPage']);
 Route::get('/get_project_timeline', [ProjectTimelineController::class, 'getList']);
 Route::post('/update_draft_status', [ProjectTimelineController::class, 'updateStatus']);
+Route::post('/kpi', [ProjectTimelineController::class, 'kpicalculate']);
+
 
 Route::post('/item_bymonth', [ProjectTimelineController::class, 'getProductTimelineByMonth']);
 Route::post('/update_timeline', [ProjectTimelineController::class, 'updateTimeline']);
 
 
-// Client
-// Route::resource('client', ClientsController::class);
-// Route::post('/client_page', [ClientsController::class, 'getPage']);
-// Route::get('/get_client', [ClientsController::class, 'getList']);
-// Route::post('/update_client', [ClientsController::class, 'updateData']);
 
-// // province
-// Route::resource('province', ProvinceController::class);
-// Route::post('/province_page', [ProvinceController::class, 'getPage']);
-// Route::get('/get_province', [ProvinceController::class, 'getList']);
-
-// // Permission
-// Route::resource('permission', PermissionController::class);
-// Route::post('/permission_page', [PermissionController::class, 'getPage']);
-// Route::get('/get_permission', [PermissionController::class, 'getList']);
-
-// //Main Menu
-// Route::resource('main_menu', MainMenuController::class);
-// Route::get('/get_main_menu', [MainMenuController::class, 'getList']);
-
-// //Menu
-// Route::resource('menu', MenuController::class);
-// Route::get('/get_menu', [MenuController::class, 'getList']);
-
-// //Menu Permission
-// Route::resource('menu_permission', MenuPermissionController::class);
-// Route::get('/get_menu_permission', [MenuPermissionController::class, 'getList']);
-// Route::post('checkAll', [MenuPermissionController::class, 'checkAll']);
-
-//controller
-// current use this!!!
-Route::post('upload_images', [Controller::class, 'uploadImages']);
-
-// Route::post('upload_file', [Controller::class, 'uploadFile']);
-// Route::post('upload_signature', [Controller::class, 'uploadSignature']);
-
-//user
-// Route::resource('user', UserController::class);
-// Route::get('/get_user', [UserController::class, 'getList']);
-// Route::post('/user_page', [UserController::class, 'getPage']);
-// Route::get('/user_profile', [UserController::class, 'getProfileUser']);
-// Route::post('/update_user', [UserController::class, 'update']);
-
-
-Route::resource('user', UserController::class);
-Route::put('/update_password_user/{id}', [UserController::class, 'updatePasswordUser']);
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-Route::group(['middleware' => 'checkjwt'], function () {
-
-
-    Route::put('/reset_password_user/{id}', [UserController::class, 'ResetPasswordUser']);
-    Route::post('/update_profile_user', [UserController::class, 'updateProfileUser']);
-    Route::get('/get_profile_user', [UserController::class, 'getProfileUser']);
-});
-
-//upload
-
-// Route::post('/upload_file', [UploadController::class, 'uploadFile']);
