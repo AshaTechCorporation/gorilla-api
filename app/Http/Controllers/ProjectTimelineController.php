@@ -94,22 +94,43 @@ class ProjectTimelineController extends Controller
         $project_id = $request->project_id;
         $month = $request->month;
         $year = $request->year;
-
-        $item = ProductTimeline::with(['product_items.project_timelines'])
+        $platform_social_id = $request->platform_social_id;
+    
+        // Initialize the query
+        $query = ProductTimeline::query()
             ->where('project_id', $project_id)
             ->where('month', $month)
-            ->where('year', $year)
-            ->get();
-
-        $productItems = $item->flatMap(function ($item) {
+            ->where('year', $year);
+    
+        // Apply whereHas if platform_social_id is provided
+        if ($platform_social_id) {
+            $query->whereHas('product_items', function ($query) use ($platform_social_id) {
+                $query->where('platform_social_id', $platform_social_id);
+            });
+        }
+    
+        // Eager load product_items with project_timelines
+        $query->with(['product_items' => function ($query) use ($platform_social_id) {
+            if ($platform_social_id) {
+                $query->where('platform_social_id', $platform_social_id);
+            }
+            $query->with('project_timelines');
+        }]);
+    
+        // Execute the query
+        $items = $query->get();
+    
+        // Flatten the product items
+        $productItems = $items->flatMap(function ($item) {
             return $item->product_items;
         });
-
+    
         // Convert the result to an array
         $productItemsArray = $productItems->toArray();
-
+    
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $productItemsArray);
     }
+    
     public function index()
     {
         //
@@ -495,14 +516,9 @@ class ProjectTimelineController extends Controller
                 $data = $this->calculateProductTimelineTotals($productTimeline);
 
                 return $this->returnSuccess('ดำเนินการสำเร็จ', $data);
-            } elseif ($projectId && $month && $year && $productItemId) {
+            } elseif ($productItemId) {
                 // Query for the sum at the product_items level
-                $productItem = ProductItem::whereHas('product_timeline', function ($query) use ($projectId, $month, $year) {
-                    $query->whereHas('project', function ($query) use ($projectId) {
-                        $query->where('id', $projectId);
-                    })->where('month', $month)
-                        ->where('year', $year);
-                })->with('project_timelines')
+                $productItem = ProductItem::with('project_timelines')
                     ->findOrFail($productItemId);
 
                 $data = $this->calculateProductItemTotals($productItem);
@@ -548,7 +564,7 @@ class ProjectTimelineController extends Controller
         $totalLike = 0;
         $totalComment = 0;
         $totalShare = 0;
-    
+
         foreach ($productTimeline->product_items as $productItem) {
             foreach ($productItem->project_timelines as $projectTimeline) {
                 $totalView += $projectTimeline->stat_view ?? 0;
@@ -557,7 +573,7 @@ class ProjectTimelineController extends Controller
                 $totalShare += $projectTimeline->stat_share ?? 0;
             }
         }
-    
+
         return [
             'total_view' => $totalView,
             'total_like' => $totalLike,
