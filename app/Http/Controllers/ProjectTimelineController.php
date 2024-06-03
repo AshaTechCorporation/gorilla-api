@@ -89,12 +89,33 @@ class ProjectTimelineController extends Controller
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $d);
     }
 
+    public function searchData(Request $request)
+    {
+        try {
+            $key = $request->input('key');
+            $Item = Influencer::where('fullname', 'like', "%{$key}%")
+                ->limit(20)
+                ->get()->toarray();
+
+            if (!empty($Item)) {
+
+                for ($i = 0; $i < count($Item); $i++) {
+                    $Item[$i]['No'] = $i + 1;
+                }
+            }
+
+            return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
+        } catch (\Exception $e) {
+            return $this->returnErrorData($e->getMessage(), 404);
+        }
+    }
     public function getProductTimelineByMonth(Request $request)
     {
         $project_id = $request->project_id;
         $month = $request->month;
         $year = $request->year;
         $platform_social_id = $request->platform_social_id;
+        $key = $request->key;
     
         // Initialize the query
         $query = ProductTimeline::query()
@@ -118,8 +139,25 @@ class ProjectTimelineController extends Controller
             $query->with('project_timelines');
         }]);
     
-        // Execute the query
-        $items = $query->get();
+        if ($key) {
+            $query->whereHas('product_items', function ($query) use ($key) {
+                $query->where('name', $key)
+                    ->orWhereHas('project_timelines', function ($query) use ($key) {
+                        $query->where('social_name', 'like', "%{$key}%")
+                            ->orWhere('link_social', 'like', "%{$key}%")
+                            ->orWhere('note1', 'like', "%{$key}%")
+                            ->orWhere('note2', 'like', "%{$key}%")
+                            ->orWhere('contact', 'like', "%{$key}%")
+                            ->orWhere('ecode', 'like', "%{$key}%")
+                            ->orWhere('create_by', 'like', "%{$key}%")
+                            ->orWhere('update_by', 'like', "%{$key}%");
+                    });
+            });
+        }
+    
+    // Get the items
+    $items = $query->get();
+        
     
         // Flatten the product items
         $productItems = $items->flatMap(function ($item) {

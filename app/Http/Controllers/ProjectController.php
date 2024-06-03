@@ -504,4 +504,22 @@ class ProjectController extends Controller
 
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $projectWithProducts);
     }
+
+    public function getProjectbyPcode(Request $request)
+    {
+
+        $pcode = $request->pcode;
+        DB::beginTransaction();
+
+        try {
+
+            $Item = Project::where("pcode",$pcode)->first();
+
+            return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
+        } catch (\Throwable $e) {
+
+
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+        }
+    }
 }
