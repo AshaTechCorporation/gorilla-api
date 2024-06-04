@@ -135,8 +135,15 @@ class PdfController extends Controller
             </table>
 
         ';
-
         $mpdf->WriteHTML($html);
-        $mpdf->Output();
+        
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="tax_book_fifty.pdf"',
+            'Content-Transfer-Encoding' => 'binary',
+        ];
+        $pdfContent = $mpdf->Output('', 'S');
+
+        return response($pdfContent, 200, $headers);
     }
 }

@@ -516,7 +516,7 @@ class ProjectTimelineController extends Controller
 
             if ($request->user_type == 'customer') {
                 if ($request->round == 0) {
-                    $Item->client_status = $request->client_status;
+                    $Item->client_status1 = $request->client_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
                         $Item->draft_status = "TRUE";
                         $Item->client_feedback1 = $request->feedback;
@@ -526,7 +526,7 @@ class ProjectTimelineController extends Controller
                         $Item->round = '1';
                     }
                 } elseif ($request->round == 1) {
-                    $Item->client_status = $request->client_status;
+                    $Item->client_status2 = $request->client_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
                         $Item->draft_status = "TRUE";
                         $Item->client_feedback2 = $request->feedback;
@@ -536,12 +536,13 @@ class ProjectTimelineController extends Controller
                         $Item->round = '2';
                     }
                 } elseif ($request->round == 2) {
-                    $Item->client_status = $request->client_status;
+                    $Item->client_status3 = $request->client_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
                         $Item->draft_status = "TRUE";
                         $Item->client_feedback3 = $request->feedback;
                     } else {
                         $Item->client_feedback3 = $request->feedback;
+                        $Item->round = '3';
                         $Item->draft_status = "FALSE";
                     }
                 }
