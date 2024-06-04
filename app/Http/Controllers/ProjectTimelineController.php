@@ -523,7 +523,7 @@ class ProjectTimelineController extends Controller
                     } else {
                         $Item->client_feedback1 = $request->feedback;
                         $Item->admin_status = "waiting";
-                        $Item->round = 1;
+                        $Item->round = '1';
                     }
                 } elseif ($request->round == 1) {
                     $Item->client_status = $request->client_status;
@@ -533,7 +533,7 @@ class ProjectTimelineController extends Controller
                     } else {
                         $Item->client_feedback2 = $request->feedback;
                         $Item->admin_status = "waiting";
-                        $Item->round = 2;
+                        $Item->round = '2';
                     }
                 } elseif ($request->round == 2) {
                     $Item->client_status = $request->client_status;

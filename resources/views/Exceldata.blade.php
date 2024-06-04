@@ -46,6 +46,7 @@
         </tr>
         <tr></tr>  --}}
         @foreach ($productTimeline->product_items as $productItem)
+        <tr></tr> <!-- Skip the rows -->
             <tr>
                 <td></td> <!-- Skip the column -->
                 <th
@@ -252,59 +253,65 @@
                     Item ที่ {{ $productItem->id }} : {{ $productItem->name }}
                 </th>
             </tr>
+            @php
+                $i = 0;
+            @endphp
+            @php
+                $i = 0;
+            @endphp
             @foreach ($productItem->project_timelines as $projectTimeline)
-                <tr>
-                    <td></td> <!-- Skip the column -->
-                    <td>{{ $projectTimeline->id }}</td>
-                    <td>{{ $projectTimeline->social_name }}</td>
-                    <td>{{ $projectTimeline->link_social }}</td>
-                    <td>{{ $projectTimeline->draft_link1 }}</td>
-                    <td>{{ $projectTimeline->admin_feedback1 }}</td>
-                    <td>{{ $projectTimeline->client_feedback1 }}</td>
-                    <td>{{ $projectTimeline->draft_link2 }}</td>
-                    <td>{{ $projectTimeline->client_feedback2 }}</td>
-                    <td>{{ $projectTimeline->admin_feedback2 }}</td>
-                    <td>{{ $projectTimeline->draft_link3 }}</td>
-                    <td>{{ $projectTimeline->client_feedback3 }}</td>
-                    <td>{{ $projectTimeline->admin_feedback3 }}</td>
-                    <td>{{ $projectTimeline->admin_status }}</td>
-                    <td>{{ $projectTimeline->client_status }}</td>
-                    <td>{{ $projectTimeline->draft_status }}</td>
-                    <td>{{ $projectTimeline->post_date }}</td>
-                    <td>{{ $projectTimeline->post_status }}</td>
-                    <td>{{ $projectTimeline->post_link }}</td>
-                    <td>{{ $projectTimeline->post_code }}</td>
-                    <td>{{ $projectTimeline->stat_view }}</td>
-                    <td>{{ $projectTimeline->stat_like }}</td>
-                    <td>{{ $projectTimeline->stat_comment }}</td>
-                    <td>{{ $projectTimeline->stat_share }}</td>
-                    <td>{{ $projectTimeline->note1 }}</td>
-                    <td>{{ $projectTimeline->contact }}</td>
-                    <td>{{ $projectTimeline->pay_rate }}</td>
-                    <td>{{ $projectTimeline->sum_rate }}</td>
-                    <td>{{ $projectTimeline->des_bill }}</td>
-                    <td>{{ $projectTimeline->content_style_id }}</td>
-                    <td>{{ $projectTimeline->vat }}</td>
-                    <td>{{ $projectTimeline->withholding }}</td>
-                    <td>{{ $projectTimeline->product_price }}</td>
-                    <td>{{ $projectTimeline->transfer_amount }}</td>
-                    <td>{{ $projectTimeline->transfer_date }}</td>
-                    <td>{{ $projectTimeline->note2 }}</td>
-                    <td>{{ $projectTimeline->bank_account }}</td>
-                    <td>{{ $projectTimeline->bank_id }}</td>
-                    <td>{{ $projectTimeline->bank_brand }}</td>
-                    <td>{{ $projectTimeline->name_of_card }}</td>
-                    <td>{{ $projectTimeline->id_card }}</td>
-                    <td>{{ $projectTimeline->address_of_card }}</td>
-                    <td>{{ $projectTimeline->product_address }}</td>
-                    <td>{{ $projectTimeline->line_id }}</td>
-                    <td>{{ $projectTimeline->image_card }}</td>
-                    <td>{{ $projectTimeline->transfer_email }}</td>
-                    <td>{{ $projectTimeline->transfer_link }}</td>
-                    <td>{{ $projectTimeline->image_quotation }}</td>
-                    <td>{{ $projectTimeline->ecode }}</td>
-                </tr>
+            <tr>
+                <td style="border: 1px solid black;"></td> <!-- Skip the column -->
+                <td style="text-align: center; border: 1px solid black;">{{ $i = $i + 1 }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->social_name ?? 'ไม่มีข้อมูล name' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->link_social ?? 'ไม่มีข้อมูล link' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->draft_link1 ?? 'ไม่มีข้อมูล link draft' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->admin_feedback1 ?? 'ไม่มีข้อมูล admin' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->client_feedback1 ?? 'ไม่มีข้อมูล client' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->draft_link2 ?? 'ไม่มีข้อมูล link draft2' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->client_feedback2 ?? 'ไม่มีข้อมูล client2' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->admin_feedback2 ?? 'ไม่มีข้อมูล admin2' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->draft_link3 ?? 'ไม่มีข้อมูล link draft3' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->client_feedback3 ?? 'ไม่มีข้อมูล client3' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->admin_feedback3 ?? 'ไม่มีข้อมูล admin3' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->draft_status ?? 'ไม่มีข้อมูล draft' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->post_date ?? 'ไม่มีข้อมูล post date' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->post_status ?? 'ไม่มีข้อมูล post status' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->post_link ?? 'ไม่มีข้อมูล post link' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->post_code ?? 'ไม่มีข้อมูล post code' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->stat_view ?? 'ไม่มีข้อมูล view' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->stat_like ?? 'ไม่มีข้อมูล like' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->stat_comment ?? 'ไม่มีข้อมูล comment' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->stat_share ?? 'ไม่มีข้อมูล share' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->note1 ?? 'ไม่มีข้อมูล note' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->contact ?? 'ไม่มีข้อมูล contact' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->pay_rate ?? 'ไม่มีข้อมูล rate ' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->sum_rate ?? 'ไม่มีข้อมูล sum rate' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->des_bill ?? 'ไม่มีข้อมูล des' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->content_style_id ?? 'ไม่มีข้อมูล content' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->vat ?? 'ไม่มีข้อมูล vat' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->withholding ?? 'ไม่มีข้อมูล withholding' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->product_price ?? 'ไม่มีข้อมูล price' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->transfer_amount ?? 'ไม่มีข้อมูล amount' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->transfer_date ?? 'ไม่มีข้อมูล date' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->note2 ?? 'ไม่มีข้อมูล note' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->bank_account ?? 'ไม่มีข้อมูล account' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->bank_id ?? 'ไม่มีข้อมูล bank' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->bank_brand ?? 'ไม่มีข้อมูล brand' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->name_of_card ?? 'ไม่มีข้อมูล name card' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->id_card ?? 'ไม่มีข้อมูล card id' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->address_of_card ?? 'ไม่มีข้อมูล address' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->product_address ?? 'ไม่มีข้อมูล product address' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->line_id ?? 'ไม่มีข้อมูล เบอร์โทร' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->line_id ?? 'ไม่มีข้อมูล line' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->image_card ?? 'ไม่มีข้อมูล image' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->transfer_email ?? 'ไม่มีข้อมูล transfer' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->transfer_link ?? 'ไม่มีข้อมูล transfer link' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->image_quotation ?? 'ไม่มีข้อมูล image quotation' }}</td>
+                <td style="text-align: center; border: 1px solid black;">{{ $projectTimeline->ecode ?? 'ไม่มีข้อมูล ecode' }}</td>
+            </tr>
             @endforeach
+            <tr></tr>
         @endforeach
     @endforeach
 </table>

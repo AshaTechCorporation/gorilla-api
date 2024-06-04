@@ -15,6 +15,12 @@ class ExcelController extends Controller
         $month = $request->month;
         $id = $request->project_id;
         $year = $request->year;
+        // $data = ProductTimeline::with(['product_items.project_timelines'])
+        // ->where('project_id', $id)
+        // ->where('month', $month)
+        // ->where('year', $year)
+        // ->get();
+        // return response()->json($data);
         try {
             return Excel::download(new ServiceCenterExport($month, $id, $year), 'สรุปภาพรวมเข้ารับบริการ.xlsx');
         } catch (\Exception $e) {
