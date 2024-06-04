@@ -238,7 +238,7 @@ class Controller extends BaseController
 
     public function uploadPostImage(Request $request)
     {
-        $image = $request->image;
+        $image = $request->file;
         $input['imagename'] = md5(rand(0, 999999) . $image->getClientOriginalName()) . '.' . $image->extension();
         $destinationPath = public_path("/presentation/postimage") ;
         if (!File::exists($destinationPath)) {

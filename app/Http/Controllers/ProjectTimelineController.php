@@ -49,11 +49,11 @@ class ProjectTimelineController extends Controller
         $page = $start / $length + 1;
 
 
-        $col = array('id', 'project_id', 'influencer_id', 'draft_link_1', 'client_feedback_1', 'admin_feedback_1', 'status_1', 'draft_link_2', 'client_feedback_2', 'admin_feedback_2', 'status_2', 'draft_status', 'post_date', 'post_status', 'post_link', 'post_code', 'stat_view', 'stat_like', 'stat_comment', 'stat_share', 'remark', 'created_at', 'updated_at');
+        $col = array('id', 'product_timeline_id', 'product_id', 'name', 'platform_social_id', 'subscribe', 'description', 'qty');
 
-        $orderby = array('id', 'project_id', 'influencer_id', 'draft_link_1', 'client_feedback_1', 'admin_feedback_1', 'status_1', 'draft_link_2', 'client_feedback_2', 'admin_feedback_2', 'status_2', 'draft_status', 'post_date', 'post_status', 'post_link', 'post_code', 'stat_view', 'stat_like', 'stat_comment', 'stat_share', 'remark', 'created_at', 'updated_at');
+        $orderby = array('id', 'product_timeline_id', 'product_id', 'name', 'platform_social_id', 'subscribe', 'description', 'qty');
 
-        $D = Project::select($col);
+        $D = ProductItem::select($col);
 
         if ($orderby[$order[0]['column']]) {
             $D->orderby($orderby[$order[0]['column']], $order[0]['dir']);
@@ -72,6 +72,34 @@ class ProjectTimelineController extends Controller
             });
         }
 
+        if (isset($request->year)) {
+            $year = $request->year;
+            if ($year) {
+                $D->whereHas('product_timelines', function ($query) use ($year) {
+                    $query->where('year', $year);
+                });
+            }
+        
+            // Eager load product_items with project_timelines
+            $D->with(['product_timelines' => function ($query) use ($year) {
+                $query->where('year', $year);
+            }]);
+        }
+
+        if (isset($request->month)) {
+
+            $month = $request->month;
+            if ($month) {
+                $D->whereHas('product_timelines', function ($query) use ($month) {
+                    $query->where('month', $month);
+                });
+            }
+        
+            // Eager load product_items with project_timelines
+            $D->with(['product_timelines' => function ($query) use ($month) {
+                $query->where('month', $month);
+            }]);
+        }
         $d = $D->paginate($length, ['*'], 'page', $page);
 
         if ($d->isNotEmpty()) {
@@ -120,18 +148,19 @@ class ProjectTimelineController extends Controller
         // Initialize the query
         $query = ProductTimeline::query()
             ->where('project_id', $project_id)
-            ->where('month', $month)
-            ->where('year', $year)
             ->orderBy('id', 'asc');
     
-        // Apply whereHas if platform_social_id is provided
+        if($month && $year) {
+            $query->where('month', $month)
+            ->where('year', $year);
+        }
+
         if ($platform_social_id) {
             $query->whereHas('product_items', function ($query) use ($platform_social_id) {
                 $query->where('platform_social_id', $platform_social_id);
             });
         }
     
-        // Eager load product_items with project_timelines
         $query->with(['product_items' => function ($query) use ($platform_social_id) {
             if ($platform_social_id) {
                 $query->where('platform_social_id', $platform_social_id);
@@ -456,7 +485,7 @@ class ProjectTimelineController extends Controller
         try {
             $Item = ProjectTimeline::find($request->id);
             if ($request->user_type == 'employee') {
-                if ($Item->round == 0) {
+                if ($request->round == 0) {
                     $Item->admin_status = $request->admin_status;
                     if ($Item->admin_status == "approve" && $Item->client_status == "approve") {
                         $Item->draft_status = "TRUE";
@@ -464,7 +493,7 @@ class ProjectTimelineController extends Controller
                     } else {
                         $Item->admin_feedback1 = $request->feedback;
                     }
-                } elseif ($Item->round == 1) {
+                } elseif ($request->round == 1) {
                     $Item->admin_status = $request->admin_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
                         $Item->draft_status = "TRUE";
@@ -472,7 +501,7 @@ class ProjectTimelineController extends Controller
                     } else {
                         $Item->admin_feedback2 = $request->feedback;
                     }
-                } elseif ($Item->round == 2) {
+                } elseif ($request->round == 2) {
                     $Item->admin_status = $request->admin_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
                         $Item->draft_status = "TRUE";
@@ -486,7 +515,7 @@ class ProjectTimelineController extends Controller
             }
 
             if ($request->user_type == 'customer') {
-                if ($Item->round = 0) {
+                if ($request->round == 0) {
                     $Item->client_status = $request->client_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
                         $Item->draft_status = "TRUE";
@@ -496,7 +525,7 @@ class ProjectTimelineController extends Controller
                         $Item->admin_status = "waiting";
                         $Item->round = 1;
                     }
-                } elseif ($Item->round = 1) {
+                } elseif ($request->round == 1) {
                     $Item->client_status = $request->client_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
                         $Item->draft_status = "TRUE";
@@ -506,7 +535,7 @@ class ProjectTimelineController extends Controller
                         $Item->admin_status = "waiting";
                         $Item->round = 2;
                     }
-                } elseif ($Item->round = 2) {
+                } elseif ($request->round == 2) {
                     $Item->client_status = $request->client_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
                         $Item->draft_status = "TRUE";

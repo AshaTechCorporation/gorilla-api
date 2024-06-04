@@ -20,7 +20,7 @@ class ProductItem extends Model
 
     public function product_timelines()
     {
-        return $this->belongsTo(ProductTimeline::class);
+        return $this->belongsTo(ProductTimeline::class,'product_timeline_id');
     }
 
     public function project_timelines()
