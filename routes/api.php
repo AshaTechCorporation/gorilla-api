@@ -57,6 +57,7 @@ use Illuminate\Support\Facades\Route;
 
 // Pdf
 Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
+Route::post('/get_fiffy', [PdfController::class, 'tax_book_fifty']);
 
 // Presentatiion
 Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentation']);

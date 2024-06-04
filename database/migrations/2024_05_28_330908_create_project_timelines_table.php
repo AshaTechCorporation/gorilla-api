@@ -26,14 +26,20 @@ class CreateProjectTimelinesTable extends Migration
             $table->text('link_social')->charset('utf8')->nullable();
 
             $table->text('draft_link1')->charset('utf8')->nullable();
+            $table->enum('admin_status1', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
+            $table->enum('client_status1', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
             $table->text('client_feedback1')->charset('utf8')->nullable();
             $table->text('admin_feedback1')->charset('utf8')->nullable();
 
             $table->text('draft_link2')->charset('utf8')->nullable();
+            $table->enum('admin_status2', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
+            $table->enum('client_status2', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
             $table->text('client_feedback2')->charset('utf8')->nullable();
             $table->text('admin_feedback2')->charset('utf8')->nullable();
 
             $table->text('draft_link3')->charset('utf8')->nullable();
+            $table->enum('admin_status3', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
+            $table->enum('client_status3', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
             $table->text('client_feedback3')->charset('utf8')->nullable();
             $table->text('admin_feedback3')->charset('utf8')->nullable();
 
@@ -48,6 +54,7 @@ class CreateProjectTimelinesTable extends Migration
             $table->enum('post_status', ['TRUE', 'FALSE', 'WAIT'])->charset('utf8')->default('WAIT');
             $table->text('post_link')->charset('utf8')->nullable();
             $table->text('post_code')->charset('utf8')->nullable();
+            $table->string('post_image', 255)->nullable()->charset('utf8');
 
             $table->integer('stat_view')->nullable();
             $table->integer('stat_like')->nullable();

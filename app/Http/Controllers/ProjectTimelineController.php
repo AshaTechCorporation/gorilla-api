@@ -486,7 +486,7 @@ class ProjectTimelineController extends Controller
             $Item = ProjectTimeline::find($request->id);
             if ($request->user_type == 'employee') {
                 if ($request->round == 0) {
-                    $Item->admin_status = $request->admin_status;
+                    $Item->admin_status1 = $request->admin_status;
                     if ($Item->admin_status == "approve" && $Item->client_status == "approve") {
                         $Item->draft_status = "TRUE";
                         $Item->admin_feedback1 = $request->feedback;
@@ -494,7 +494,7 @@ class ProjectTimelineController extends Controller
                         $Item->admin_feedback1 = $request->feedback;
                     }
                 } elseif ($request->round == 1) {
-                    $Item->admin_status = $request->admin_status;
+                    $Item->admin_status2 = $request->admin_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
                         $Item->draft_status = "TRUE";
                         $Item->admin_feedback2 = $request->feedback;
@@ -502,7 +502,7 @@ class ProjectTimelineController extends Controller
                         $Item->admin_feedback2 = $request->feedback;
                     }
                 } elseif ($request->round == 2) {
-                    $Item->admin_status = $request->admin_status;
+                    $Item->admin_status3 = $request->admin_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
                         $Item->draft_status = "TRUE";
                         $Item->admin_feedback3 = $request->feedback;
