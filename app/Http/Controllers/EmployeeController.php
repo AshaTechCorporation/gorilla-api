@@ -328,6 +328,7 @@ class EmployeeController extends Controller
             return $this->returnErrorData('ไม่พบข้อมูลที่ท่านต้องการ', 404);
         }
         $Item = Employee::with('department')
+            ->with('employee_credentials')
             ->with('position')
             ->where('id', $id)
             ->first();
@@ -455,6 +456,9 @@ class EmployeeController extends Controller
         try {
 
             $Item = Employee::find($id);
+
+            $Item->employee_credentials()->delete(); 
+
             $Item->delete();
 
             //log

@@ -19,7 +19,7 @@ class EmployeeCredential extends Model
     //////////////////////////////////////// relation //////////////////////////////////////
     public function employees()
     {
-        return $this->belongsTo(Employee::class,'employee_id', 'id');
+        return $this->belongsTo(Employee::class,'employee_id', 'id')->onDelete('cascade');
     }
 
 }

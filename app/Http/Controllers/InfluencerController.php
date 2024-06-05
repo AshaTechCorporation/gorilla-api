@@ -629,7 +629,6 @@ class InfluencerController extends Controller
             'map' => 'nullable|string|max:255',
             'current_address' => 'nullable|string|max:255',
             'note' => 'nullable|string|max:1000',
-            'project_id' => 'nullable|exists:projects,id',
         ];
 
         $messages = [

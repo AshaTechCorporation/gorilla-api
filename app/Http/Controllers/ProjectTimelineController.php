@@ -597,7 +597,13 @@ class ProjectTimelineController extends Controller
                 return $this->returnErrorData('ข้อมูลไม่ถูกต้อง', 400);
             }
         } catch (\Throwable $e) {
-            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 500);
+            $defauftdata = [
+                'total_view' => 0,
+                'total_like' => 0,
+                'total_comment' => 0,
+                'total_share' => 0,
+            ];
+            return $this->returnSuccess('ไม่มีข้อมูล' , $defauftdata);
         }
     }
 

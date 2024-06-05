@@ -317,18 +317,39 @@ class ProjectController extends Controller
         }
 
 
-        $Item = Project::with('customer')
+        $Item = Project::with('products.employees')
+            ->with('customer')
             ->where('id', $id)
             ->first();
 
-        $Item->strdate = date('d/m/Y', strtotime($Item->strdate . ' +543 years'));
-        $Item->enddate = date('d/m/Y', strtotime($Item->enddate . ' +543 years'));
+        $Item->strdate = date('d/m/Y', strtotime($Item->strdate));
+        $Item->enddate = date('d/m/Y', strtotime($Item->enddate));
 
         $customer = Customer::find($Item->customer_id);
         $Item->customer_name = $customer->name;
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
     }
 
+    public function showbyid($id)
+    {
+        $checkId = Project::find($id);
+        if (!$checkId) {
+            return $this->returnErrorData('ไม่พบข้อมูลที่ท่านต้องการ', 404);
+        }
+
+
+        $Item = Project::with('products.employees')
+            ->with('customer')
+            ->where('id', $id)
+            ->first();
+
+        // $Item->strdate = date('d/m/Y', strtotime($Item->strdate));
+        // $Item->enddate = date('d/m/Y', strtotime($Item->enddate));
+
+        $customer = Customer::find($Item->customer_id);
+        $Item->customer_name = $customer->name;
+        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $Item);
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -350,60 +371,73 @@ class ProjectController extends Controller
     public function update(Request $request, $id)
     {
         $loginBy = "admin";
-
+    
         DB::beginTransaction();
-
+    
         try {
             $Item = Project::find($id);
-
+            if (!$Item) {
+                return $this->returnErrorData('Project not found', 404);
+            }
+    
             $Item->name = $request->name;
             $Item->strdate = $request->strdate;
             $Item->enddate = $request->enddate;
             $Item->customer_id = $request->customer_id;
-
+    
             $Item->save();
-
+    
             if (isset($request->products)) {
                 $products = $request->products;
                 foreach ($products as $product) {
-
-                    $ItemP = new Product();
-                    $ItemP->project_id = $Item->id;
+                    if (isset($product['id'])) {
+                        $ItemP = Product::find($product['id']);
+                        if (!$ItemP) {
+                            return $this->returnErrorData('Product not found', 404);
+                        }
+                    } else {
+                        // Create new product
+                        $ItemP = new Product();
+                        $ItemP->project_id = $Item->id;
+                    }
+    
                     $ItemP->name = $product['name'];
                     $ItemP->productdes = $product['productdes'];
                     $ItemP->save();
+    
                     if (isset($product['employees'])) {
-                        $employees = $product['employees'];
-                        foreach ($employees as $employee) {
-                            $employee = Employee::find($employee['employee_id']);
-
-                            if ($employee == null) {
-                                return $this->returnErrorData('เกิดข้อผิดพลาดที่ $employee กรุณาลองใหม่อีกครั้ง ', 404);
+                        // Sync employees
+                        $employeeIds = [];
+                        foreach ($product['employees'] as $employee) {
+                            $employeeEntity = Employee::find($employee['employee_id']);
+                            if ($employeeEntity == null) {
+                                return $this->returnErrorData('Employee not found', 404);
                             } else {
-                                $ItemP->employees()->attach($employee);
+                                $employeeIds[] = $employeeEntity->id;
                             }
                         }
+                        $ItemP->employees()->sync($employeeIds);
                     }
                 }
             }
-
-            //log
+    
+            // Log
             $userId = $loginBy;
-            $type = 'เพิ่มลูกค้า';
-            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
+            $type = 'แก้ไขลูกค้า';
+            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการแก้ไขลูกค้า';
             $this->Log($userId, $description, $type);
-
-
+    
             DB::commit();
-
+    
             return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
         } catch (\Throwable $e) {
-
+    
             DB::rollback();
-
+    
             return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
         }
     }
+    
 
     /**
      * Remove the specified resource from storage.
