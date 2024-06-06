@@ -187,8 +187,7 @@ class LoginController extends Controller
 
             $key = $request->email;
 
-            $Item = EmployeeCredential::where('UID', $key)
-            ->with('employees')    
+            $Item = EmployeeCredential::where('UID', $key)    
             ->first();
 
             if ($Item) {
@@ -199,7 +198,7 @@ class LoginController extends Controller
                     'id' => $Item->employee_id,
                     'role' => 'Employee',
                     'data' => $Item,
-                    'token' => $Login->genToken($Item->id, $Item->employees->fname ." ". $Item->employees->lname),
+                    'token' => $Login->genToken($Item->id, $Item->UID),
                 ], 200);
             } else {
 
@@ -214,7 +213,7 @@ class LoginController extends Controller
         } catch (\Exception $e) {
 
             DB::rollback();
-            return $this->returnErrorData($e->getMessage(), 404);
+            return $this->returnErrorData($e, 404);
         }
 
     }
@@ -243,13 +242,6 @@ class LoginController extends Controller
                 ], 200);
             } else {
 
-                // DB::beginTransaction();
-
-                // $CustomerCredential = new CustomerCredential();
-                // $CustomerCredential->UID = $key;
-                // $CustomerCredential->save();
-
-                // DB::commit();
                 return response()->json([
                     'code' => '404',
                     'status' => false,
