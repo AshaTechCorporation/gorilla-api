@@ -1184,7 +1184,7 @@ class InfluencerController extends Controller
 
             DB::commit();
 
-            return $this->returnUpdate('ดำเนินการสำเร็จ');
+            return $this->returnUpdate('สถานะ Influencer '.$Item->fullname.' เปลี่ยนเป็น '.$Item->status);
         } catch (\Throwable $e) {
 
             DB::rollback();

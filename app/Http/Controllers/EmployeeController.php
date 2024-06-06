@@ -44,6 +44,7 @@ class EmployeeController extends Controller
         $orderby = array('id', 'department_id', 'position_id', 'ecode', 'prefix', 'fname', 'lname', 'nickname', 'phone');
 
         $D = Employee::select($col)
+            ->with('employee_credentials')
             ->with('department')
             ->with('position');
 
