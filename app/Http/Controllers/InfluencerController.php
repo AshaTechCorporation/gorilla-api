@@ -521,7 +521,7 @@ class InfluencerController extends Controller
             if ($request->image_card && $request->image_card != null && $request->image_card != 'null' && $request->image_card != 'undefined') {
                 $Item->image_card = $this->uploadImage($request->image_card, '/image_card');
             }
-            $Item->status = "Yes";
+            $Item->status = "Request";
             $Item->update_by = $loginBy;
 
             $Item->save();
@@ -882,7 +882,7 @@ class InfluencerController extends Controller
             if ($request->image_card && $request->image_card != null && $request->image_card != 'null') {
                 $Item->image_card = $this->uploadImage($request->image_card, '/image_card');
             }
-            $Item->status = "Yes";
+            $Item->status = "Request";
             $Item->update_by = $loginBy;
 
             $Item->save();
@@ -1099,7 +1099,7 @@ class InfluencerController extends Controller
             if ($request->image_card && $request->image_card != null && $request->image_card != 'null') {
                 $Item->image_card = $this->uploadImage($request->image_card, '/image_card');
             }
-            $Item->status = "Yes";
+            $Item->status = "Request";
             $Item->update_by = $Byname;
 
             $Item->save();
