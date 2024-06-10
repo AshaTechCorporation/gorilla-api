@@ -223,6 +223,23 @@ class ProjectController extends Controller
             return $this->returnErrorData('เกิดข้อผิดพลาดในการอัปเดคสถานะโปรเจค ' . $e, 404);
         }
     }
+
+    public function getProjectbyInfluencer($id)
+    {
+        $influencer = Influencer::find($id);
+        if (!$influencer) {
+            return $this->returnErrorData('ไม่พบข้อมูลที่ท่านต้องการ', 404);
+        }
+
+
+        $projects = $influencer->projects()
+        ->wherePivot('influencer_id', $id)
+        ->wherePivot('status', 'working')
+        ->get();
+
+
+        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $projects);
+    }
     public function index()
     {
         //

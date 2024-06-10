@@ -169,6 +169,7 @@ Route::get('/get_project', [ProjectController::class, 'getList']);
 Route::post('/add_project_influencer', [ProjectController::class, 'addInfluencer']);
 Route::post('/project_by_pcode', [ProjectController::class, 'getProjectbyPcode']);
 Route::get('/showproject/{id}', [ProjectController::class, 'showbyid']);
+Route::get('/get_influProject/{id}', [ProjectController::class, 'getProjectbyInfluencer']);
 // Product
 // Route::resource('product', ProductController::class);
 // Route::post('/product_page', [ProductController::class, 'getPage']);

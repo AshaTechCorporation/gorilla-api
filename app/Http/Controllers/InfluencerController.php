@@ -821,141 +821,114 @@ class InfluencerController extends Controller
      * @param  \App\Models\Influencer  $influencer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        $loginBy = "admin";
-        $socialID = $request->socials;
+    // public function update(Request $request, $id)
+    // {
+    //     $loginBy = "admin";
+    //     $socialID = $request->socials;
 
-        if (!isset($id)) {
-            return $this->returnErrorData('ไม่พบข้อมูล id', 404);
-        }
+    //     if (!isset($id)) {
+    //         return $this->returnErrorData('ไม่พบข้อมูล id', 404);
+    //     }
 
-        DB::beginTransaction();
-        try {
-            $Item = Influencer::find($id);
+    //     DB::beginTransaction();
+    //     try {
+    //         $Item = Influencer::find($id);
 
-            $Item->career_id = $request->career_id;
-            $Item->content_style_id = $request->content_style_id;
-            //get data
-            $Content_style = ContentStyle::find($Item->content_style_id);
-            if (!$Content_style) {
-                return $this->returnErrorData('ไม่พบ content_style_id', 404);
-            }
-            $Career = Career::find($Item->career_id);
-            if (!$Career) {
-                return $this->returnErrorData('ไม่พบ career_id', 404);
-            }
+    //         $Item->career_id = $request->career_id;
+    //         $Item->content_style_id = $request->content_style_id;
+    //         //get data
+    //         $Content_style = ContentStyle::find($Item->content_style_id);
+    //         if (!$Content_style) {
+    //             return $this->returnErrorData('ไม่พบ content_style_id', 404);
+    //         }
+    //         $Career = Career::find($Item->career_id);
+    //         if (!$Career) {
+    //             return $this->returnErrorData('ไม่พบ career_id', 404);
+    //         }
 
-            $Item->fullname = $request->fullname;
-            $Item->gender = $request->gender;
-            $Item->email = $request->email;
-            $Item->phone = $request->phone;
-            // $Item->career_id = $request->career_id;
-            $Item->line_id = $request->line_id;
-            // $Item->content_style_id = $request->content_style_id;
-            $Item->birthday = $request->birthday;
-            $Item->product_address = $request->product_address;
-            $Item->product_province = $request->product_province;
-            $Item->product_district = $request->product_district;
-            $Item->product_subdistrict = $request->product_subdistrict;
-            $Item->product_zip = $request->product_zip;
-            $Item->bank_id = $request->bank_id;
-            $Item->bank_account = $request->bank_account;
-            $Item->bank_brand = $request->bank_brand;
-            $Item->id_card = $request->id_card;
-            $Item->name_of_card = $request->name_of_card;
-            $Item->address_of_card = $request->address_of_card;
-            $Item->influencer_province = $request->influencer_province;
-            $Item->influencer_district = $request->influencer_district;
-            $Item->influencer_subdistrict = $request->influencer_subdistrict;
-            $Item->influencer_zip = $request->influencer_zip;
-            $Item->map = $request->map;
-            $Item->current_address = $request->current_address;
-            $Item->latitude = $request->latitude;
-            $Item->longitude = $request->longitude;
-            $Item->note = $request->note;
+    //         $Item->fullname = $request->fullname;
+    //         $Item->gender = $request->gender;
+    //         $Item->email = $request->email;
+    //         $Item->phone = $request->phone;
+    //         // $Item->career_id = $request->career_id;
+    //         $Item->line_id = $request->line_id;
+    //         // $Item->content_style_id = $request->content_style_id;
+    //         $Item->birthday = $request->birthday;
+    //         $Item->product_address = $request->product_address;
+    //         $Item->product_province = $request->product_province;
+    //         $Item->product_district = $request->product_district;
+    //         $Item->product_subdistrict = $request->product_subdistrict;
+    //         $Item->product_zip = $request->product_zip;
+    //         $Item->bank_id = $request->bank_id;
+    //         $Item->bank_account = $request->bank_account;
+    //         $Item->bank_brand = $request->bank_brand;
+    //         $Item->id_card = $request->id_card;
+    //         $Item->name_of_card = $request->name_of_card;
+    //         $Item->address_of_card = $request->address_of_card;
+    //         $Item->influencer_province = $request->influencer_province;
+    //         $Item->influencer_district = $request->influencer_district;
+    //         $Item->influencer_subdistrict = $request->influencer_subdistrict;
+    //         $Item->influencer_zip = $request->influencer_zip;
+    //         $Item->map = $request->map;
+    //         $Item->current_address = $request->current_address;
+    //         $Item->latitude = $request->latitude;
+    //         $Item->longitude = $request->longitude;
+    //         $Item->note = $request->note;
 
-            if ($request->image_bank && $request->image_bank != null && $request->image_bank != 'null') {
-                $Item->image_bank = $this->uploadImage($request->image_bank, '/image_bank');
-            }
+    //         if ($request->image_bank && $request->image_bank != null && $request->image_bank != 'null') {
+    //             $Item->image_bank = $this->uploadImage($request->image_bank, '/image_bank');
+    //         }
 
-            if ($request->image_card && $request->image_card != null && $request->image_card != 'null') {
-                $Item->image_card = $this->uploadImage($request->image_card, '/image_card');
-            }
-            $Item->status = "Request";
-            $Item->update_by = $loginBy;
+    //         if ($request->image_card && $request->image_card != null && $request->image_card != 'null') {
+    //             $Item->image_card = $this->uploadImage($request->image_card, '/image_card');
+    //         }
+    //         $Item->status = "Request";
+    //         $Item->update_by = $loginBy;
 
-            $Item->save();
+    //         $Item->save();
 
+    //         if (isset($request->socials)) {
+    //             try {
+    //                 foreach ($request->socials as $socialID) {
+    //                     $social = PlatformSocial::find($socialID['platform_social_id']);
 
-            // if ($request->socials === "SocialTemp") {
-            //     $request->merge([
-            //         'socials' => [
-            //             [
-            //                 'platform_social_id' => 1,
-            //                 'name' => 'Facebook',
-            //                 'subscribe' => 1000,
-            //                 'link' => 'https://www.facebook.com/example'
-            //             ],
-            //             [
-            //                 'platform_social_id' => 2,
-            //                 'name' => 'Tiktok',
-            //                 'subscribe' => 15000,
-            //                 'link' => 'https://www.tiktok.com/example'
-            //             ],
-            //             [
-            //                 'platform_social_id' => 3,
-            //                 'name' => 'Youtube',
-            //                 'subscribe' => 3000,
-            //                 'link' => 'https://www.youtube.com/example'
-            //             ]
-            //         ]
-            //     ]);
-            // }
+    //                     if ($social == null) {
+    //                         return $this->returnErrorData('เกิดข้อผิดพลาดที่ $social กรุณาลองใหม่อีกครั้ง ', 404);
+    //                     } else {
+    //                         $Item->platform_socials()->attach($social, array('name' => $socialID['name'], 'subscribe' => $socialID['subscribe'], 'link' => $socialID['link']));
+    //                     }
+    //                 }
+    //             } catch (\Throwable $e) {
+    //                 return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+    //             }
+    //         }
 
 
-            if (isset($request->socials)) {
-                try {
-                    foreach ($request->socials as $socialID) {
-                        $social = PlatformSocial::find($socialID['platform_social_id']);
+    //         if (isset($request->project_id)) {
 
-                        if ($social == null) {
-                            return $this->returnErrorData('เกิดข้อผิดพลาดที่ $social กรุณาลองใหม่อีกครั้ง ', 404);
-                        } else {
-                            $Item->platform_socials()->attach($social, array('name' => $socialID['name'], 'subscribe' => $socialID['subscribe'], 'link' => $socialID['link']));
-                        }
-                    }
-                } catch (\Throwable $e) {
-                    return $this->returnErrorData('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ' . $e, 404);
-                }
-            }
+    //             $project = Project::find($request->project_id);
 
+    //             if ($project == null) {
+    //                 return $this->returnErrorData('เกิดข้อผิดพลาดที่ $projects กรุณาลองใหม่อีกครั้ง ', 404);
+    //             } else {
+    //                 $status = "working";
+    //                 $Item->projects()->sync($project, ['status' => $status]);
+    //             }
+    //         }
+    //         //log
+    //         $userId = $loginBy;
+    //         $type = 'แก้ไขผู้ใช้งาน';
+    //         $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
+    //         $this->Log($userId, $description, $type);
 
-            if (isset($request->project_id)) {
+    //         DB::commit();
 
-                $project = Project::find($request->project_id);
-
-                if ($project == null) {
-                    return $this->returnErrorData('เกิดข้อผิดพลาดที่ $projects กรุณาลองใหม่อีกครั้ง ', 404);
-                } else {
-                    $status = "working";
-                    $Item->projects()->attach($project, ['status' => $status]);
-                }
-            }
-            //log
-            $userId = $loginBy;
-            $type = 'แก้ไขผู้ใช้งาน';
-            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
-            $this->Log($userId, $description, $type);
-
-            DB::commit();
-
-            return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
-        } catch (\Throwable $e) {
-            DB::rollback();
-            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 404);
-        }
-    }
+    //         return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
+    //     } catch (\Throwable $e) {
+    //         DB::rollback();
+    //         return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 404);
+    //     }
+    // }
 
     /**
      * Remove the specified resource from storage.
@@ -1138,7 +1111,7 @@ class InfluencerController extends Controller
                     return $this->returnErrorData('เกิดข้อผิดพลาดที่ $projects กรุณาลองใหม่อีกครั้ง ', 404);
                 } else {
                     $status = "working";
-                    $Item->projects()->attach($project, ['status' => $status]);
+                    $Item->projects()->sync($project, ['status' => $status]);
                 }
             }
 
