@@ -736,12 +736,16 @@ class InfluencerController extends Controller
             }
 
             if (isset($request->project_id)) {
-
-                $project = Project::find($request->project_id);
-
-                if ($project == null) {
-                    return $this->returnErrorData('เกิดข้อผิดพลาดที่ $projects กรุณาลองใหม่อีกครั้ง ', 404);
-                } else {
+                $project_ids = explode(',', $request->project_id);
+                $project_ids = array_map('trim', $project_ids);
+            
+                foreach ($project_ids as $project_id) {
+                    $project = Project::find($project_id);
+            
+                    if ($project == null) {
+                        continue;
+                    }
+            
                     $status = "working";
                     $Item->projects()->attach($project, ['status' => $status]);
                 }
@@ -1104,14 +1108,20 @@ class InfluencerController extends Controller
 
 
             if (isset($request->project_id)) {
+                $project_ids = explode(',', $request->project_id);
+                $project_ids = array_map('trim', $project_ids);
+            
+                $Item->projects()->detach();
 
-                $project = Project::find($request->project_id);
-
-                if ($project == null) {
-                    return $this->returnErrorData('เกิดข้อผิดพลาดที่ $projects กรุณาลองใหม่อีกครั้ง ', 404);
-                } else {
+                foreach ($project_ids as $project_id) {
+                    $project = Project::find($project_id);
+            
+                    if ($project == null) {
+                        continue;
+                    }
+            
                     $status = "working";
-                    $Item->projects()->sync($project, ['status' => $status]);
+                    $Item->projects()->attach($project, ['status' => $status]);
                 }
             }
 
