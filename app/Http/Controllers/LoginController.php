@@ -230,7 +230,6 @@ class LoginController extends Controller
             $Item = CustomerCredential::where('UID', $key)
                 ->first();
 
-
             if ($Item) {
                 return response()->json([
                     'code' => '200',

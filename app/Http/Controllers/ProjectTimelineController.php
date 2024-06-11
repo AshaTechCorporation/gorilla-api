@@ -496,6 +496,7 @@ class ProjectTimelineController extends Controller
                     $Item->image_quotation = $value['image_quotation'];
                     $Item->ecode = $value['ecode'];
                     $Item->post_image = $value['post_image'];
+                    $Item->payment_status = $Item['payment_status'];
                     $Item->create_by = $loginBy;
                     $Item->update_by = $loginBy;
 
@@ -529,7 +530,7 @@ class ProjectTimelineController extends Controller
                 if ($request->round == 0) {
                     $Item->admin_status1 = $request->admin_status;
                     if ($Item->admin_status == "approve" && $Item->client_status == "approve") {
-                        $Item->draft_status = "TRUE";
+                        $Item->draft_status = "approve";
                         $Item->admin_feedback1 = $request->feedback;
                     } else {
                         $Item->admin_feedback1 = $request->feedback;
@@ -537,7 +538,7 @@ class ProjectTimelineController extends Controller
                 } elseif ($request->round == 1) {
                     $Item->admin_status2 = $request->admin_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
-                        $Item->draft_status = "TRUE";
+                        $Item->draft_status = "approve";
                         $Item->admin_feedback2 = $request->feedback;
                     } else {
                         $Item->admin_feedback2 = $request->feedback;
@@ -545,13 +546,13 @@ class ProjectTimelineController extends Controller
                 } elseif ($request->round == 2) {
                     $Item->admin_status3 = $request->admin_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
-                        $Item->draft_status = "TRUE";
+                        $Item->draft_status = "approve";
                         $Item->admin_feedback3 = $request->feedback;
                     } else {
                         $Item->admin_feedback3 = $request->feedback;
                     }
                 } else {
-                    $Item->draft_status = "FALSE";
+                    $Item->draft_status = "reject";
                 }
             }
 
@@ -559,7 +560,7 @@ class ProjectTimelineController extends Controller
                 if ($request->round == 0) {
                     $Item->client_status1 = $request->client_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
-                        $Item->draft_status = "TRUE";
+                        $Item->draft_status = "approve";
                         $Item->client_feedback1 = $request->feedback;
                     } else {
                         $Item->client_feedback1 = $request->feedback;
@@ -569,7 +570,7 @@ class ProjectTimelineController extends Controller
                 } elseif ($request->round == 1) {
                     $Item->client_status2 = $request->client_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
-                        $Item->draft_status = "TRUE";
+                        $Item->draft_status = "approve";
                         $Item->client_feedback2 = $request->feedback;
                     } else {
                         $Item->client_feedback2 = $request->feedback;
@@ -579,12 +580,12 @@ class ProjectTimelineController extends Controller
                 } elseif ($request->round == 2) {
                     $Item->client_status3 = $request->client_status;
                     if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
-                        $Item->draft_status = "TRUE";
+                        $Item->draft_status = "approve";
                         $Item->client_feedback3 = $request->feedback;
                     } else {
                         $Item->client_feedback3 = $request->feedback;
                         $Item->round = '3';
-                        $Item->draft_status = "FALSE";
+                        $Item->draft_status = "reject";
                     }
                 }
             }

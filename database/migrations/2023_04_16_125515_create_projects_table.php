@@ -25,7 +25,7 @@ class CreateProjectsTable extends Migration
             $table->string('pcode', 250)->charset('utf8')->nullable();
             $table->integer('tax')->nullable();
 
-            $table->enum('status', ['open', 'ongoing', 'closed'])->charset('utf8')->default('closed');
+            $table->enum('status', ['open', 'ongoing', 'closed'])->charset('utf8')->default('ongoing');
             $table->timestamps();
             $table->softDeletes();
         });

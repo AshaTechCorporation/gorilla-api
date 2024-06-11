@@ -48,11 +48,11 @@ class CreateProjectTimelinesTable extends Migration
             $table->enum('client_status', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
 
 
-            $table->enum('draft_status', ['TRUE', 'FALSE', 'WAIT'])->charset('utf8')->default('WAIT');
-            $table->enum('payment_status', ['TRUE', 'FALSE', 'WAIT'])->charset('utf8')->default('WAIT');
+            $table->enum('draft_status', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
+            $table->enum('payment_status', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
 
             $table->string('post_date', 250)->charset('utf8')->nullable();
-            $table->enum('post_status', ['TRUE', 'FALSE', 'WAIT'])->charset('utf8')->default('WAIT');
+            $table->enum('post_status', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
             $table->text('post_link')->charset('utf8')->nullable();
             $table->text('post_code')->charset('utf8')->nullable();
             $table->string('post_image', 255)->nullable()->charset('utf8');
