@@ -167,7 +167,7 @@ Route::get('/get_influProject/{id}', [ProjectController::class, 'getProjectbyInf
 // Route::post('/product_page', [ProductController::class, 'getPage']);
 // Route::get('/get_product', [ProductController::class, 'getList']);
 Route::get('/get_product/{id}', [ProductController::class, 'getProductbyProject']);
-Route::post('/product_item', [ProductController::class, 'addProductItem']);
+Route::post('/product_item', [ProductController::class, 'addItem']);
 Route::post('/create_item', [ProductController::class, 'addProductItem']);
 
 // Past Project
