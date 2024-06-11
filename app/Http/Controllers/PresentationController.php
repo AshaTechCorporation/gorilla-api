@@ -1092,7 +1092,7 @@ class PresentationController extends Controller
             10 => 'October', 11 => 'November', 12 => 'December'
         ];
 
-        // return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $projects);
+        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $projects);
 
         if ($projects) {
             $productTimelineCount = count($projects->product_timelines);

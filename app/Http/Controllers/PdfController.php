@@ -11,30 +11,31 @@ use Mpdf\Config\ConfigVariables;
 use Mpdf\Config\FontVariables;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use Symfony\Component\HttpFoundation\Response;
+use TCPDF;
+use App\Utilities\PdfFiller;
 
 class PdfController extends Controller
 {
     public function fillPdfForm()
     {
-        $inputPdfPath = public_path("pdf/approve_wh3_081156.pdf");
-        $outputPdfPath = public_path('pdf/approve_wh3_081156_filled.pdf');
-        $jsFilePath = resource_path('js/fillPdf.js');
-
-        $data = json_encode([
-            'name1' => 'นายภวัต แย้มวงษ์',
-            'chk1' => 'Yes',
-            'chk5' => 'Yes',
-            'chk7' => 'Yes',
-        ]);
-
-        $process = new Process(['node', $jsFilePath, $inputPdfPath, $outputPdfPath, $data]);
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        return response()->download($outputPdfPath);
+        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+        $pdf->setSourceFile(public_path('path/to/your/pdf/form.pdf'));
+        $import_page = $pdf->importPage(1);
+        $pdf->AddPage();
+        $pdf->useTemplate($import_page);
+    
+        $data = [
+            'field_name_1' => 'Field Value 1',
+            'field_name_2' => 'Field Value 2',
+            // Add more fields as needed
+        ];
+    
+        $import = new TCPDF_IMPORT($pdf, $pdf->getFormFields());
+        $import->fillFormFields($data);
+    
+        // Inline (display in the browser)
+        $pdf->Output('document.pdf', 'I');
     }
     public function generatePdf()
     {
@@ -99,8 +100,8 @@ class PdfController extends Controller
         $amountPaid = '10,000.00';
         $taxWithheld = '300.00';
 
-        $checked = '☑';  // Unicode for checked box
-        $unchecked = '☐';  // Unicode for unchecked box
+        $checked = '☑';  
+        $unchecked = '☐';  
 
         $html = '
             <div style="text-align: left; font-size: 14px; margin-top: 5px;">
@@ -141,7 +142,7 @@ class PdfController extends Controller
                     <div style="font-size: 18px;">
                         <div>ลำดับที่: <span style="border-bottom: 1px dotted black; width: 100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
                         <div>ในแบบ: <span style="border-bottom: 1px dotted black; width: 100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-                        <div>' . $unchecked . ' (1) ภ.ง.ด.1ก ' . $unchecked . ' (2) ภ.ง.ด.1ก พิเศษ ' . $unchecked . ' (3) ภ.ง.ด.2 ' . $unchecked . ' (4) ภ.ง.ด.3</div>
+                        <div>' . $unchecked . ' (1) ภ.ง.ด.1ก ' . $unchecked . ' (2) ภ.ง.ด.1ก พิเศษ ' . $unchecked . ' (3) ภ.ง.ด.2 ' . $checked . ' (4) ภ.ง.ด.3</div>
                         <div>' . $unchecked . ' (5) ภ.ง.ด.2ก ' . $unchecked . ' (6) ภ.ง.ด.3ก ' . $unchecked . ' (7) ภ.ง.ด.53</div>
                     </div>
                 </div>

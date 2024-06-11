@@ -50,22 +50,82 @@ class ProductController extends Controller
         DB::beginTransaction();
 
         try {
-            $InsertItem = $request->insertitem;
-            foreach ($InsertItem as $key => $value) {
-                $existingProductTimeline = ProductTimeline::where('project_id', $value['project_id'])
-                ->where('year', $value['year'])
-                ->where('month', $value['month'])
+            $existingProductTimeline = ProductTimeline::where('project_id', $request->project_id)
+                ->where('year', $request->year)
+                ->where('month', $request->month)
                 ->first();
 
             if ($existingProductTimeline) {
                 $Item = $existingProductTimeline;
             } else {
-                $Item = new ProductTimeline();
-                $Item->project_id = $value['project_id'];
-                $Item->year = $value['year'];
-                $Item->month = $value['month'];
-                $Item->save();
+                return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 404);
             }
+
+            if ($Item) {
+
+                $ItemP = new ProductItem();
+                $ItemP->product_timeline_id = $Item->id;
+                $ItemP->name = $request->name;
+                $ItemP->qty = $request->qty;
+                $ItemP->platform_social_id = $request->platform_social_id;
+                $ItemP->product_id = $request->product_id;
+                $ItemP->subscribe = $request->subscribe;
+                $ItemP->description = $request->description;
+                $ItemP->save();
+                for ($i = 0; $i < $ItemP->qty; $i++) {
+                    $ItemInf = new ProjectTimeline();
+
+                    $ItemInf->product_item_id = $ItemP->id;
+                    $ItemInf->create_by = $loginBy;
+                    $ItemInf->ecode = 'IN' . $ItemP->id . '-' . $i;
+
+                    $ItemInf->save();
+                }
+            }
+
+
+            //log
+            $userId = $loginBy;
+            $type = 'เพิ่มลูกค้า';
+            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
+            $this->Log($userId, $description, $type);
+
+
+            DB::commit();
+
+            return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
+        } catch (\Throwable $e) {
+
+            DB::rollback();
+
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+        }
+    }
+
+    public function addItem(Request $request)
+    {
+
+        $loginBy = "admin";
+
+        DB::beginTransaction();
+
+        try {
+            $InsertItem = $request->insertitem;
+            foreach ($InsertItem as $key => $value) {
+                $existingProductTimeline = ProductTimeline::where('project_id', $value['project_id'])
+                    ->where('year', $value['year'])
+                    ->where('month', $value['month'])
+                    ->first();
+
+                if ($existingProductTimeline) {
+                    $Item = $existingProductTimeline;
+                } else {
+                    $Item = new ProductTimeline();
+                    $Item->project_id = $value['project_id'];
+                    $Item->year = $value['year'];
+                    $Item->month = $value['month'];
+                    $Item->save();
+                }
 
                 if (isset($value['productitem'])) {
                     $productItems = $value['productitem'];
@@ -80,13 +140,13 @@ class ProductController extends Controller
                         $ItemP->subscribe = $productItem['subscribe'];
                         $ItemP->description = $productItem['description'];
                         $ItemP->save();
-                        for($i=0;$i<$ItemP->qty;$i++){
+                        for ($i = 0; $i < $ItemP->qty; $i++) {
                             $ItemInf = new ProjectTimeline();
-    
+
                             $ItemInf->product_item_id = $ItemP->id;
                             $ItemInf->create_by = $loginBy;
-                            $ItemInf->ecode = 'IN'. $ItemP->id . '-' . $i;
-            
+                            $ItemInf->ecode = 'IN' . $ItemP->id . '-' . $i;
+
                             $ItemInf->save();
                         }
                     }

@@ -10,6 +10,7 @@
     "require": {
         "php": "^7.3|^8.0",
         "barryvdh/laravel-dompdf": "^2.1",
+        "barryvdh/laravel-snappy": "^1.0",
         "berkayk/onesignal-laravel": "^2.0",
         "fideloper/proxy": "^4.4",
         "firebase/php-jwt": "^5.2",
@@ -27,8 +28,11 @@
         "mpdf/mpdf": "^8.0",
         "phpoffice/phppresentation": "dev-master",
         "phpoffice/phpword": "^0.18.2",
+        "setasign/fpdf": "^1.8",
+        "setasign/fpdi": "^2.6",
         "socialiteproviders/line": "^4.1",
         "socialiteproviders/youtube": "^4.1",
+        "tecnickcom/tcpdf": "^6.7",
         "tomlerendu/laravel-convert-case-middleware": "^1.1"
     },
     "require-dev": {

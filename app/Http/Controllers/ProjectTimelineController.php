@@ -79,7 +79,7 @@ class ProjectTimelineController extends Controller
                     $query->where('year', $year);
                 });
             }
-        
+
             // Eager load product_items with project_timelines
             $D->with(['product_timelines' => function ($query) use ($year) {
                 $query->where('year', $year);
@@ -94,7 +94,7 @@ class ProjectTimelineController extends Controller
                     $query->where('month', $month);
                 });
             }
-        
+
             // Eager load product_items with project_timelines
             $D->with(['product_timelines' => function ($query) use ($month) {
                 $query->where('month', $month);
@@ -144,15 +144,15 @@ class ProjectTimelineController extends Controller
         $year = $request->year;
         $platform_social_id = $request->platform_social_id;
         $key = $request->key;
-    
+
         // Initialize the query
         $query = ProductTimeline::query()
             ->where('project_id', $project_id)
             ->orderBy('id', 'asc');
-    
-        if($month && $year) {
+
+        if ($month && $year) {
             $query->where('month', $month)
-            ->where('year', $year);
+                ->where('year', $year);
         }
 
         if ($platform_social_id) {
@@ -160,14 +160,14 @@ class ProjectTimelineController extends Controller
                 $query->where('platform_social_id', $platform_social_id);
             });
         }
-    
+
         $query->with(['product_items' => function ($query) use ($platform_social_id) {
             if ($platform_social_id) {
                 $query->where('platform_social_id', $platform_social_id);
             }
             $query->with('project_timelines');
         }]);
-    
+
         if ($key) {
             $query->whereHas('product_items', function ($query) use ($key) {
                 $query->where('name', $key)
@@ -183,22 +183,57 @@ class ProjectTimelineController extends Controller
                     });
             });
         }
-    
-    // Get the items
-    $items = $query->get();
-        
-    
+
+        // Get the items
+        $items = $query->get();
+
+
         // Flatten the product items
         $productItems = $items->flatMap(function ($item) {
             return $item->product_items;
         });
-    
+
         // Convert the result to an array
         $productItemsArray = $productItems->toArray();
-    
+
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $productItemsArray);
     }
-    
+
+    public function addRowinItem(Request $request)
+    {
+        $loginBy = "admin";
+
+        DB::beginTransaction();
+
+        try {
+
+            $ItemP = ProductItem::find($request->product_item_id);
+            $ItemP->qty = $ItemP->qty + 1;
+            $ItemP->save();
+            $ItemInf = new ProjectTimeline();
+
+            $ItemInf->product_item_id = $ItemP->id;
+            $ItemInf->create_by = $loginBy;
+            $ItemInf->ecode = 'IN' . $ItemP->id . '-' . "test";
+
+            $ItemInf->save();
+
+            //log
+            $userId = $loginBy;
+            $type = 'เพิ่มข้อมูล';
+            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
+            $this->Log($userId, $description, $type);
+
+            DB::commit();
+
+            return $this->returnSuccess('ดำเนินการสำเร็จ', $ItemInf);
+        } catch (\Throwable $e) {
+            DB::rollback();
+
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 500);
+        }
+    }
+
     public function index()
     {
         //
@@ -603,7 +638,7 @@ class ProjectTimelineController extends Controller
                 'total_comment' => 0,
                 'total_share' => 0,
             ];
-            return $this->returnSuccess('ไม่มีข้อมูล' , $defauftdata);
+            return $this->returnSuccess('ไม่มีข้อมูล', $defauftdata);
         }
     }
 

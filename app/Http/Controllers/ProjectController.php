@@ -123,6 +123,10 @@ class ProjectController extends Controller
             $customer_id = $this->decoderid($request->header('Authorization'));
             $D->where('customer_id', $customer_id);
         }
+
+        if ($request->status) {
+            $D->where('status', $request->status);
+        }
         
         $d = $D->paginate($length, ['*'], 'page', $page);
 

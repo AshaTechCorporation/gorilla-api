@@ -45,20 +45,11 @@ use Illuminate\Support\Facades\Route;
  */
 
 //////////////////////////////////////////web no route group/////////////////////////////////////////////////////
-//Login Admin
-// Route::post('/login', [LoginController::class, 'login']);
-
-//use middleware checkjwt
-// Route::post('/check_login', [LoginController::class, 'checkLogin']);
-
-//user
-// Route::post('/create_admin', [UserController::class, 'createUserAdmin']);
-// Route::post('/forgot_password_user', [UserController::class, 'ForgotPasswordUser']);
 
 // Pdf
 Route::get('/get_pdf', [PdfController::class, 'generatePdf']);
 Route::post('/get_fiffy', [PdfController::class, 'tax_book_fifty']);
-Route::get('/fill-pdf', [PdfController::class, 'fillPdfForm']);
+Route::post('/fill-pdf', [PdfController::class, 'fillPdfForm']);
 
 // Presentatiion
 Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentation']);
@@ -177,6 +168,7 @@ Route::get('/get_influProject/{id}', [ProjectController::class, 'getProjectbyInf
 // Route::get('/get_product', [ProductController::class, 'getList']);
 Route::get('/get_product/{id}', [ProductController::class, 'getProductbyProject']);
 Route::post('/product_item', [ProductController::class, 'addProductItem']);
+Route::post('/create_item', [ProductController::class, 'addProductItem']);
 
 // Past Project
 Route::resource('pastproject', PastProjectController::class);
@@ -189,6 +181,7 @@ Route::post('/project_timeline_page', [ProjectTimelineController::class, 'getPag
 Route::get('/get_project_timeline', [ProjectTimelineController::class, 'getList']);
 Route::post('/update_draft_status', [ProjectTimelineController::class, 'updateStatus']);
 Route::post('/kpi', [ProjectTimelineController::class, 'kpicalculate']);
+Route::post('/add_row', [ProjectTimelineController::class, 'addRowinItem']);
 
 
 Route::post('/item_bymonth', [ProjectTimelineController::class, 'getProductTimelineByMonth']);
