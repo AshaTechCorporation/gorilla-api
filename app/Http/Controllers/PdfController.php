@@ -7,11 +7,7 @@ use App\Models\Influencer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Date;
 use Mpdf\Mpdf;
-use Mpdf\Config\ConfigVariables;
-use Mpdf\Config\FontVariables;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
-use Symfony\Component\HttpFoundation\Response;
+use setasign\Fpdi\Tcpdf\Fpdi;
 use TCPDF;
 use App\Utilities\PdfFiller;
 
@@ -19,23 +15,47 @@ class PdfController extends Controller
 {
     public function fillPdfForm()
     {
-        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-        $pdf->setSourceFile(public_path('path/to/your/pdf/form.pdf'));
-        $import_page = $pdf->importPage(1);
-        $pdf->AddPage();
-        $pdf->useTemplate($import_page);
-    
+        // Data to be filled in the PDF template
         $data = [
-            'field_name_1' => 'Field Value 1',
-            'field_name_2' => 'Field Value 2',
-            // Add more fields as needed
+            'name' => 'John Doe',
+            'date' => date('Y-m-d'),
+            'invoice_number' => '123456',
+            // Add more data as needed
         ];
-    
-        $import = new TCPDF_IMPORT($pdf, $pdf->getFormFields());
-        $import->fillFormFields($data);
-    
-        // Inline (display in the browser)
-        $pdf->Output('document.pdf', 'I');
+
+        // Path to the existing PDF template
+        $templatePath = public_path("pdf/approve_wh3_081156.pdf");
+
+        // Create a new FPDI instance
+        $pdf = new FPDI();
+
+        // Add a page
+        $pdf->AddPage();
+
+        // Set the source file
+        $pdf->setSourceFile($templatePath);
+
+        // Import the first page of the template PDF
+        $tplIdx = $pdf->importPage(1);
+
+        // Use the imported page as the template
+        $pdf->useTemplate($tplIdx, 0, 0, 210, 297);
+
+        // Set the font, style, and size
+        $pdf->SetFont('Helvetica', '', 12);
+
+        // Set the position for the text and write the data
+        $pdf->SetXY(50, 50); // Position for 'name'
+        $pdf->Write(0, $data['name']);
+
+        $pdf->SetXY(50, 60); // Position for 'date'
+        $pdf->Write(0, $data['date']);
+
+        $pdf->SetXY(50, 70); // Position for 'invoice_number'
+        $pdf->Write(0, $data['invoice_number']);
+
+        // Output the PDF as a download
+        return response($pdf->Output('document.pdf', 'D'))->header('Content-Type', 'application/pdf');
     }
     public function generatePdf()
     {
@@ -100,8 +120,8 @@ class PdfController extends Controller
         $amountPaid = '10,000.00';
         $taxWithheld = '300.00';
 
-        $checked = '☑';  
-        $unchecked = '☐';  
+        $checked = '☑';
+        $unchecked = '☐';
 
         $html = '
             <div style="text-align: left; font-size: 14px; margin-top: 5px;">
@@ -219,5 +239,10 @@ class PdfController extends Controller
         $pdfContent = $mpdf->Output('', 'S');
 
         return response($pdfContent, 200, $headers);
+    }
+    public function showPdfForm(Request $request){
+        $modelData = Influencer::find($request->influencer_id); // Example: Retrieve data based on an ID
+        // Pass the data to the view
+        return view('pdf_form', ['modelData' => $modelData]);
     }
 }

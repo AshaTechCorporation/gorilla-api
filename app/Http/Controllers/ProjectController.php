@@ -503,7 +503,7 @@ class ProjectController extends Controller
     {
         $loginBy = "admin";
         $ProjectID = $request->project_id;
-        $influencerID = $request->influ;
+        $influencerIDs = $request->influ;
 
         if (empty($ProjectID)) {
             return $this->returnErrorData('กรุณาระบุ $ProjectID ให้เรียบร้อย' . $request, 404);
@@ -512,17 +512,19 @@ class ProjectController extends Controller
 
         try {
 
-            $Item = Project::find($ProjectID);
+            $project = Project::find($ProjectID);
 
-            if ($influencerID) {
-                foreach($influencerID as $Influencerid) {
-
-                    $influencer = Influencer::find($Influencerid);
-
-                    if ($influencer == null) {
-                        return $this->returnErrorData('เกิดข้อผิดพลาดที่ $influencer กรุณาลองใหม่อีกครั้ง ', 404);
-                    } else {
-                        $Item->influencers()->attach($influencer, array('status' => "working"));
+            if ($influencerIDs) {
+                foreach($influencerIDs as $influencerID) {
+                    // Check if the influencer is already attached
+                    if (!$project->influencers()->where('influencer_id', $influencerID)->exists()) {
+                        $influencer = Influencer::find($influencerID);
+    
+                        if ($influencer == null) {
+                            return $this->returnErrorData('เกิดข้อผิดพลาดที่ $influencer กรุณาลองใหม่อีกครั้ง ', 404);
+                        } else {
+                            $project->influencers()->attach($influencer, ['status' => "working"]);
+                        }
                     }
                 }
             }
@@ -536,7 +538,7 @@ class ProjectController extends Controller
 
             DB::commit();
 
-            return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
+            return $this->returnSuccess('ดำเนินการสำเร็จ', $project);
         } catch (\Throwable $e) {
 
             DB::rollback();
