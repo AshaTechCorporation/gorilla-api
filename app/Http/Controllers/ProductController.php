@@ -58,7 +58,11 @@ class ProductController extends Controller
             if ($existingProductTimeline) {
                 $Item = $existingProductTimeline;
             } else {
-                return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 404);
+                $Item = new ProductTimeline();
+                $Item->project_id = $request->project_id;
+                $Item->year = $request->year;
+                $Item->month = $request->month;
+                $Item->save();
             }
 
             if ($Item) {
