@@ -395,7 +395,7 @@ class ProjectTimelineController extends Controller
             $ItemP = ProductItem::find($Item->product_item_id);
             $ItemP->qty = $ItemP->qty - 1;
             $ItemP->save();
-            
+
             $Item->delete();
 
             //log
@@ -645,6 +645,31 @@ class ProjectTimelineController extends Controller
                 'total_share' => 0,
             ];
             return $this->returnSuccess('ไม่มีข้อมูล', $defauftdata);
+        }
+    }
+
+    public function kpionlyitem($id)
+    {
+        try {
+            $productItemId = $id;
+            if ($productItemId) {
+                $productItem = ProductItem::with('project_timelines')
+                    ->findOrFail($productItemId);
+
+                $data = $this->calculateProductItemTotals($productItem);
+
+                return  $data;
+            } else {
+                return $this->returnErrorData('ข้อมูลไม่ถูกต้อง', 400);
+            }
+        } catch (\Throwable $e) {
+            $defauftdata = [
+                'total_view' => 0,
+                'total_like' => 0,
+                'total_comment' => 0,
+                'total_share' => 0,
+            ];
+            return $defauftdata;
         }
     }
 

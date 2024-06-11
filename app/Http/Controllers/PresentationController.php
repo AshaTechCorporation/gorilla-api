@@ -22,6 +22,7 @@ use App\Models\Presentation;
 use App\Models\Project;
 use Illuminate\Support\Facades\DB;
 
+use App\Http\Controllers\ProjectTimelineController;
 
 class PresentationController extends Controller
 {
@@ -352,8 +353,9 @@ class PresentationController extends Controller
         $textRun->getFont()->setBold(true);
         $textRun->getFont()->setName($this->defaultFontName);
     }
-    public function sub_status()
+    public function sub_status($kpi,$status)
     {
+        // dd($kpi);
         //  *************************Add the second slide *************************
         $secondSlide = $this->presentation->createSlide();
 
@@ -381,7 +383,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('Total State');
+        $textRun = $textShape->createTextRun("Total State");
         $textRun->getFont()->setSize(48);
         $textRun->getFont()->setColor(new Color('FFFFFF'));
         $textRun->getFont()->setName('Berlin Sans FB');
@@ -392,7 +394,7 @@ class PresentationController extends Controller
         $textShape->getShadow()->setBlurRadius(5); // Blur radius of shadow
         $textShape->getShadow()->setColor(new Color('E11616')); // Color of shadow
         // second component
-        $textShapeWidth = 150;
+        $textShapeWidth = 350;
         $textShapeOffsetX = ($this->imageWidth - $textShapeWidth) / 2;
 
         // Add dynamic content to the first slide
@@ -405,7 +407,7 @@ class PresentationController extends Controller
         $textShape->getFill()->setFillType(Fill::FILL_SOLID)->setRotation(45)->setStartColor(new Color('E1AB16'))->setEndColor(new Color('E1AB16'));
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('Overall');
+        $textRun = $textShape->createTextRun(isset($status->name)?$status->name:'ไม่มีข้อมูล');
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new Color('FFFFFF'));
         $textRun->getFont()->setName($this->defaultFontName);
@@ -446,7 +448,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('123');
+        $textRun = $textShape->createTextRun(isset($kpi["total_view"]) ? $kpi["total_view"] : 0);
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('FFFFFF'));
         $textRun->getFont()->setBold(true);
@@ -487,7 +489,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('123');
+        $textRun = $textShape->createTextRun(isset($kpi["total_like"])? $kpi["total_like"] : 0);
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('FFFFFF'));
         $textRun->getFont()->setBold(true);
@@ -528,7 +530,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('123');
+        $textRun = $textShape->createTextRun(isset($kpi["total_comment"]) ? $kpi["total_comment"] : 0);
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('FFFFFF'));
         $textRun->getFont()->setBold(true);
@@ -570,7 +572,7 @@ class PresentationController extends Controller
         $textShape->getActiveParagraph()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Add a text run to the shape
-        $textRun = $textShape->createTextRun('123');
+        $textRun = $textShape->createTextRun(isset($kpi["total_share"]) ? $kpi["total_share"] : 0);
         $textRun->getFont()->setSize(20);
         $textRun->getFont()->setColor(new \PhpOffice\PhpPresentation\Style\Color('FFFFFF'));
         $textRun->getFont()->setBold(true);
@@ -1326,7 +1328,10 @@ class PresentationController extends Controller
                 $this->Title($projects, $monthName, $timeline['month']);
                 $count = count($timeline->product_items);
                 foreach ($timeline->product_items as $status) {
-                    $this->sub_status();
+                    $projecttime=new ProjectTimelineController();
+                    $kpi = $projecttime->kpionlyitem($status->id);
+
+                    $this->sub_status($kpi,$status);
                 }
                 foreach ($timeline->product_items as $item) {
                     $this->createInfluSide($item->project_timelines);
