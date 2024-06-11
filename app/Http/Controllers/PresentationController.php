@@ -390,7 +390,7 @@ class PresentationController extends Controller
         $shape = $thirdSlide->createDrawingShape();
         $shape->setName('image')
             ->setDescription('My image description')
-            ->setPath(public_path('/presentation/static/influ1.jpg'))
+            ->setPath(public_path(isset($influencer[0]->post_image) ? $influencer[0]->post_image :'/presentation/static/influ1.jpg'))
             ->setHeight(250)
             ->setWidth(250)
             ->setOffsetX(52)
@@ -428,7 +428,7 @@ class PresentationController extends Controller
         $shape = $thirdSlide->createDrawingShape();
         $shape->setName('image')
             ->setDescription('My image description')
-            ->setPath(public_path('/presentation/static/influ2.jpg'))
+            ->setPath(public_path(isset($influencer[1]->post_image) ? $influencer[1]->post_image :'/presentation/static/influ2.jpg'))
             ->setHeight(250)
             ->setWidth(250)
             ->setOffsetX(354)
@@ -466,7 +466,7 @@ class PresentationController extends Controller
         $shape = $thirdSlide->createDrawingShape();
         $shape->setName('image')
             ->setDescription('My image description')
-            ->setPath(public_path('/presentation/static/influ3.jpg'))
+            ->setPath(public_path(isset($influencer[2]->post_image) ? $influencer[2]->post_image :'/presentation/static/influ3.jpg'))
             ->setHeight(250)
             ->setWidth(250)
             ->setOffsetX(656)
@@ -521,7 +521,7 @@ class PresentationController extends Controller
         $shape = $thirdSlide->createDrawingShape();
         $shape->setName('image')
             ->setDescription('My image description')
-            ->setPath(public_path('/presentation/static/influ1.jpg'))
+            ->setPath(public_path(isset($influencer[0]->post_image) ? $influencer[0]->post_image :'/presentation/static/influ1.jpg'))
             ->setHeight(250)
             ->setWidth(250)
             ->setOffsetX($offxcom1 - 74)
@@ -563,7 +563,7 @@ class PresentationController extends Controller
         $shape = $thirdSlide->createDrawingShape();
         $shape->setName('image')
             ->setDescription('My image description')
-            ->setPath(public_path('/presentation/static/influ2.jpg'))
+            ->setPath(public_path(isset($influencer[1]->post_image) ? $influencer[1]->post_image :'/presentation/static/influ2.jpg'))
             ->setHeight(250)
             ->setWidth(250)
             ->setOffsetX($offxcom2 - 74)
@@ -618,7 +618,7 @@ class PresentationController extends Controller
         $shape = $thirdSlide->createDrawingShape();
         $shape->setName('image')
             ->setDescription('My image description')
-            ->setPath(public_path('/presentation/static/influ2.jpg'))
+            ->setPath(public_path(isset($influencer[0]->post_image) ? $influencer[0]->post_image :'/presentation/static/influ2.jpg'))
             ->setHeight(250)
             ->setWidth(250)
             ->setOffsetX(354)
@@ -1092,7 +1092,7 @@ class PresentationController extends Controller
             10 => 'October', 11 => 'November', 12 => 'December'
         ];
 
-        return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $projects);
+        // return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $projects);
 
         if ($projects) {
             $productTimelineCount = count($projects->product_timelines);

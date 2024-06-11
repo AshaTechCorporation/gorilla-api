@@ -391,6 +391,11 @@ class ProjectTimelineController extends Controller
         try {
 
             $Item = ProjectTimeline::find($id);
+
+            $ItemP = ProductItem::find($Item->product_item_id);
+            $ItemP->qty = $ItemP->qty - 1;
+            $ItemP->save();
+            
             $Item->delete();
 
             //log

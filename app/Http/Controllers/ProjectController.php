@@ -228,6 +228,7 @@ class ProjectController extends Controller
         }
     }
 
+
     public function getProjectbyInfluencer($id)
     {
         $influencer = Influencer::find($id);
@@ -502,7 +503,7 @@ class ProjectController extends Controller
     {
         $loginBy = "admin";
         $ProjectID = $request->project_id;
-        $influencerID = $request->influencers;
+        $influencerID = array_map('trim', explode(',', $request->influencers));
 
         if (empty($ProjectID)) {
             return $this->returnErrorData('กรุณาระบุ $ProjectID ให้เรียบร้อย' . $request, 404);
