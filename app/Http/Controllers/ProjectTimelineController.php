@@ -495,6 +495,7 @@ class ProjectTimelineController extends Controller
                     $Item->transfer_link = $value['transfer_link'];
                     $Item->image_quotation = $value['image_quotation'];
                     $Item->ecode = $value['ecode'];
+                    $Item->post_image = $value['post_image'];
                     $Item->create_by = $loginBy;
                     $Item->update_by = $loginBy;
 

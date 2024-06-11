@@ -27,6 +27,7 @@ class InfluencerController extends Controller
         $Item = Influencer::with('career')
             ->with('contentstyle')
             ->with('platform_socials')
+            ->where('influencers.status', "Request")
             ->get()->toarray();
 
         if (!empty($Item)) {

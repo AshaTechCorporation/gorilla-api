@@ -503,7 +503,7 @@ class ProjectController extends Controller
     {
         $loginBy = "admin";
         $ProjectID = $request->project_id;
-        $influencerID = array_map('trim', explode(',', $request->influencers));
+        $influencerID = $request->influ;
 
         if (empty($ProjectID)) {
             return $this->returnErrorData('กรุณาระบุ $ProjectID ให้เรียบร้อย' . $request, 404);
@@ -514,15 +514,15 @@ class ProjectController extends Controller
 
             $Item = Project::find($ProjectID);
 
-            if (isset($request->influencers)) {
-                for ($i = 0; $i < count($influencerID); $i++) {
+            if ($influencerID) {
+                foreach($influencerID as $Influencerid) {
 
-                    $influencer = Influencer::find($influencerID[$i]['influencer_id']);
+                    $influencer = Influencer::find($Influencerid);
 
                     if ($influencer == null) {
                         return $this->returnErrorData('เกิดข้อผิดพลาดที่ $influencer กรุณาลองใหม่อีกครั้ง ', 404);
                     } else {
-                        $Item->influencers()->attach($influencer, array('status' => $influencerID[$i]['status']));
+                        $Item->influencers()->attach($influencer, array('status' => "working"));
                     }
                 }
             }
