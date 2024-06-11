@@ -13,3 +13,4 @@ yarn-error.log
 /public/files
 /public/images
 /public/presentation
+resources/js/node_modules

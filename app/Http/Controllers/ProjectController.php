@@ -47,9 +47,9 @@ class ProjectController extends Controller
         $page = $start / $length + 1;
 
 
-        $col = array('id', 'customer_id', 'name', 'strdate', 'enddate','pcode',  'created_at', 'updated_at');
+        $col = array('id', 'customer_id', 'name', 'strdate', 'enddate','pcode', 'status',  'created_at', 'updated_at');
 
-        $orderby = array('id', 'customer_id', 'name', 'strdate', 'enddate','pcode',  'created_at');
+        $orderby = array('id', 'customer_id', 'name', 'strdate', 'enddate','pcode', 'status' , 'created_at');
 
         $D = Project::select($col)
             ->with('employees')
