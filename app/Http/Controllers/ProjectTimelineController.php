@@ -551,8 +551,17 @@ class ProjectTimelineController extends Controller
                     } else {
                         $Item->admin_feedback3 = $request->feedback;
                     }
-                } else {
-                    $Item->draft_status = "reject";
+                } elseif ($request->round == 3) {
+                    $Item->post_status = $request->admin_status;
+                    if ($Item->client_status == "approve" && $Item->admin_status == "approve") {
+                        $Item->draft_status = "approve";
+                        // $Item->admin_feedback3 = $request->feedback;
+                    } else {
+                        // $Item->admin_feedback3 = $request->feedback;
+                        $Item->round = '4';
+                    }
+                } else{
+                    $Item->payment_status = $request->admin_status;
                 }
             }
 

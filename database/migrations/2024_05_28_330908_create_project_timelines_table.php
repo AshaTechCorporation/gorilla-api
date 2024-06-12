@@ -43,7 +43,7 @@ class CreateProjectTimelinesTable extends Migration
             $table->text('client_feedback3')->charset('utf8')->nullable();
             $table->text('admin_feedback3')->charset('utf8')->nullable();
 
-            $table->enum('round', [0, 1, 2, 3])->default(0);
+            $table->enum('round', [0, 1, 2, 3, 4])->default(0);
             $table->enum('admin_status', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
             $table->enum('client_status', ['approve', 'reject', 'waiting'])->charset('utf8')->default('waiting');
 
