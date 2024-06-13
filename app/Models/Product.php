@@ -29,7 +29,7 @@ class Product extends Model
 
     public function projects()
     {
-        return $this->belongsTo(Project::class);
+        return $this->belongsTo(Project::class,'project_id');
     }
 
     public function product_items()

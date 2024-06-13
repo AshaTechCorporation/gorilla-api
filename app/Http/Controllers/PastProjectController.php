@@ -78,6 +78,33 @@ class PastProjectController extends Controller
 
         return $this->returnSuccess('เรียกดูข้อมูลสำเร็จ', $d);
     }
+
+
+    public function createpasteProject($influencer_id,$customer_name,$project_name)
+    {
+        DB::beginTransaction();
+
+        try {
+            $Item = new PastProject();
+            $Item->influencer_id = $influencer_id;
+            $Item->customer_name = $customer_name;
+            $Item->name = $project_name;
+            
+            $Item->save();
+
+            $userId = "admin";
+            $type = 'เพิ่มsocial';
+            $description = 'ผู้ใช้งาน ' . $userId . ' ได้ทำการ ';
+            $this->Log($userId, $description, $type);
+            
+
+            DB::commit();
+
+        } catch (\Throwable $e) {
+
+            DB::rollback();
+        }
+    }
     /**
      * Display a listing of the resource.
      *

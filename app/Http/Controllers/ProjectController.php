@@ -59,7 +59,8 @@ class ProjectController extends Controller
                     ->with(['platform_socials' => function ($query) {
                         // Select only the name and subscribe columns from the pivot table
                         $query->select('platform_socials.name as platform_social_name', 'influencer_platform_social.name as name', 'subscribe', 'link');
-                    }]);
+                    }])
+                    ->wherePivot('status', 'working');
             }]);
         if ($orderby[$order[0]['column']]) {
             $D->orderby($orderby[$order[0]['column']], $order[0]['dir']);

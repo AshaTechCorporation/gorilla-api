@@ -27,4 +27,9 @@ class ProductItem extends Model
     {
         return $this->hasMany(ProjectTimeline::class);
     }
+
+    public function products()
+    {
+        return $this->belongsTo(Product::class,'product_id');
+    }
 }
