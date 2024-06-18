@@ -30,6 +30,7 @@ use App\Http\Controllers\ProjectTimelineController;
 use App\Http\Controllers\SocialInfluencerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\OtpController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -58,6 +59,9 @@ Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentatio
 // Excel
 Route::post('/get_excel', [ExcelController::class, 'ExportServiceCenterByComp']);
 
+//OTP
+Route::post('/send_otp', [OtpController::class, 'sendOTP']);
+Route::post('/verify_otp', [OtpController::class, 'verifyOTP']);
 // Upload File
 Route::post('/upload_postimage', [Controller::class, 'uploadPostImage']);
 Route::post('/upload_file', [Controller::class, 'uploadFile']);
@@ -92,6 +96,9 @@ Route::post('/selfupdate', [InfluencerController::class, 'selfupdate']);
 
 // Influencer Login
 Route::post('/line_influencer', [LoginController::class, 'influencerlogin']);
+Route::post('/otp_influencer', [LoginController::class, 'influencerOTPlogin']);
+Route::post('/create_user_influencer', [LoginController::class, 'InfluencerCreateUser']);
+Route::post('/login_user_influencer', [LoginController::class, 'InfluencerLoginwithPassword']);
 
 // PlatformSocial
 Route::resource('platformSocial', PlatformSocialController::class);

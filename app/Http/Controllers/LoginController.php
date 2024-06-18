@@ -7,11 +7,13 @@ use App\Models\InfluencerCredential;
 use App\Models\CustomerCredential;
 use App\Models\Employee;
 use App\Models\EmployeeCredential;
+
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use \Firebase\JWT\JWT;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\OtpController;
 
 class LoginController extends Controller
 {
@@ -179,6 +181,134 @@ class LoginController extends Controller
         }
     }
 
+    public function influencerOTPlogin(Request $request)
+    {
+
+        try {
+
+            $Login = new LoginController();
+
+            $key = $request->phone;
+
+            if ($request->gk) {
+                $Item = InfluencerCredential::where('GK', $request->gk)
+                    ->first();
+                DB::beginTransaction();
+
+                $Item->UID = $key;
+                $Item->save();
+
+                DB::commit();
+            } else {
+                $Item = InfluencerCredential::where('UID', $key)
+                    ->first();
+            }
+            if ($Item) {
+                return response()->json([
+                    'code' => '200',
+                    'status' => true,
+                    'message' => 'เข้าสู่ระบบสำเร็จ',
+                    'id' => $Item->influencer_id,
+                    'role' => 'Influencer',
+                    'token' => $Login->genToken($Item->id, $key),
+                ], 200);
+            } else {
+
+                DB::beginTransaction();
+
+                $influCredential = new InfluencerCredential();
+                $influCredential->UID = $key;
+                $influCredential->save();
+
+                DB::commit();
+
+                $otp = new OtpController();
+                $otptoken = $otp->sendOTP($key, true);
+
+
+                return response()->json([
+                    'code' => '200',
+                    'status' => true,
+                    'message' => 'สร้างบัญชีสำเร็จ',
+                    'id' => $influCredential->id,
+                    'role' => 'Influencer',
+                    'token' => $Login->genToken($influCredential->id, $key),
+                    'otptoken' => $otptoken
+                ], 200);
+            }
+        } catch (\Exception $e) {
+
+            DB::rollback();
+            return $this->returnErrorData($e->getMessage(), 404);
+        }
+    }
+
+    public function InfluencerCreateUser(Request $request)
+    {
+        $data = $request->data;
+        $id = $data['id'];
+        try {
+
+            $Login = new LoginController();
+
+            $Item = InfluencerCredential::find($id);
+
+            $Item->username = $data['username'];
+            $Item->password = md5($data['password']);
+            $Item->save();
+
+            if ($Item) {
+                return response()->json([
+                    'code' => '200',
+                    'status' => true,
+                    'message' => 'สร้าง User สำเร็จ',
+                    'id' => $Item->influencer_id,
+                    'role' => 'Influencer',
+                    'token' => $Login->genToken($Item->id, $Item->UID),
+                ], 200);
+            }
+        } catch (\Exception $e) {
+
+            DB::rollback();
+            return $this->returnErrorData($e->getMessage(), 404);
+        }
+    }
+
+    public function InfluencerLoginwithPassword(Request $request)
+    {
+        $data = $request->data;
+        try {
+
+            $Login = new LoginController();
+
+            if (!isset($data['username'])) {
+                return $this->returnErrorData('[username] ไม่มีข้อมูล', 404);
+            } else if (!isset($data['password'])) {
+                return $this->returnErrorData('[password] ไม่มีข้อมูล', 404);
+            }
+
+            $Item = InfluencerCredential::where('username', $data['username'])
+                ->where('password', md5($data['password']))
+                ->first();
+
+            if ($Item) {
+                return response()->json([
+                    'code' => '200',
+                    'status' => true,
+                    'message' => 'เข้าสู่ระบบสำเร็จ',
+                    'id' => $Item->influencer_id,
+                    'role' => 'Influencer',
+                    'token' => $Login->genToken($Item->id, $Item->UID),
+                ], 200);
+            }else{
+                $this->returnErrorData('ไม่พบ Username หรือ Password', 404);
+            }
+        } catch (\Exception $e) {
+
+            return $this->returnErrorData($e->getMessage(), 404);
+        }
+    }
+
     public function employeelogin(Request $request)
     {
         try {
@@ -187,8 +317,8 @@ class LoginController extends Controller
 
             $key = $request->email;
 
-            $Item = EmployeeCredential::where('UID', $key)    
-            ->first();
+            $Item = EmployeeCredential::where('UID', $key)
+                ->first();
 
             if ($Item) {
                 return response()->json([
@@ -215,7 +345,6 @@ class LoginController extends Controller
             DB::rollback();
             return $this->returnErrorData($e, 404);
         }
-
     }
 
     public function customerlogin(Request $request)

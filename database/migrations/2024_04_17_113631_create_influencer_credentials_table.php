@@ -18,6 +18,8 @@ class CreateInfluencerCredentialsTable extends Migration
 
             $table->integer('influencer_id')->unsigned()->nullable()->index();
             $table->foreign('influencer_id')->references('id')->on('influencers')->onDelete('cascade');
+            $table->string('username', 250)->charset('utf8')->nullable();
+            $table->string('password', 250)->charset('utf8')->nullable();
             $table->string('UID', 250)->charset('utf8')->nullable();
             $table->string('GK', 250)->charset('utf8')->nullable();
             
