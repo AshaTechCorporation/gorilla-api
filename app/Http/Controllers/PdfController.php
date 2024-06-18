@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Influencer;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Smalot\PdfParser\Parser;
 use Illuminate\Support\Facades\Date;
 use Mpdf\Mpdf;
 use setasign\Fpdi\Tcpdf\Fpdi;
@@ -13,49 +14,73 @@ use App\Utilities\PdfFiller;
 
 class PdfController extends Controller
 {
-    public function fillPdfForm()
+
+    public function formatThaiIdCard($idCard)
     {
-        // Data to be filled in the PDF template
-        $data = [
-            'name' => 'John Doe',
-            'date' => date('Y-m-d'),
-            'invoice_number' => '123456',
-            // Add more data as needed
+        $Space = '&nbsp;&nbsp;&nbsp;'; // Two spaces
+        return substr($idCard, 0, 1) . $Space .
+            substr($idCard, 1, 4) . $Space .
+            substr($idCard, 5, 5) . $Space .
+            substr($idCard, 10, 2) . $Space .
+            substr($idCard, 12, 1);
+    }
+    public function fillPdfForm(Request $request)
+    {
+        $id = $request->influencer_id;
+        $influencer = Influencer::find($id);
+
+        //PDF
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
+        $mpdf = new \Mpdf\Mpdf([
+            'fontDir' => array_merge($fontDirs, [
+                base_path() . '/custom/font/directory',
+            ]),
+            'fontdata' => $fontData + [ // lowercase letters only in font key
+                'th-sarabun-it' => [
+                    'R' => 'THSarabunIT๙.ttf',
+                    'I' => 'THSarabunIT๙ Italic.ttf',
+                    'B' => 'THSarabunIT๙ Bold.ttf',
+                    'BI' => 'THSarabunIT๙ BoldItalic.ttf',
+                ],
+            ],
+            'default_font' => 'th-sarabun-it',
+            'mode' => 'utf-8',
+            'format' => 'A4',
+        ]);
+
+        $formattedIdCard = $this->formatThaiIdCard($influencer->id_card);
+        $company_name = "บริษัทโฆษณา Gorillaideas";
+        $address = "1792 ถ. ประชาสงเคราะห์ แขวงดินแดง ดินแดง กรุงเทพมหานคร 10400";
+        // background-color:red;
+        $content = array(
+            '
+            <div style="position:absolute; top:135px; left:150px; width:650px; font-size:16px;"> ' . $company_name . '  </div>
+            <div style="position:absolute; top:165px; left:150px; width:650px; font-size:16px;"> ' . $address . '  </div>
+            <div style="position:absolute; top:193px; left:502px; width:650px; font-size:28px;"> ' . $formattedIdCard . '  </div>
+            <div style="position:absolute; top:230px; left:150px; width:650px; font-size:16px;"> ' . $influencer->fullname . '  </div>
+            <div style="position:absolute; top:265px; left:150px; width:650px; font-size:16px;"> ' . $influencer->address_of_card . '  </div>
+            <div style="position:absolute; top:290px; left:635px; width:650px; font-size:28px;"> ' . '/' . '  </div>
+        ',
+        );
+
+        // return $influencer;
+        $mpdf->setSourceFile(public_path('pdf/lastest.pdf'));
+        $mpdf->AddPage('');
+        $import_page = $mpdf->ImportPage(1);
+        $mpdf->UseTemplate($import_page);
+        $mpdf->WriteHTML($content[0]);
+
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="tax_book_fifty.pdf"',
+            'Content-Transfer-Encoding' => 'binary',
         ];
+        $pdfContent = $mpdf->Output('', 'S');
 
-        // Path to the existing PDF template
-        $templatePath = public_path("pdf/approve_wh3_081156.pdf");
-
-        // Create a new FPDI instance
-        $pdf = new FPDI();
-
-        // Add a page
-        $pdf->AddPage();
-
-        // Set the source file
-        $pdf->setSourceFile($templatePath);
-
-        // Import the first page of the template PDF
-        $tplIdx = $pdf->importPage(1);
-
-        // Use the imported page as the template
-        $pdf->useTemplate($tplIdx, 0, 0, 210, 297);
-
-        // Set the font, style, and size
-        $pdf->SetFont('Helvetica', '', 12);
-
-        // Set the position for the text and write the data
-        $pdf->SetXY(50, 50); // Position for 'name'
-        $pdf->Write(0, $data['name']);
-
-        $pdf->SetXY(50, 60); // Position for 'date'
-        $pdf->Write(0, $data['date']);
-
-        $pdf->SetXY(50, 70); // Position for 'invoice_number'
-        $pdf->Write(0, $data['invoice_number']);
-
-        // Output the PDF as a download
-        return response($pdf->Output('document.pdf', 'D'))->header('Content-Type', 'application/pdf');
+        return response($pdfContent, 200, $headers);
     }
     public function generatePdf()
     {
@@ -240,8 +265,9 @@ class PdfController extends Controller
 
         return response($pdfContent, 200, $headers);
     }
-    public function showPdfForm(Request $request){
-        $modelData = Influencer::find($request->influencer_id); 
+    public function showPdfForm(Request $request)
+    {
+        $modelData = Influencer::find($request->influencer_id);
         // Pass the data to the view
         return view('pdf_form', ['modelData' => $modelData]);
     }

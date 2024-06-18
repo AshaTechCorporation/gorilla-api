@@ -177,7 +177,8 @@ return [
         // Jenssegers\Mongodb\MongodbServiceProvider::class, //mongodb
         Berkayk\OneSignal\OneSignalServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
-        Intervention\Image\ImageServiceProvider::class
+        Intervention\Image\ImageServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
 
     ],
 

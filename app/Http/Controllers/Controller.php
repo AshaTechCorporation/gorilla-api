@@ -247,7 +247,7 @@ class Controller extends BaseController
 
         $image->move($destinationPath, $input['imagename']);
 
-        return "/presentation/postimage" .'/'. $input['imagename'];
+        return $this->returnSuccess('ดำเนินการสำเร็จ', "/presentation/postimage" .'/'. $input['imagename']);
     }
 
     public function getImage($path)

@@ -30,6 +30,7 @@
         "phpoffice/phpword": "^0.18.2",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",
+        "smalot/pdfparser": "^2.10",
         "socialiteproviders/line": "^4.1",
         "socialiteproviders/youtube": "^4.1",
         "tecnickcom/tcpdf": "^6.7",
