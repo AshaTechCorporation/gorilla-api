@@ -248,7 +248,11 @@ class LoginController extends Controller
         $data = $request->data;
         $id = $data['id'];
         try {
-
+            if (!isset($data['username'])) {
+                return $this->returnErrorData('[username] ไม่มีข้อมูล', 404);
+            } else if (!isset($data['password'])) {
+                return $this->returnErrorData('[password] ไม่มีข้อมูล', 404);
+            }
             $Login = new LoginController();
 
             $Item = InfluencerCredential::find($id);
@@ -297,11 +301,12 @@ class LoginController extends Controller
                     'status' => true,
                     'message' => 'เข้าสู่ระบบสำเร็จ',
                     'id' => $Item->influencer_id,
+                    'phone' => $Item->UID,
                     'role' => 'Influencer',
                     'token' => $Login->genToken($Item->id, $Item->UID),
                 ], 200);
             }else{
-                $this->returnErrorData('ไม่พบ Username หรือ Password', 404);
+                return $this->returnErrorData('ไม่พบ Username หรือ Password', 404);
             }
         } catch (\Exception $e) {
 

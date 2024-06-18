@@ -241,7 +241,7 @@ class PdfController extends Controller
         return response($pdfContent, 200, $headers);
     }
     public function showPdfForm(Request $request){
-        $modelData = Influencer::find($request->influencer_id); // Example: Retrieve data based on an ID
+        $modelData = Influencer::find($request->influencer_id); 
         // Pass the data to the view
         return view('pdf_form', ['modelData' => $modelData]);
     }
