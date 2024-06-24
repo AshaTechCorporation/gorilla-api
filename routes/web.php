@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PresentationController;
 use App\Http\Controllers\LineWebhookController;
+use App\Http\Controllers\LineNotifyProjectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,3 +43,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 // Line Web hook
 Route::post('/line/webhook', [LineWebhookController::class, 'webhook']);
+
+
+Route::get('/line-notify', [LineNotifyProjectController::class, 'index']);
+Route::get('/line-notify/callback', [LineNotifyProjectController::class, 'callback']);

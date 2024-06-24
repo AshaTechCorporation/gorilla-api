@@ -332,7 +332,7 @@ class LoginController extends Controller
                     'message' => 'เข้าสู่ระบบสำเร็จ',
                     'id' => $Item->employee_id,
                     'role' => 'Employee',
-                    'data' => $Item,
+                    'data' => json_encode($Item) ,
                     'token' => $Login->genToken($Item->id, $Item->UID),
                 ], 200);
             } else {

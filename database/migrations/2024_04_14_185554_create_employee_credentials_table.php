@@ -19,6 +19,7 @@ class CreateEmployeeCredentialsTable extends Migration
             $table->integer('employee_id')->unsigned()->nullable()->index();
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
             $table->string('UID', 250)->charset('utf8')->nullable();
+            $table->string('LCID', 250)->charset('utf8')->nullable();
             
             $table->timestamps();
             $table->softDeletes();

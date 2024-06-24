@@ -31,6 +31,7 @@ use App\Http\Controllers\SocialInfluencerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\OtpController;
+use App\Http\Controllers\LineNotifyProjectController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -191,6 +192,9 @@ Route::post('/update_draft_status', [ProjectTimelineController::class, 'updateSt
 Route::get('/update_item_status/{id}', [ProjectTimelineController::class, 'updateItemStatus']);
 Route::post('/kpi', [ProjectTimelineController::class, 'kpicalculate']);
 Route::post('/add_row', [ProjectTimelineController::class, 'addRowinItem']);
+
+Route::get('/line-notify', [LineNotifyProjectController::class, 'index']);
+Route::get('/line-notify/callback', [LineNotifyProjectController::class, 'callback']);
 
 
 Route::post('/item_bymonth', [ProjectTimelineController::class, 'getProductTimelineByMonth']);

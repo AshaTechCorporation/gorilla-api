@@ -672,6 +672,17 @@ class ProjectTimelineController extends Controller
                 $data = $this->calculateProjectTotals($project);
 
                 return $this->returnSuccess('ดำเนินการสำเร็จ', $data);
+            } elseif ($projectId && !$month && $year && !$productItemId) {
+                // Query for the sum at the product_timelines level
+                $productTimeline = ProductTimeline::whereHas('projects', function ($query) use ($projectId) {
+                    $query->where('id', $projectId);
+                })->where('year', $year)
+                    ->with('product_items.project_timelines')
+                    ->firstOrFail();
+
+                $data = $this->calculateProductTimelineTotals($productTimeline);
+
+                return $this->returnSuccess('ดำเนินการสำเร็จ', $data);
             } elseif ($projectId && $month && $year && !$productItemId) {
                 // Query for the sum at the product_timelines level
                 $productTimeline = ProductTimeline::whereHas('projects', function ($query) use ($projectId) {
