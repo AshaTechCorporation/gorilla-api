@@ -15,6 +15,8 @@ use App\Models\InfluProject;
 use App\Models\Product;
 
 use App\Http\Controllers\PastProjectController;
+use App\Http\Controllers\LineNotifyProjectController;
+use App\Models\EmployeeCredential;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
@@ -232,7 +234,7 @@ class ProjectTimelineController extends Controller
 
             $ItemInf->product_item_id = $ItemP->id;
             $ItemInf->create_by = $loginBy;
-            $ItemInf->ecode = 'IN' . $ItemP->id . '-' . "test";
+            $ItemInf->ecode = Employee::find($request->ecode)->ecode;
 
             $ItemInf->save();
 
@@ -543,7 +545,14 @@ class ProjectTimelineController extends Controller
         $loginBy = "admin";
         DB::beginTransaction();
         try {
-            $Item = ProjectTimeline::find($request->id);
+            $Item = ProjectTimeline::with('product_items.products.projects')
+            ->find($request->id);
+            return $this->returnSuccess('test', $Item);
+            $linenotify = new LineNotifyProjectController();
+            $EmpID = $this->decoderid($request->header('Authorization'));
+            $Emp = EmployeeCredential::find($EmpID);
+            $linetoken = $Emp->LCID;
+
             if ($request->user_type == 'employee') {
                 if ($request->round == 0) {
                     $Item->admin_status1 = $request->admin_status;
@@ -555,6 +564,7 @@ class ProjectTimelineController extends Controller
                         $Item->client_status3 = "approve";
                         $Item->draft_status = "approve";
                         $Item->admin_feedback1 = $request->feedback;
+                        
                     } else {
                         if($Item->client_status1 != "waiting"){
                             $Item->round = '1';
@@ -646,6 +656,15 @@ class ProjectTimelineController extends Controller
             }
             $Item->update_by = $loginBy;
             $Item->save();
+            //line notify
+            if($request->user_type == 'customer'){
+                $linenotify->NoticebyClient(md5($linetoken), $Item,$request->round);
+            }
+
+            if($request->user_type == 'employee'){
+                $linenotify->NoticebyEmployee(md5($linetoken), $Item,$request->round);
+            }
+            
 
             $this->updateItemStatus($Item->product_item_id);
             DB::commit();

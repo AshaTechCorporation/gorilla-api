@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\ProductTimeline;
 use App\Models\ProjectTimeline;
 use App\Models\ProductItem;
+use App\Models\Employee;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -81,7 +82,7 @@ class ProductController extends Controller
 
                     $ItemInf->product_item_id = $ItemP->id;
                     $ItemInf->create_by = $loginBy;
-                    $ItemInf->ecode = 'IN' . $ItemP->id . '-' . $i;
+                    $ItemInf->ecode = Employee::find($request->ecode)->ecode;
 
                     $ItemInf->save();
                 }
@@ -149,7 +150,7 @@ class ProductController extends Controller
 
                             $ItemInf->product_item_id = $ItemP->id;
                             $ItemInf->create_by = $loginBy;
-                            $ItemInf->ecode = 'IN' . $ItemP->id . '-' . $i;
+                            $ItemInf->ecode = Employee::find($request->ecode)->ecode;
 
                             $ItemInf->save();
                         }

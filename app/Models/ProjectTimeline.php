@@ -24,7 +24,7 @@ class ProjectTimeline extends Model
 
     public function product_items()
     {
-        return $this->belongsTo(ProductItem::class);
+        return $this->belongsTo(ProductItem::class,'product_item_id');
     }
 
 }
