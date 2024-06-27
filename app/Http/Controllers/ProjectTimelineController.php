@@ -547,10 +547,11 @@ class ProjectTimelineController extends Controller
         try {
             $Item = ProjectTimeline::with('product_items.products.projects')
             ->find($request->id);
-            return $this->returnSuccess('test', $Item);
+            // return $this->returnSuccess('test', $Item);
             $linenotify = new LineNotifyProjectController();
             $EmpID = $this->decoderid($request->header('Authorization'));
             $Emp = EmployeeCredential::find($EmpID);
+            // return $this->returnSuccess('test', $Emp);
             $linetoken = $Emp->LCID;
 
             if ($request->user_type == 'employee') {
@@ -656,12 +657,14 @@ class ProjectTimelineController extends Controller
             }
             $Item->update_by = $loginBy;
             $Item->save();
-            //line notify
+            //line notify 
+
             if($request->user_type == 'customer'){
-                $linenotify->NoticebyClient(md5($linetoken), $Item,$request->round);
+                $linenotify->NoticebyClient(md5($linetoken), $Item,$request->round); 
             }
 
             if($request->user_type == 'employee'){
+                            return $this->returnSuccess('test', $Item);
                 $linenotify->NoticebyEmployee(md5($linetoken), $Item,$request->round);
             }
             

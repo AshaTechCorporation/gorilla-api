@@ -156,7 +156,7 @@ class LineNotifyProjectController extends Controller
     {
         $employee_id = $request->query('id');
         $clientId = 'MWWSx4M3elQgRdroBDhXR2';
-        $redirectUri = 'http://192.168.1.164/gorilla-api/public/api/line-notify/callback';
+        $redirectUri = 'http://localhost/gorilla-api/public/api/line-notify/callback';
         $state = $employee_id;
 
         $authUrl = "https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={$clientId}&redirect_uri={$redirectUri}&scope=notify&state={$state}";
@@ -174,7 +174,7 @@ class LineNotifyProjectController extends Controller
             $tokenUrl = 'https://notify-bot.line.me/oauth/token';
             $clientId = 'MWWSx4M3elQgRdroBDhXR2';
             $clientSecret = 'PTlorqFw30xexcsUsLOcD12YwCuz5QGzcA6OtzN9qza';
-            $redirectUri = 'http://192.168.1.164/gorilla-api/public/api/line-notify/callback';
+            $redirectUri = 'http://localhost/gorilla-api/public/api/line-notify/callback';
 
             $response = Http::asForm()->post($tokenUrl, [
                 'grant_type' => 'authorization_code',
