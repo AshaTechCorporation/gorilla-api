@@ -547,11 +547,9 @@ class ProjectTimelineController extends Controller
         try {
             $Item = ProjectTimeline::with('product_items.products.projects')
             ->find($request->id);
-            // return $this->returnSuccess('test', $Item);
             $linenotify = new LineNotifyProjectController();
             $EmpID = $this->decoderid($request->header('Authorization'));
             $Emp = EmployeeCredential::find($EmpID);
-            // return $this->returnSuccess('test', $Emp);
             $linetoken = $Emp->LCID;
 
             if ($request->user_type == 'employee') {
@@ -660,16 +658,25 @@ class ProjectTimelineController extends Controller
             //line notify 
 
             if($request->user_type == 'customer'){
-                $linenotify->NoticebyClient(md5($linetoken), $Item,$request->round); 
+                $result = $linenotify->NoticebyClient($linetoken, $Item,$request->round);
+                if($result == false){
+                    DB::rollback();
+                    return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 500);
+                }
             }
 
             if($request->user_type == 'employee'){
-                            return $this->returnSuccess('test', $Item);
-                $linenotify->NoticebyEmployee(md5($linetoken), $Item,$request->round);
+                // return $this->returnSuccess('test', $Item);
+                $result =$linenotify->NoticebyEmployee($linetoken, $Item,$request->round);
+                // return $this->returnSuccess('ดำเนินการสำเร็จ', $result);;
+                if($result == false){
+                    DB::rollback();
+                    return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 500);
+                }
             }
             
 
-            $this->updateItemStatus($Item->product_item_id);
+            $this->updateItemStatus($Item->product_item_id,$linetoken,$Item);
             DB::commit();
             return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
         } catch (\Throwable $e) {
@@ -739,7 +746,7 @@ class ProjectTimelineController extends Controller
         }
     }
 
-    public function updateItemStatus($id)
+    public function updateItemStatus($id,$token,$data)
     {
         DB::beginTransaction();
     
@@ -747,7 +754,8 @@ class ProjectTimelineController extends Controller
             $items = ProjectTimeline::where("product_item_id", $id)->get()->toArray();
     
             $itemP = ProductItem::with('products.projects')->find($id);
-            
+            $linenotify = new LineNotifyProjectController();
+
             // Check product item status
             $check = true;
             foreach ($items as $value) {
@@ -760,6 +768,10 @@ class ProjectTimelineController extends Controller
             if ($check) {
                 $itemP->status = "closed";
                 $itemP->save();
+                $result =$linenotify->NoticebyItem($token, $data);
+                if($result == false){
+                    return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 500);
+                }
             }
     
             $product = $itemP->products;
@@ -788,6 +800,10 @@ class ProjectTimelineController extends Controller
                     $pastproject = new PastProjectController();
                     $customer = Customer::find($project->customer_id);
                     $pastproject->createpasteProject($influencer->id,$customer->name,$project->name);
+                }
+                $result =$linenotify->NoticebyProject($token, $data);
+                if($result == false){
+                    return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 500);
                 }
             }
     

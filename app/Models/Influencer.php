@@ -56,4 +56,15 @@ class Influencer extends Model
     {
         return $this->hasOne(InfluencerCredential::class);
     }
+
+    protected static function booted()
+    {
+        static::deleting(function ($influencer) {
+            // Delete related influencer_credentials
+            $influencer->influencer_credentials()->delete();
+            // Detach other related relationships if necessary
+            $influencer->platform_socials()->detach();
+            $influencer->projects()->detach();
+        });
+    }
 }

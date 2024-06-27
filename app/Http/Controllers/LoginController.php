@@ -181,13 +181,35 @@ class LoginController extends Controller
         }
     }
 
+    public function destroyOTP($UID)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $Item = InfluencerCredential::where("UID",$UID)->first();
+            $Item->delete();
+
+            //
+
+            DB::commit();
+
+            return $this->returnUpdate('ดำเนินการสำเร็จ');
+        } catch (\Throwable $e) {
+
+            DB::rollback();
+
+            return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e, 404);
+        }
+    }
+    
     public function influencerOTPlogin(Request $request)
     {
 
         try {
 
             $Login = new LoginController();
-
+            $otp = new OtpController();
             $key = $request->phone;
 
             if ($request->gk) {
@@ -204,13 +226,17 @@ class LoginController extends Controller
                     ->first();
             }
             if ($Item) {
+                $influencer_id = $Item->influencer_id;
+                $this->destroyOTP($key);
+                $otptoken = $otp->sendOTP($key, true);
                 return response()->json([
                     'code' => '200',
                     'status' => true,
                     'message' => 'เข้าสู่ระบบสำเร็จ',
-                    'id' => $Item->influencer_id,
+                    'id' => $influencer_id,
                     'role' => 'Influencer',
                     'token' => $Login->genToken($Item->id, $key),
+                    'otptoken' => $otptoken
                 ], 200);
             } else {
 
@@ -222,10 +248,7 @@ class LoginController extends Controller
 
                 DB::commit();
 
-                $otp = new OtpController();
                 $otptoken = $otp->sendOTP($key, true);
-
-
                 return response()->json([
                     'code' => '200',
                     'status' => true,

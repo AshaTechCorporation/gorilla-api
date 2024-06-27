@@ -18,120 +18,169 @@ class LineNotifyProjectController extends Controller
         $sendLine = $this->sendLine($token, $message_data);
     }
 
-    public function NoticebyClient($Linetoken,$data,$round)
+    public function NoticebyClient($Linetoken, $data, $round)
     {
-        $token = $Linetoken;
-        $project = $data->product_items->products->projects->name?? 'ไม่มีค่า';
-        $Influencer = Influencer::find($data->influencer_id)->fullname?? 'ไม่มีค่า';
-        $draftstatus = $round == 0 ? "draft1" : ($round == 1 ? "draft2" : ($round == 2 ? "draft3" : ($round == 3 ? "post" : ($round == 4 ? "payment" : "Unknown"))));
-        if($round < 4){
-            $toround = $round + 1;
-        }else{
-            $toround = $round;
+        try {
+            $token = $Linetoken;
+            $project = $data->product_items->products->projects->name ?? 'ไม่มีค่า';
+            $Influencer = Influencer::find($data->influencer_id)->fullname ?? 'ไม่มีค่า';
+            $draftstatus = $round == 0 ? "draft1" : ($round == 1 ? "draft2" : ($round == 2 ? "draft3" : ($round == 3 ? "post" : ($round == 4 ? "payment" : "Unknown"))));
+            if ($round < 4) {
+                $toround = $round + 1;
+            } else {
+                $toround = $round;
+            }
+            $draftstatus2 = $toround == 0 ? "draft1" : ($toround == 1 ? "draft2" : ($toround == 2 ? "draft3" : ($toround == 3 ? "post" : ($toround == 4 ? "payment" : "Unknown"))));
+            switch ($round) {
+                case 0:
+                    $message_data =
+                        "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
+                        "ในโปรเจ็ค " . $project . "\n" .
+                        "Influencer " . $Influencer . "\n" .
+                        "โดยพนักงานรหัส : " . $data->ecode . "\n" .
+                        "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
+                    break;
+                case 1:
+                    $message_data =
+                        "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
+                        "ในโปรเจ็ค " . $project . "\n" .
+                        "Influencer " . $Influencer . "\n" .
+                        "โดยพนักงานรหัส : " . $data->ecode . "\n" .
+                        "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
+                    break;
+                case 2:
+                    $message_data =
+                        "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
+                        "ในโปรเจ็ค " . $project . "\n" .
+                        "Influencer " . $Influencer . "\n" .
+                        "โดยพนักงานรหัส : " . $data->ecode . "\n" .
+                        "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
+                    break;
+                case 3:
+                    $message_data =
+                        "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
+                        "ในโปรเจ็ค " . $project . "\n" .
+                        "Influencer " . $Influencer . "\n" .
+                        "โดยพนักงานรหัส : " . $data->ecode . "\n" .
+                        "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
+                    break;
+                case 4:
+                    $message_data =
+                        "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
+                        "ในโปรเจ็ค " . $project . "\n" .
+                        "Influencer " . $Influencer . "\n" .
+                        "โดยพนักงานรหัส : " . $data->ecode . "\n" .
+                        "สถานะมีการเปลี่ยนแปลงเป็น " . $draftstatus . "\n";
+                default:
+                    $message_data = "เกิดข้อผิดพลาดในการแจ้งเตือน!!!";
+            }
+            $sendLine = $this->sendLine($token, $message_data);
+            return true;
+        } catch (\Throwable $e) {
+            return false;
         }
-        $draftstatus2 = $toround == 0 ? "draft1" : ($toround == 1 ? "draft2" : ($toround == 2 ? "draft3" : ($toround == 3 ? "post" : ($toround == 4 ? "payment" : "Unknown"))));
-        switch ($round) {
-            case 0:
-                $message_data =
-                "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
-                "ในโปรเจ็ค " . $project . "\n" .
-                "Influencer " . $Influencer . "\n" .
-                "โดยพนักงานรหัส : " . $data->ecode . "\n" .
-                "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
-                break;
-            case 1:
-                $message_data =
-                "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
-                "ในโปรเจ็ค " . $project . "\n" .
-                "Influencer " . $Influencer . "\n" .
-                "โดยพนักงานรหัส : " . $data->ecode . "\n" .
-                "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
-                break;
-            case 2:
-                $message_data =
-                "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
-                "ในโปรเจ็ค " . $project . "\n" .
-                "Influencer " . $Influencer . "\n" .
-                "โดยพนักงานรหัส : " . $data->ecode . "\n" .
-                "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
-                break;
-            case 3:
-                $message_data =
-                "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
-                "ในโปรเจ็ค " . $project . "\n" .
-                "Influencer " . $Influencer . "\n" .
-                "โดยพนักงานรหัส : " . $data->ecode . "\n" .
-                "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
-                break;
-            case 4:
-                $message_data =
-                "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
-                "ในโปรเจ็ค " . $project . "\n" .
-                "Influencer " . $Influencer . "\n" .
-                "โดยพนักงานรหัส : " . $data->ecode . "\n" .
-                "สถานะมีการเปลี่ยนแปลงเป็น " . $draftstatus . "\n";
-            default:
-                $message_data = "เกิดข้อผิดพลาดในการแจ้งเตือน!!!";
-        }
-        $sendLine = $this->sendLine($token, $message_data);
     }
 
-    public function NoticebyEmployee($Linetoken,$data,$round)
+    public function NoticebyEmployee($Linetoken, $data, $round)
     {
-        $token = $Linetoken;
-        $project = $data->product_items->products->projects->name?? 'ไม่มีค่า';
-        $Influencer = Influencer::find($data->influencer_id)->fullname?? 'ไม่มีค่า';
-        $draftstatus = $round == 0 ? "draft1" : ($round == 1 ? "draft2" : ($round == 2 ? "draft3" : ($round == 3 ? "post" : ($round == 4 ? "payment" : "Unknown"))));
-        if($round < 4){
-            $toround = $round + 1;
-        }else{
-            $toround = $round;
+        try {
+            $token = $Linetoken;
+            $project = $data->product_items->products->projects->name ?? 'ไม่มีค่า';
+            $Influencer = Influencer::find($data->influencer_id)->fullname ?? 'ไม่มีค่า';
+            $draftstatus = $round == 0 ? "draft1" : ($round == 1 ? "draft2" : ($round == 2 ? "draft3" : ($round == 3 ? "post" : ($round == 4 ? "payment" : "Unknown"))));
+            if ($round < 4) {
+                $toround = $round + 1;
+            } else {
+                $toround = $round;
+            }
+            $draftstatus2 = $toround == 0 ? "draft1" : ($toround == 1 ? "draft2" : ($toround == 2 ? "draft3" : ($toround == 3 ? "post" : ($toround == 4 ? "payment" : "Unknown"))));
+            // return $token;
+            switch ($round) {
+                case 0:
+                    $message_data =
+                        "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
+                        "ในโปรเจ็ค " . $project . "\n" .
+                        "Influencer " . $Influencer . "\n" .
+                        "โดยพนักงานรหัส : " . $data->ecode . "\n" .
+                        "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
+                    break;
+                case 1:
+                    $message_data =
+                        "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
+                        "ในโปรเจ็ค " . $project . "\n" .
+                        "Influencer " . $Influencer . "\n" .
+                        "โดยพนักงานรหัส : " . $data->ecode . "\n" .
+                        "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
+                    break;
+                case 2:
+                    $message_data =
+                        "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
+                        "ในโปรเจ็ค " . $project . "\n" .
+                        "Influencer " . $Influencer . "\n" .
+                        "โดยพนักงานรหัส : " . $data->ecode . "\n" .
+                        "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
+                    break;
+                case 3:
+                    $message_data =
+                        "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
+                        "ในโปรเจ็ค " . $project . "\n" .
+                        "Influencer " . $Influencer . "\n" .
+                        "โดยพนักงานรหัส : " . $data->ecode . "\n" .
+                        "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
+                    break;
+                case 4:
+                    $message_data =
+                        "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
+                        "ในโปรเจ็ค " . $project . "\n" .
+                        "Influencer " . $Influencer . "\n" .
+                        "โดยพนักงานรหัส : " . $data->ecode . "\n" .
+                        "สถานะมีการเปลี่ยนแปลงเป็น " . $draftstatus . "\n";
+                default:
+                    $message_data = "เกิดข้อผิดพลาดในการแจ้งเตือน!!!";
+            }
+            $sendLine = $this->sendLine($token, $message_data);
+            return true;
+        } catch (\Throwable $e) {
+            return false;
         }
-        $draftstatus2 = $toround == 0 ? "draft1" : ($toround == 1 ? "draft2" : ($toround == 2 ? "draft3" : ($toround == 3 ? "post" : ($toround == 4 ? "payment" : "Unknown"))));
-        switch ($round) {
-            case 0:
-                $message_data =
-                "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
-                "ในโปรเจ็ค " . $project . "\n" .
-                "Influencer " . $Influencer . "\n" .
-                "โดยพนักงานรหัส : " . $data->ecode . "\n" .
-                "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
-                break;
-            case 1:
-                $message_data =
-                "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
-                "ในโปรเจ็ค " . $project . "\n" .
-                "Influencer " . $Influencer . "\n" .
-                "โดยพนักงานรหัส : " . $data->ecode . "\n" .
-                "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
-                break;
-            case 2:
-                $message_data =
-                "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
-                "ในโปรเจ็ค " . $project . "\n" .
-                "Influencer " . $Influencer . "\n" .
-                "โดยพนักงานรหัส : " . $data->ecode . "\n" .
-                "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
-                break;
-            case 3:
-                $message_data =
-                "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
-                "ในโปรเจ็ค " . $project . "\n" .
-                "Influencer " . $Influencer . "\n" .
-                "โดยพนักงานรหัส : " . $data->ecode . "\n" .
-                "สถานะมีการเปลี่ยนแปลงจาก" . $draftstatus . " เป็น " . $draftstatus2 . "\n";
-                break;
-            case 4:
-                $message_data =
-                "แจ้งเตือนการเปลี่ยนสถานะดราฟ" . "\n" .
-                "ในโปรเจ็ค " . $project . "\n" .
-                "Influencer " . $Influencer . "\n" .
-                "โดยพนักงานรหัส : " . $data->ecode . "\n" .
-                "สถานะมีการเปลี่ยนแปลงเป็น " . $draftstatus . "\n";
-            default:
-                $message_data = "เกิดข้อผิดพลาดในการแจ้งเตือน!!!";
+    }
+
+    public function NoticebyItem($Linetoken, $data)
+    {
+        try {
+            $token = $Linetoken;
+            $project = $data->product_items->products->projects->name ?? 'ไม่มีค่า';
+            $Influencer = Influencer::find($data->influencer_id)->fullname ?? 'ไม่มีค่า';
+
+            $message_data =
+            "แจ้งเตือนการเปลี่ยนสถานะ Item" . "\n" .
+            "ในโปรเจ็ค " . $project . "\n" .
+            "Influencer " . $Influencer . "\n" .
+            "โดยพนักงานรหัส : " . $data->ecode . "\n" .
+            "มีการดำเนินการเสร็จสิ้น ". "\n";
+            $sendLine = $this->sendLine($token, $message_data);
+            return true;
+        } catch (\Throwable $e) {
+            return false;
         }
-        $sendLine = $this->sendLine($token, $message_data);
+    }
+
+    public function NoticebyProject($Linetoken, $data)
+    {
+        try {
+            $token = $Linetoken;
+            $project = $data->product_items->products->projects->name ?? 'ไม่มีค่า';
+
+            $message_data =
+            "แจ้งเตือนการเปลี่ยนสถานะ Project" . "\n" .
+            "ในโปรเจ็ค " . $project . "\n" .
+            "โดยพนักงานรหัส : " . $data->ecode . "\n" .
+            "มีการดำเนินการเสร็จสิ้น " . "\n";
+            $sendLine = $this->sendLine($token, $message_data);
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
     public function sendLine($line_token, $text)
     {
@@ -191,7 +240,7 @@ class LineNotifyProjectController extends Controller
                 $accessToken = $responseBody['access_token'];
                 $item = EmployeeCredential::find($state);
                 // dd($accessToken);
-                $item->LCID = md5($accessToken);
+                $item->LCID = $accessToken;
                 $item->save();
 
                 DB::commit();

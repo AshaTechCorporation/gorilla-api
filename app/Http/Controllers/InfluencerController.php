@@ -444,7 +444,7 @@ class InfluencerController extends Controller
         DB::beginTransaction();
         try {
             $Item = Influencer::find($id);
-
+            // return $this->returnErrorData($request->career_id, 404);
             if ($request->career_id != null) {
                 $Item->career_id = $request->career_id;
             } else {
@@ -560,8 +560,15 @@ class InfluencerController extends Controller
                 if ($project == null) {
                     return $this->returnErrorData('เกิดข้อผิดพลาดที่ $projects กรุณาลองใหม่อีกครั้ง ', 404);
                 } else {
-                    $status = "working";
-                    $Item->projects()->attach($project, ['status' => $status]);
+                    if (!$project->influencers()->where('influencer_id', $id)->exists()) {
+                        $influencer = Influencer::find($id);
+    
+                        if ($influencer == null) {
+                            return $this->returnErrorData('เกิดข้อผิดพลาดที่ $influencer กรุณาลองใหม่อีกครั้ง ', 404);
+                        } else {
+                            $project->influencers()->attach($influencer, ['status' => "working"]);
+                        }
+                    }
                 }
             }
 
@@ -948,7 +955,7 @@ class InfluencerController extends Controller
         try {
 
             $Item = Influencer::find($id);
-            $Item->platform_socials()->detach();
+
             $Item->delete();
 
             $Byname = $this->decodername($request->header('Authorization'));

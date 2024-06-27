@@ -32,8 +32,9 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\LineNotifyProjectController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
-
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,8 @@ Route::post('/get_fiffy', [PdfController::class, 'tax_book_fifty']);
 Route::post('/fill-pdf', [PdfController::class, 'fillPdfForm']);
 Route::post('/pdf-form', [PdfController::class, 'showPdfForm']);
 
+// DashboardController
+Route::get('/get_dashboard',[DashboardController::class, 'getData']);
 // Presentatiion
 Route::get('/get_ppx/{id}', [PresentationController::class, 'generatePresentation']);
 
