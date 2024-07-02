@@ -202,6 +202,3 @@ Route::get('/line-notify/callback', [LineNotifyProjectController::class, 'callba
 
 Route::post('/item_bymonth', [ProjectTimelineController::class, 'getProductTimelineByMonth']);
 Route::post('/update_timeline', [ProjectTimelineController::class, 'updateTimeline']);
-
-
-

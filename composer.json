@@ -34,7 +34,8 @@
         "socialiteproviders/line": "^4.1",
         "socialiteproviders/youtube": "^4.1",
         "tecnickcom/tcpdf": "^6.7",
-        "tomlerendu/laravel-convert-case-middleware": "^1.1"
+        "tomlerendu/laravel-convert-case-middleware": "^1.1",
+        "weidner/goutte": "^2.3"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
