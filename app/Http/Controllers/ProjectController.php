@@ -140,7 +140,11 @@ class ProjectController extends Controller
                 $project->enddate = date('d/m/Y', strtotime($project->enddate . ' +543 years'));
 
                 $customer = Customer::find($project->customer_id);
-                $project->customer_name = $customer->name;
+                if ($customer) {
+                    $project->customer_name = $customer->name;
+                } else {
+                    $project->customer_name = null; 
+                }
                 foreach ($project->influencers as $influencer) {
                     $influencer->count = 0;
                     $No++;

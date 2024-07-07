@@ -74,6 +74,36 @@ class InfluencerController extends Controller
         return $this->returnSuccess('Data retrieved successfully', $influencersData);
     }
 
+    public function addInfluencerTimeline(Request $request)
+    {
+        $social = $request->platform_social_id;
+        $subscribe = $request->subscribe;
+
+        $influencers = Influencer::whereHas('platform_socials', function ($query) use ($social, $subscribe) {
+            $query->where('platform_social_id', $social);
+            $query->where('subscribe', '>', $subscribe);
+        })
+            ->where('influencers.status', "Request")
+            ->with(['platform_socials' => function ($query) use ($social, $subscribe) {
+                $query->where('platform_social_id', $social);
+                $query->where('subscribe', '>', $subscribe)
+                    ->withPivot('name', 'subscribe', 'link');
+            }])->get();
+
+        $influencersData = [];
+        foreach ($influencers as $influencer) {
+            $influencerData = $influencer->toArray();
+            foreach ($influencer->platform_socials as $platformSocial) {
+                $influencerData['social_name'] = $platformSocial->pivot->name;
+                $influencerData['subscribers'] = $platformSocial->pivot->subscribe;
+                $influencerData['link'] = $platformSocial->pivot->link;
+            }
+            $influencersData[] = $influencerData;
+        }
+
+        return $this->returnSuccess('Data retrieved successfully', $influencersData);
+    }
+
     public function getPage(Request $request)
     {
         $columns = $request->columns;
