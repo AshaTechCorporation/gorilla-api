@@ -76,7 +76,7 @@ class InfluencerController extends Controller
 
     public function addInfluencerTimeline(Request $request)
     {
-        $social = $request->platform_social_id;
+        $social = $request->platform_social;
         $subscribe = $request->subscribe;
 
         $influencers = Influencer::whereHas('platform_socials', function ($query) use ($social, $subscribe) {
