@@ -211,28 +211,27 @@ class LoginController extends Controller
             $Login = new LoginController();
             $otp = new OtpController();
             $key = $request->phone;
-
+            DB::beginTransaction();
             if ($request->gk) {
                 $Item = InfluencerCredential::where('GK', $request->gk)
                     ->first();
-                DB::beginTransaction();
 
                 $Item->UID = $key;
                 $Item->save();
 
-                DB::commit();
             } else {
                 $Item = InfluencerCredential::where('UID', $key)
                     ->first();
             }
             if ($Item) {
-                $influencer_id = $Item->influencer_id;
+                $influencer_id = $Item->id;
                 $this->destroyOTP($key);
                 $otptoken = $otp->sendOTP($key, true);
+                DB::commit();
                 return response()->json([
                     'code' => '200',
                     'status' => true,
-                    'message' => 'เข้าสู่ระบบสำเร็จ',
+                    'message' => 'เข้าสู่ระบบสำเร็จ1',
                     'id' => $influencer_id,
                     'role' => 'Influencer',
                     'token' => $Login->genToken($Item->id, $key),
@@ -240,7 +239,6 @@ class LoginController extends Controller
                 ], 200);
             } else {
 
-                DB::beginTransaction();
 
                 $influCredential = new InfluencerCredential();
                 $influCredential->UID = $key;
@@ -252,7 +250,7 @@ class LoginController extends Controller
                 return response()->json([
                     'code' => '200',
                     'status' => true,
-                    'message' => 'สร้างบัญชีสำเร็จ',
+                    'message' => 'สร้างบัญชีสำเร็จ2',
                     'id' => $influCredential->id,
                     'role' => 'Influencer',
                     'token' => $Login->genToken($influCredential->id, $key),
