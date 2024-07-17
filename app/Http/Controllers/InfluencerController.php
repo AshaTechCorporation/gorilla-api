@@ -78,12 +78,14 @@ class InfluencerController extends Controller
     {
         $social = $request->platform_social;
         $subscribe = $request->subscribe;
+        $dropinfluencer = $request->influencer;
 
         $influencers = Influencer::whereHas('platform_socials', function ($query) use ($social, $subscribe) {
             $query->where('platform_social_id', $social);
             $query->where('subscribe', '>', $subscribe);
         })
             ->where('influencers.status', "Request")
+            ->whereNotIn('id', $dropinfluencer)
             ->with(['platform_socials' => function ($query) use ($social, $subscribe) {
                 $query->where('platform_social_id', $social);
                 $query->where('subscribe', '>', $subscribe)
