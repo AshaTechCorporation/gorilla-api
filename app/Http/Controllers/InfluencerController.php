@@ -649,7 +649,6 @@ class InfluencerController extends Controller
             'phone' => 'required|numeric',
             'career_id' => 'required',
             'content_style_id' => 'required',
-            'email' => 'nullable|email|max:255',
             'line_id' => 'nullable|string|max:255',
             'birthday' => 'nullable|date',
             'product_address' => 'nullable|string|max:255',
@@ -677,7 +676,6 @@ class InfluencerController extends Controller
             'phone.required' => 'กรุณาระบุเบอร์โทร',
             'career_id.exists' => 'ไม่พบ career_id',
             'content_style_id.exists' => 'ไม่พบ content_style_id',
-            'email.email' => 'รูปแบบอีเมลไม่ถูกต้อง',
             'phone.numeric' => 'เบอร์โทรต้องเป็นตัวเลข',
         ];
 
