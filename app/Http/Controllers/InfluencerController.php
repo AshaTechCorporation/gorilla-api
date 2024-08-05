@@ -1179,13 +1179,14 @@ class InfluencerController extends Controller
         }
     }
 
-    public function block(Request $request, $id)
+    public function block(Request $request)
     {
         DB::beginTransaction();
 
         try {
 
-            $Item = Influencer::find($id);
+            $Item = Influencer::find($request->id);
+            $Item->des = $request->des;
 
             if ($Item->status == "Request") {
                 $Item->status = "Blocked";

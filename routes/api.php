@@ -92,7 +92,7 @@ Route::post('/fix_influencer', [InfluencerController::class, 'fixdataInfluencer'
 Route::get('/search_influencer', [InfluencerController::class, 'searchData']);
 Route::post('/get_influtimeline', [InfluencerController::class, 'getInfluencerTimeline']);
 Route::post('/add_influtimeline', [InfluencerController::class, 'addInfluencerTimeline']);
-Route::get('/influencer_block/{id}', [InfluencerController::class, 'block']);
+Route::post('/influencer_block', [InfluencerController::class, 'block']);
 
 // Influencer Self management
 // Route::post('/line_influencer', [InfluencerController::class, 'Line_Influencer']);
@@ -193,6 +193,7 @@ Route::resource('project_timeline', ProjectTimelineController::class);
 Route::post('/project_timeline_page', [ProjectTimelineController::class, 'getPage']);
 Route::get('/get_project_timeline', [ProjectTimelineController::class, 'getList']);
 Route::post('/update_draft_status', [ProjectTimelineController::class, 'updateStatus']);
+// Route::post('/update_draft_status_customer', [ProjectTimelineController::class, 'updateStatus_customer']);
 Route::get('/update_item_status/{id}', [ProjectTimelineController::class, 'updateItemStatus']);
 Route::post('/kpi', [ProjectTimelineController::class, 'kpicalculate']);
 Route::post('/add_row', [ProjectTimelineController::class, 'addRowinItem']);

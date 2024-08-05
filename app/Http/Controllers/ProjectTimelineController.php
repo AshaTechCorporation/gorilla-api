@@ -54,9 +54,9 @@ class ProjectTimelineController extends Controller
         $page = $start / $length + 1;
 
 
-        $col = array('id', 'product_timeline_id', 'product_id', 'name', 'platform_social_id', 'subscribe', 'description', 'qty' ,'status');
+        $col = array('id', 'product_timeline_id', 'product_id', 'name', 'platform_social_id', 'subscribe', 'description', 'qty', 'status');
 
-        $orderby = array('id', 'product_timeline_id', 'product_id', 'name', 'platform_social_id', 'subscribe', 'description', 'qty','status');
+        $orderby = array('id', 'product_timeline_id', 'product_id', 'name', 'platform_social_id', 'subscribe', 'description', 'qty', 'status');
 
         $D = ProductItem::select($col);
 
@@ -540,17 +540,165 @@ class ProjectTimelineController extends Controller
         }
     }
 
+    // public function updateStatus_customer(Request $request)
+    // {
+    //     $loginBy = "admin";
+    //     DB::beginTransaction();
+    //     try {
+    //         $Item = ProjectTimeline::with('product_items.products.projects')
+    //         ->find($request->id);
+    //         $linenotify = new LineNotifyProjectController();
+    //         $EmpID = $this->decoderid($request->header('Authorization'));
+    //         $Emp = EmployeeCredential::find($EmpID);
+    //         $linetoken = $Emp->LCID;
+
+    //         if ($request->user_type == 'employee') {
+    //             if ($request->round == 0) {
+    //                 $Item->admin_status1 = $request->admin_status;
+    //                 if ($Item->admin_status1 == "approve" && $Item->client_status1 == "approve") {
+    //                     $Item->round = '3';
+    //                     $Item->admin_status2 = "approve";
+    //                     $Item->admin_status3 = "approve";
+    //                     $Item->client_status2 = "approve";
+    //                     $Item->client_status3 = "approve";
+    //                     $Item->draft_status = "approve";
+    //                     $Item->admin_feedback1 = $request->feedback;
+
+    //                 } else {
+    //                     if($Item->client_status1 != "waiting"){
+    //                         $Item->round = '1';
+    //                     }  
+    //                     $Item->admin_feedback1 = $request->feedback;
+    //                 }
+    //             } elseif ($request->round == 1) {
+    //                 $Item->admin_status2 = $request->admin_status;
+    //                 if ($Item->client_status2 == "approve" && $Item->admin_status2 == "approve") {
+    //                     $Item->round = '3';
+    //                     $Item->admin_status3 = "approve";
+    //                     $Item->client_status3 = "approve";
+    //                     $Item->draft_status = "approve";
+    //                     $Item->admin_feedback2 = $request->feedback;
+    //                 } else {
+    //                     if($Item->client_status2 != "waiting"){
+    //                         $Item->round = '2';
+    //                     } 
+    //                     $Item->admin_feedback2 = $request->feedback;
+    //                 }
+    //             } elseif ($request->round == 2) {
+    //                 $Item->admin_status3 = $request->admin_status;
+    //                 if ($Item->client_status3 == "approve" && $Item->admin_status3 == "approve") {
+    //                     $Item->round = '3';
+    //                     $Item->draft_status = "approve";
+    //                     $Item->admin_feedback3 = $request->feedback;
+    //                 } else {
+    //                     if($Item->client_status3 != "waiting"){
+    //                         $Item->round = '3';
+    //                     } 
+    //                     $Item->admin_feedback3 = $request->feedback;
+    //                 }
+    //             } elseif ($request->round == 3) {
+    //                 $Item->post_status = $request->admin_status;
+    //                 $Item->round = '4';
+    //             } else{
+    //                 $Item->payment_status = $request->admin_status;
+    //             }
+    //         }
+
+    //         if ($request->user_type == 'customer') {
+    //             if ($request->round == 0) {
+    //                 $Item->client_status1 = $request->client_status;
+    //                 if ($Item->client_status1 == "approve" && $Item->admin_status1 == "approve") {
+    //                     $Item->admin_status2 = "approve";
+    //                     $Item->admin_status3 = "approve";
+    //                     $Item->client_status2 = "approve";
+    //                     $Item->client_status3 = "approve";
+    //                     $Item->round = '3';
+    //                     $Item->draft_status = "approve";
+    //                     $Item->client_feedback1 = $request->feedback;
+    //                 } else {
+    //                     $Item->client_feedback1 = $request->feedback;
+    //                     $Item->admin_status = "waiting";
+
+    //                     if($Item->admin_status1 != "waiting"){
+    //                         $Item->round = '1';
+    //                     }     
+    //                 }
+    //             } elseif ($request->round == 1) {
+    //                 $Item->client_status2 = $request->client_status;
+    //                 if ($Item->client_status2 == "approve" && $Item->admin_status2 == "approve") {
+    //                     $Item->admin_status3 = "approve";
+    //                     $Item->client_status3 = "approve";
+    //                     $Item->round = '3';
+    //                     $Item->draft_status = "approve";
+    //                     $Item->client_feedback2 = $request->feedback;
+    //                 } else {
+    //                     $Item->client_feedback2 = $request->feedback;
+    //                     $Item->admin_status = "waiting";
+    //                     if($Item->admin_status2 != "waiting"){
+    //                         $Item->round = '2';
+    //                     }
+    //                 }
+    //             } elseif ($request->round == 2) {
+    //                 $Item->client_status3 = $request->client_status;
+    //                 if ($Item->client_status3 == "approve" && $Item->admin_status3 == "approve") {
+    //                     $Item->round = '3';
+    //                     $Item->draft_status = "approve";
+    //                     $Item->client_feedback3 = $request->feedback;
+    //                 } else {
+    //                     $Item->client_feedback3 = $request->feedback;
+    //                     if($Item->admin_status3 != "waiting"){
+    //                         $Item->round = '3';
+    //                     }
+    //                     $Item->draft_status = "reject";
+    //                 }
+    //             }
+    //         }
+    //         $Item->update_by = $loginBy;
+    //         $Item->save();
+    //         //line notify 
+
+    //         if($request->user_type == 'customer'){
+    //             $result = $linenotify->NoticebyClient($linetoken, $Item,$request->round);
+    //             if($result == false){
+    //                 DB::rollback();
+    //                 return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 500);
+    //             }
+    //         }
+
+    //         if($request->user_type == 'employee'){
+    //             // return $this->returnSuccess('test', $Item);
+    //             $result =$linenotify->NoticebyEmployee($linetoken, $Item,$request->round);
+    //             // return $this->returnSuccess('ดำเนินการสำเร็จ', $result);;
+    //             if($result == false){
+    //                 DB::rollback();
+    //                 return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 500);
+    //             }
+    //         }
+
+
+    //         $this->updateItemStatus($Item->product_item_id,$linetoken,$Item);
+    //         DB::commit();
+    //         return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
+    //     } catch (\Throwable $e) {
+    //         DB::rollback();
+    //         return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ' . $e->getMessage(), 500);
+    //     }
+    // }
+
     public function updateStatus(Request $request)
     {
         $loginBy = "admin";
         DB::beginTransaction();
         try {
             $Item = ProjectTimeline::with('product_items.products.projects')
-            ->find($request->id);
+                ->find($request->id);
             $linenotify = new LineNotifyProjectController();
-            $EmpID = $this->decoderid($request->header('Authorization'));
-            $Emp = EmployeeCredential::find($EmpID);
-            $linetoken = $Emp->LCID;
+            if ($request->user_type == 'employee') {
+                $EmpID = $this->decoderid($request->header('Authorization'));
+                $Emp = EmployeeCredential::find($EmpID);
+                $linetoken = $Emp->LCID;
+            }
+
 
             if ($request->user_type == 'employee') {
                 if ($request->round == 0) {
@@ -563,11 +711,10 @@ class ProjectTimelineController extends Controller
                         $Item->client_status3 = "approve";
                         $Item->draft_status = "approve";
                         $Item->admin_feedback1 = $request->feedback;
-                        
                     } else {
-                        if($Item->client_status1 != "waiting"){
+                        if ($Item->client_status1 != "waiting") {
                             $Item->round = '1';
-                        }  
+                        }
                         $Item->admin_feedback1 = $request->feedback;
                     }
                 } elseif ($request->round == 1) {
@@ -579,9 +726,9 @@ class ProjectTimelineController extends Controller
                         $Item->draft_status = "approve";
                         $Item->admin_feedback2 = $request->feedback;
                     } else {
-                        if($Item->client_status2 != "waiting"){
+                        if ($Item->client_status2 != "waiting") {
                             $Item->round = '2';
-                        } 
+                        }
                         $Item->admin_feedback2 = $request->feedback;
                     }
                 } elseif ($request->round == 2) {
@@ -591,15 +738,15 @@ class ProjectTimelineController extends Controller
                         $Item->draft_status = "approve";
                         $Item->admin_feedback3 = $request->feedback;
                     } else {
-                        if($Item->client_status3 != "waiting"){
+                        if ($Item->client_status3 != "waiting") {
                             $Item->round = '3';
-                        } 
+                        }
                         $Item->admin_feedback3 = $request->feedback;
                     }
                 } elseif ($request->round == 3) {
                     $Item->post_status = $request->admin_status;
                     $Item->round = '4';
-                } else{
+                } else {
                     $Item->payment_status = $request->admin_status;
                 }
             }
@@ -619,9 +766,9 @@ class ProjectTimelineController extends Controller
                         $Item->client_feedback1 = $request->feedback;
                         $Item->admin_status = "waiting";
 
-                        if($Item->admin_status1 != "waiting"){
+                        if ($Item->admin_status1 != "waiting") {
                             $Item->round = '1';
-                        }     
+                        }
                     }
                 } elseif ($request->round == 1) {
                     $Item->client_status2 = $request->client_status;
@@ -634,7 +781,7 @@ class ProjectTimelineController extends Controller
                     } else {
                         $Item->client_feedback2 = $request->feedback;
                         $Item->admin_status = "waiting";
-                        if($Item->admin_status2 != "waiting"){
+                        if ($Item->admin_status2 != "waiting") {
                             $Item->round = '2';
                         }
                     }
@@ -646,7 +793,7 @@ class ProjectTimelineController extends Controller
                         $Item->client_feedback3 = $request->feedback;
                     } else {
                         $Item->client_feedback3 = $request->feedback;
-                        if($Item->admin_status3 != "waiting"){
+                        if ($Item->admin_status3 != "waiting") {
                             $Item->round = '3';
                         }
                         $Item->draft_status = "reject";
@@ -657,26 +804,26 @@ class ProjectTimelineController extends Controller
             $Item->save();
             //line notify 
 
-            if($request->user_type == 'customer'){
-                $result = $linenotify->NoticebyClient($linetoken, $Item,$request->round);
-                if($result == false){
-                    DB::rollback();
-                    return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 500);
-                }
-            }
+            // if ($request->user_type == 'customer') {
+            //     $result = $linenotify->NoticebyClient($linetoken, $Item, $request->round);
+            //     if ($result == false) {
+            //         DB::rollback();
+            //         return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 500);
+            //     }
+            // }
 
-            if($request->user_type == 'employee'){
+            if ($request->user_type == 'employee') {
                 // return $this->returnSuccess('test', $Item);
-                $result =$linenotify->NoticebyEmployee($linetoken, $Item,$request->round);
+                $result = $linenotify->NoticebyEmployee($linetoken, $Item, $request->round);
                 // return $this->returnSuccess('ดำเนินการสำเร็จ', $result);;
-                if($result == false){
+                if ($result == false) {
                     DB::rollback();
                     return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 500);
                 }
             }
-            
 
-            $this->updateItemStatus($Item->product_item_id,$linetoken,$Item);
+
+            $this->updateItemStatus($Item->product_item_id, $linetoken, $Item);
             DB::commit();
             return $this->returnSuccess('ดำเนินการสำเร็จ', $Item);
         } catch (\Throwable $e) {
@@ -746,13 +893,14 @@ class ProjectTimelineController extends Controller
         }
     }
 
-    public function updateItemStatus($id,$token,$data)
+
+    public function updateItemStatus($id, $token, $data)
     {
         DB::beginTransaction();
-    
+
         try {
             $items = ProjectTimeline::where("product_item_id", $id)->get()->toArray();
-    
+
             $itemP = ProductItem::with('products.projects')->find($id);
             $linenotify = new LineNotifyProjectController();
 
@@ -764,24 +912,24 @@ class ProjectTimelineController extends Controller
                     break;
                 }
             }
-    
+
             if ($check) {
                 $itemP->status = "closed";
                 $itemP->save();
-                $result =$linenotify->NoticebyItem($token, $data);
-                if($result == false){
+                $result = $linenotify->NoticebyItem($token, $data);
+                if ($result == false) {
                     return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 500);
                 }
             }
-    
+
             $product = $itemP->products;
             $project = $product->projects;
-    
+
             $check = true;
             $allProductItems = Project::where("id", $project->id)
-                ->with("products.product_items.project_timelines","influencers")
+                ->with("products.product_items.project_timelines", "influencers")
                 ->first();
-    
+
             foreach ($allProductItems->products as $product) {
                 foreach ($product->product_items as $productItem) {
                     if ($productItem->status == "ongoing") {
@@ -790,7 +938,7 @@ class ProjectTimelineController extends Controller
                     }
                 }
             }
-    
+
             if ($check) {
                 $allProductItems->status = "closed";
                 $allProductItems->save();
@@ -799,16 +947,16 @@ class ProjectTimelineController extends Controller
                     $allProductItems->influencers()->updateExistingPivot($influencer->id, ['status' => 'done']);
                     $pastproject = new PastProjectController();
                     $customer = Customer::find($project->customer_id);
-                    $pastproject->createpasteProject($influencer->id,$customer->name,$project->name);
+                    $pastproject->createpasteProject($influencer->id, $customer->name, $project->name);
                 }
-                $result =$linenotify->NoticebyProject($token, $data);
-                if($result == false){
+                $result = $linenotify->NoticebyProject($token, $data);
+                if ($result == false) {
                     return $this->returnErrorData('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง ', 500);
                 }
             }
-    
+
             DB::commit();
-    
+
             return $this->returnSuccess('ดำเนินการสำเร็จ', $allProductItems);
         } catch (\Exception $e) {
             DB::rollBack();

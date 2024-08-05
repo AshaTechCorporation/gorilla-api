@@ -58,7 +58,7 @@ class CreateInfluencersTable extends Migration
             $table->string('latitude', 250)->charset('utf8')->nullable();
             $table->string('longitude', 250)->charset('utf8')->nullable();
             $table->enum('status', [ 'Yes','Request','Blocked'])->charset('utf8')->default('Request');
-
+            $table->string('des', 250)->charset('utf8')->nullable();
             $table->string('create_by', 100)->charset('utf8')->nullable();
             $table->string('update_by', 100)->charset('utf8')->nullable();
             
